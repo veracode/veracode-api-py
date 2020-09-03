@@ -9,16 +9,16 @@
 #           and file permission set appropriately (chmod 600)
 
 from urllib.parse import urlparse
-
 import time
 import requests
 import logging
 from requests.adapters import HTTPAdapter
 
-from .exceptions import VeracodeAPIError
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 
+from .constants import Constants
+from .exceptions import VeracodeAPIError
 
 class VeracodeAPI:
 
@@ -147,25 +147,10 @@ class VeracodeAPI:
         """Returns a detailed report for a given build ID."""
         return self._request(self.baseurl + "/5.0/detailedreport.do", "GET", params={"build_id": build_id})
 
-    def set_mitigation_info(self,build_id,flaw_id_list,action,comment, results_from_app_id):
+    def set_mitigation_info(self,build_id,flaw_id_list,action,comment):
         """Adds a new mitigation proposal, acceptance, rejection, or comment for a set of flaws for an application."""
-        if action == 'Mitigate by Design':
-            action = 'appdesign'
-        elif action == 'Mitigate by Network Environment':
-            action = 'netenv'
-        elif action == 'Mitigate by OS Environment':
-            action = 'osenv'
-        elif action == 'Approve Mitigation':
-            action = 'accepted'
-        elif action == 'Reject Mitigation':
-            action = 'rejected'
-        elif action == 'Potential False Positive':
-            action = 'fp'
-        elif action == 'Reported to Library Maintainer':
-            action = 'library'
-        else:
-            action = 'comment'
-        payload = {'build_id': build_id, 'flaw_id_list': flaw_id_list, 'action': action, 'comment': comment}
+        actiontype = Constants.ANNOT_TYPE.get(action, 'comment')        
+        payload = {'build_id': build_id, 'flaw_id_list': flaw_id_list, 'action': actiontype, 'comment': comment}
         return self._request(self.baseurl + "/updatemitigationinfo.do", "POST", params=payload)
 
     def generate_archer(self,payload):
