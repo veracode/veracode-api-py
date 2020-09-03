@@ -88,9 +88,9 @@ class VeracodeAPI:
             raise VeracodeAPIError("Unsupported HTTP method")
 
         if not (r.status_code == requests.codes.ok):
-            print("Error retrieving data. HTTP status code: {}".format(r.status_code))
+            logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
             if r.status_code == 401:
-                print("Check that your Veracode API account credentials are correct.")
+                logging.exception("Check that your Veracode API account credentials are correct.")
             else:
                 logging.exception("Error:" + r.text + " for request " + r.request.url)
             raise requests.exceptions.RequestException()
@@ -205,7 +205,8 @@ class VeracodeAPI:
     def get_findings(self,app):
         #Gets a list of static findings for app using the Veracode Findings API
         request_params = {'include_annot': 'TRUE', 'scan_type': 'STATIC'}
-        return self._rest_paged_request("appsec/v2/applications/"+app+"/findings","GET","findings",request_params)
+        uri = "appsec/v2/applications/{}/findings".format(app)
+        return self._rest_paged_request(uri,"GET","findings",request_params)
 
     ## Identity APIs
 
@@ -216,11 +217,13 @@ class VeracodeAPI:
 
     def get_user(self,user_guid):
         #Gets an individual user provided their GUID, using the Veracode Identity API
-        return self._rest_request('api/authn/v2/users/'+user_guid,"GET")
+        uri = "api/authn/v2/users/{}".format(user_guid)
+        return self._rest_request(uri,"GET")
 
     def get_creds (self):
         return self._rest_request("api/authn/v2/api_credentials","GET")
 
     def update_user (self,user_guid,roles):
         request_params = {'partial':'TRUE',"incremental": 'TRUE'}
-        return self._rest_request("api/authn/v2/users/"+user_guid,"PUT",request_params,roles)
+        uri = "api/authn/v2/users/{}".format(user_guid)
+        return self._rest_request(uri,"PUT",request_params,roles)       
