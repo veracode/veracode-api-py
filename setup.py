@@ -1,7 +1,7 @@
 from distutils.core import setup
 setup(
-  name = 'veracode-api-py',         
-  packages = ['veracode-api-py'],   
+  name = 'veracode_api_py',         
+  packages = ['veracode_api_py'],   
   version = '0.1',      
   license='MIT',        
   description = 'Python helper library for working with the Veracode APIs. Handles retries, pagination, and other features of the modern Veracode REST APIs.',   

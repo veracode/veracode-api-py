@@ -8,7 +8,7 @@ Not an official Veracode product.
 
 Install from pypi:
 
-    pypi veracode-api-py
+    pypi veracode_api_py
 
 (Optional) Save Veracode API credentials in `~/.veracode/credentials`
 
@@ -18,7 +18,7 @@ Install from pypi:
 
 ## Use in your applications
 
-Include the library in your code and call the methods. Most methods return JSON or XML depending on the underlying API.
+Import VeracodeAPI into your code and call the methods. Most methods return JSON or XML depending on the underlying API.
 
 ### VeracodeAPI
 
