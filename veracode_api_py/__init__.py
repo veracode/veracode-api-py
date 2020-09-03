@@ -1,2 +1,2 @@
-from veracode-api-py.api import VeracodeAPI
-from veracode-api-py.exceptions import VeracodeError, VeracodeAPIError
+from veracode_api_py.api import VeracodeAPI
+from veracode_api_py.exceptions import VeracodeError, VeracodeAPIError
