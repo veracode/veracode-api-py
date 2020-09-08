@@ -187,9 +187,16 @@ class VeracodeAPI:
         uri = policy_base_uri.format(guid)
         return self._rest_request(uri,"GET")
 
-    def get_findings(self,app):
-        #Gets a list of static findings for app using the Veracode Findings API
-        request_params = {'include_annot': 'TRUE', 'scan_type': 'STATIC'}
+    def get_findings(self,app,scantype='STATIC',annot='TRUE'):
+        #Gets a list of  findings for app using the Veracode Findings API
+        request_params = {}
+
+        if scantype in ['STATIC', 'DYNAMIC', 'MANUAL','SCA']:
+            request_params['scan_type'] = scantype
+        #note that scantype='ALL' will result in no scan_type parameter as in API
+            
+        request_params['include_annot'] = annot
+        
         uri = "appsec/v2/applications/{}/findings".format(app)
         return self._rest_paged_request(uri,"GET","findings",request_params)
 

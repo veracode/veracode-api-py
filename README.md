@@ -39,7 +39,9 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_apps()` : get a list of Veracode applications (JSON format).
 - `get_app(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
 - `get_policy(guid)`: get information for the policy corresponding to `guid`.
-- `get_findings(app)`: get the findings for `app` (guid).
+- `get_findings(app,scantype(opt),annot(opt))`: get the findings for `app` (guid).
+  - `scantype`: Defaults to STATIC findings, but can be STATIC, DYNAMIC, MANUAL, SCA, or ALL (static, dynamic, manual).
+  - `annot`: Defaults to TRUE but can be FALSE
 - `get_users()`: get a list of users for the organization.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
 - `get_creds()`: get credentials information (API ID and expiration date) for the current user.
