@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
   name = 'veracode_api_py',         
   packages = ['veracode_api_py'],   
-  version = '0.3',      
+  version = '0.4',      
   license='MIT',        
   description = 'Python helper library for working with the Veracode APIs. Handles retries, pagination, and other features of the modern Veracode REST APIs.',   
   long_description = long_description,
