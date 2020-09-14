@@ -63,64 +63,64 @@ class VeracodeAPI:
             logging.exception("Connection error")
             raise VeracodeAPIError(e)
 
-def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
-        # base request method for a REST request
-        myheaders = {"User-Agent": "api.py"}
-        if method in ["POST", "PUT"]:
-            myheaders.update({'Content-type': 'application/json'})
+    def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
+            # base request method for a REST request
+            myheaders = {"User-Agent": "api.py"}
+            if method in ["POST", "PUT"]:
+                myheaders.update({'Content-type': 'application/json'})
 
-        if method == "GET":
-            # incorporate retries to deal with some failure situations
-            try: 
-                session = requests.Session()
-                session.mount(self.base_rest_url, HTTPAdapter(max_retries=3))
-                request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
-                prepared_request = request.prepare()
-                r = session.send(prepared_request, proxies=self.proxies)
-                if r.status_code == 500 or r.status_code == 504:
-                    time.sleep(1)
-                    r = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,json=body)
-            except requests.exceptions.RequestException as e:
-                logging.exception("Connection error")
-                raise VeracodeAPIError(e)
-        elif method == "POST":
-            try:
-                r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
-            except requests.exceptions.RequestException as e:
-                logging.exception("Connection error")
-                raise VeracodeAPIError(e)
-        elif method == "PUT":
-            try:
-                r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
-            except requests.exceptions.RequestException as e:
-                logging.exception("Connection error")
-                raise VeracodeAPIError(e)
-        elif method == "DELETE":
-            try:
-                r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
-            except requests.exceptions.RequestException as e:
-                logging.exception("Connection error")
-                raise VeracodeAPIError(e)
-        else:
-            raise VeracodeAPIError("Unsupported HTTP method")
-
-        if not (r.status_code == requests.codes.ok):
-            logging.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
-
-        if not (r.ok):
-            logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
-            if r.status_code == 401:
-                logging.exception("Check that your Veracode API account credentials are correct.")
+            if method == "GET":
+                # incorporate retries to deal with some failure situations
+                try: 
+                    session = requests.Session()
+                    session.mount(self.base_rest_url, HTTPAdapter(max_retries=3))
+                    request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
+                    prepared_request = request.prepare()
+                    r = session.send(prepared_request, proxies=self.proxies)
+                    if r.status_code == 500 or r.status_code == 504:
+                        time.sleep(1)
+                        r = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,json=body)
+                except requests.exceptions.RequestException as e:
+                    logging.exception("Connection error")
+                    raise VeracodeAPIError(e)
+            elif method == "POST":
+                try:
+                    r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
+                except requests.exceptions.RequestException as e:
+                    logging.exception("Connection error")
+                    raise VeracodeAPIError(e)
+            elif method == "PUT":
+                try:
+                    r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
+                except requests.exceptions.RequestException as e:
+                    logging.exception("Connection error")
+                    raise VeracodeAPIError(e)
+            elif method == "DELETE":
+                try:
+                    r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
+                except requests.exceptions.RequestException as e:
+                    logging.exception("Connection error")
+                    raise VeracodeAPIError(e)
             else:
-                logging.exception("Error [{}]: {} for request {}".format(r.status_code,r.text, r.request.url))
-            raise requests.exceptions.RequestException()
-        elif fullresponse:
-            return r
-        else:
-            if r.text != "":
-                return r.json()
+                raise VeracodeAPIError("Unsupported HTTP method")
+
+            if not (r.status_code == requests.codes.ok):
+                logging.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
+
+            if not (r.ok):
+                logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
+                if r.status_code == 401:
+                    logging.exception("Check that your Veracode API account credentials are correct.")
+                else:
+                    logging.exception("Error [{}]: {} for request {}".format(r.status_code,r.text, r.request.url))
+                raise requests.exceptions.RequestException()
+            elif fullresponse:
+                return r
             else:
-                return ""
+                if r.text != "":
+                    return r.json()
+                else:
+                    return ""
 
     def _rest_paged_request(self, url, method, element, params=None):
         all_data = []

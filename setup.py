@@ -3,13 +3,13 @@ from distutils.core import setup
 setup(
   name = 'veracode_api_py',         
   packages = ['veracode_api_py'],   
-  version = '0.6',      
+  version = '0.7',      
   license='MIT',        
   description = 'Python helper library for working with the Veracode APIs. Handles retries, pagination, and other features of the modern Veracode REST APIs.',   
   author = 'Tim Jarrett',                  
   author_email = 'tjarrett@veracode.com',      
   url = 'https://github.com/tjarrettveracode',   
-  download_url = 'https://github.com/tjarrettveracode/veracode-api-py/archive/v_06.tar.gz',    
+  download_url = 'https://github.com/tjarrettveracode/veracode-api-py/archive/v_07.tar.gz',    
   keywords = ['veracode', 'veracode-api'],   
   install_requires=[            
           'veracode-api-signing'
