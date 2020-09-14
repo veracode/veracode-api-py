@@ -63,24 +63,41 @@ class VeracodeAPI:
             logging.exception("Connection error")
             raise VeracodeAPIError(e)
 
-    def _rest_request(self, url, method, params=None,body=None):
+def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
         # base request method for a REST request
-        if method in ["GET","POST"]:
+        myheaders = {"User-Agent": "api.py"}
+        if method in ["POST", "PUT"]:
+            myheaders.update({'Content-type': 'application/json'})
+
+        if method == "GET":
+            # incorporate retries to deal with some failure situations
             try: 
                 session = requests.Session()
                 session.mount(self.base_rest_url, HTTPAdapter(max_retries=3))
-                request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers={"User-Agent": "api.py"})
+                request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
                 prepared_request = request.prepare()
                 r = session.send(prepared_request, proxies=self.proxies)
                 if r.status_code == 500 or r.status_code == 504:
                     time.sleep(1)
-                    r = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers={"User-Agent": "api.py"},json=body)
+                    r = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,json=body)
+            except requests.exceptions.RequestException as e:
+                logging.exception("Connection error")
+                raise VeracodeAPIError(e)
+        elif method == "POST":
+            try:
+                r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
             except requests.exceptions.RequestException as e:
                 logging.exception("Connection error")
                 raise VeracodeAPIError(e)
         elif method == "PUT":
             try:
-                r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers={"User-Agent": "api.py", 'Content-type': 'application/json'},data=body)
+                r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
+            except requests.exceptions.RequestException as e:
+                logging.exception("Connection error")
+                raise VeracodeAPIError(e)
+        elif method == "DELETE":
+            try:
+                r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
             except requests.exceptions.RequestException as e:
                 logging.exception("Connection error")
                 raise VeracodeAPIError(e)
@@ -88,14 +105,22 @@ class VeracodeAPI:
             raise VeracodeAPIError("Unsupported HTTP method")
 
         if not (r.status_code == requests.codes.ok):
+            logging.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
+
+        if not (r.ok):
             logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
             if r.status_code == 401:
                 logging.exception("Check that your Veracode API account credentials are correct.")
             else:
-                logging.exception("Error:" + r.text + " for request " + r.request.url)
+                logging.exception("Error [{}]: {} for request {}".format(r.status_code,r.text, r.request.url))
             raise requests.exceptions.RequestException()
+        elif fullresponse:
+            return r
         else:
-            return r.json()
+            if r.text != "":
+                return r.json()
+            else:
+                return ""
 
     def _rest_paged_request(self, url, method, element, params=None):
         all_data = []
@@ -169,7 +194,8 @@ class VeracodeAPI:
     ## Appsec APIs
 
     def get_apps(self):
-        return self._rest_paged_request('appsec/v1/applications',"GET","applications")
+        request_params = {}
+        return self._rest_paged_request('appsec/v1/applications',"GET", params=request_params, element="applications")
 
     def get_app (self,guid=None,legacy_id=None):
         """Gets a single applications in the current customer account using the Veracode Application API."""
@@ -218,4 +244,27 @@ class VeracodeAPI:
     def update_user (self,user_guid,roles):
         request_params = {'partial':'TRUE',"incremental": 'TRUE'}
         uri = "api/authn/v2/users/{}".format(user_guid)
-        return self._rest_request(uri,"PUT",request_params,roles)       
+        return self._rest_request(uri,"PUT",request_params,roles)      
+
+## SCA APIs - note must be human user to use these, not API user
+
+    def get_workspaces(self):
+        #Gets existing workspaces
+        request_params = {}
+        return self._rest_paged_request("srcclr/v3/workspaces","GET",params=request_params,element="workspaces")
+
+    def get_workspace_by_name(self,name):
+        #Does a name filter on the workspaces list. Note that this is a partial match. Only returns the first match
+        name = parse.quote(name) #urlencode any spaces or special characters
+        request_params = {'filter[workspace]': name}
+        return self._rest_paged_request("srcclr/v3/workspaces","GET",params=request_params,element="workspaces")
+
+    def create_workspace(self,name):
+        r = self._rest_request("srcclr/v3/workspaces","POST",body=name,fullresponse=True)
+        return r.headers.get('location','')
+
+    def add_workspace_team(self,workspace_guid,team_id):
+        return self._rest_request("srcclr/v3/workspaces/{}/teams/{}".format(workspace_guid,team_id),"PUT")
+
+    def delete_workspace(self,workspace_guid):
+        return self._rest_request("srcclr/v3/workspaces/{}".format(workspace_guid),"DELETE") 
