@@ -41,7 +41,7 @@ class VeracodeAPI:
         try:
             session = requests.Session()
             session.mount(self.baseurl, HTTPAdapter(max_retries=3))
-            request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers={"User-Agent": "api.py"}, verify=True)
+            request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers={"User-Agent": "api.py"})
             prepared_request = request.prepare()
             r = session.send(prepared_request, proxies=self.proxies)
             if 200 <= r.status_code <= 299:
@@ -74,7 +74,7 @@ class VeracodeAPI:
                 try: 
                     session = requests.Session()
                     session.mount(self.base_rest_url, HTTPAdapter(max_retries=3))
-                    request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders, verify=True)
+                    request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
                     prepared_request = request.prepare()
                     r = session.send(prepared_request, proxies=self.proxies)
                     if r.status_code == 500 or r.status_code == 504:
@@ -85,19 +85,19 @@ class VeracodeAPI:
                     raise VeracodeAPIError(e)
             elif method == "POST":
                 try:
-                    r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body, verify=True)
+                    r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
                 except requests.exceptions.RequestException as e:
                     logging.exception(self.connect_error_msg)
                     raise VeracodeAPIError(e)
             elif method == "PUT":
                 try:
-                    r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body, verify=True)
+                    r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
                 except requests.exceptions.RequestException as e:
                     logging.exception(self.connect_error_msg)
                     raise VeracodeAPIError(e)
             elif method == "DELETE":
                 try:
-                    r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders, verify=True)
+                    r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
                 except requests.exceptions.RequestException as e:
                     logging.exception(self.connect_error_msg)
                     raise VeracodeAPIError(e)
