@@ -8,7 +8,7 @@
 #
 #           and file permission set appropriately (chmod 600)
 
-from urllib.parse import urlparse
+from urllib import parse
 import time
 import requests
 import logging
@@ -27,9 +27,9 @@ class VeracodeAPI:
         requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.proxies = proxies
         self.base_rest_url = "https://api.veracode.com/"
-        self.base_uri = base_uri = "https://api.veracode.com/appsec/v1/applications"
-        self.find_uri = "https://api.veracode.com/appsec/v2/applications"
         self.retry_seconds = 120
+        self.connect_error_msg = "Connection Error"
+        self.sca_base_url = "srcclr/v3/workspaces"
 
     # helper functions
 
@@ -41,7 +41,7 @@ class VeracodeAPI:
         try:
             session = requests.Session()
             session.mount(self.baseurl, HTTPAdapter(max_retries=3))
-            request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers={"User-Agent": "api.py"})
+            request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers={"User-Agent": "api.py"}, verify=True)
             prepared_request = request.prepare()
             r = session.send(prepared_request, proxies=self.proxies)
             if 200 <= r.status_code <= 299:
@@ -74,32 +74,32 @@ class VeracodeAPI:
                 try: 
                     session = requests.Session()
                     session.mount(self.base_rest_url, HTTPAdapter(max_retries=3))
-                    request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
+                    request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders, verify=True)
                     prepared_request = request.prepare()
                     r = session.send(prepared_request, proxies=self.proxies)
                     if r.status_code == 500 or r.status_code == 504:
                         time.sleep(1)
                         r = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,json=body)
                 except requests.exceptions.RequestException as e:
-                    logging.exception("Connection error")
+                    logging.exception(self.connect_error_msg)
                     raise VeracodeAPIError(e)
             elif method == "POST":
                 try:
-                    r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
+                    r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body, verify=True)
                 except requests.exceptions.RequestException as e:
-                    logging.exception("Connection error")
+                    logging.exception(self.connect_error_msg)
                     raise VeracodeAPIError(e)
             elif method == "PUT":
                 try:
-                    r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
+                    r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body, verify=True)
                 except requests.exceptions.RequestException as e:
-                    logging.exception("Connection error")
+                    logging.exception(self.connect_error_msg)
                     raise VeracodeAPIError(e)
             elif method == "DELETE":
                 try:
-                    r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
+                    r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders, verify=True)
                 except requests.exceptions.RequestException as e:
-                    logging.exception("Connection error")
+                    logging.exception(self.connect_error_msg)
                     raise VeracodeAPIError(e)
             else:
                 raise VeracodeAPIError("Unsupported HTTP method")
@@ -251,20 +251,20 @@ class VeracodeAPI:
     def get_workspaces(self):
         #Gets existing workspaces
         request_params = {}
-        return self._rest_paged_request("srcclr/v3/workspaces","GET",params=request_params,element="workspaces")
+        return self._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
 
     def get_workspace_by_name(self,name):
         #Does a name filter on the workspaces list. Note that this is a partial match. Only returns the first match
         name = parse.quote(name) #urlencode any spaces or special characters
         request_params = {'filter[workspace]': name}
-        return self._rest_paged_request("srcclr/v3/workspaces","GET",params=request_params,element="workspaces")
+        return self._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
 
     def create_workspace(self,name):
-        r = self._rest_request("srcclr/v3/workspaces","POST",body=name,fullresponse=True)
+        r = self._rest_request(self.sca_base_url,"POST",body=name,fullresponse=True)
         return r.headers.get('location','')
 
     def add_workspace_team(self,workspace_guid,team_id):
-        return self._rest_request("srcclr/v3/workspaces/{}/teams/{}".format(workspace_guid,team_id),"PUT")
+        return self._rest_request(self.sca_base_url + "/{}/teams/{}".format(workspace_guid,team_id),"PUT")
 
     def delete_workspace(self,workspace_guid):
-        return self._rest_request("srcclr/v3/workspaces/{}".format(workspace_guid),"DELETE") 
+        return self._rest_request(self.sca_base_url + "/{}".format(workspace_guid),"DELETE") 
