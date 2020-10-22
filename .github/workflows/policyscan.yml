@@ -24,9 +24,9 @@ jobs:
           
       # zip the project and move it to a staging directory
       - name: Zip Project
-          run: zip -R project.zip '*.py' '*.js' '*.php' '*.ts'
-          env:
-            build-name: project.zip
+        run: zip -R project.zip '*.py' '*.js' '*.php' '*.ts'
+        env:
+          build-name: project.zip
       - uses: actions/upload-artifact@v2 # Copy files from repository to docker container so the next uploadandscan action can access them.
         with:
           path: folder_to_upload/*.zip # Wildcards can be used to filter the files copied into the container. See: https://github.com/actions/upload-artifact
