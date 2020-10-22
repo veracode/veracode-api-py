@@ -43,9 +43,12 @@ The following methods call Veracode REST APIs and return JSON.
   - `scantype`: Defaults to STATIC findings, but can be STATIC, DYNAMIC, MANUAL, SCA, or ALL (static, dynamic, manual).
   - `annot`: Defaults to TRUE but can be FALSE
 - `get_users()`: get a list of users for the organization.
+- `get_user_self()`: get user information for the current user.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
+- `get_user_by_name(username)`: look up info for an individual user based on their user_name.
 - `get_creds()`: get credentials information (API ID and expiration date) for the current user.
 - `update_user(user_guid, roles)`: update the user identified by `user_guid` with the list of roles passed in `roles`. Because the Identity API does not support adding a single role, the list should be the entire list of existing roles for the user plus whatever new roles. See [veracode-user-bulk-role-assign](https://github.com/tjarrettveracode/veracode-user-bulk-role-assign) for an example.
+- `disable_user(user_guid)`: set the `Active` flag the user identified by `user_guid` to `False`.
 - `get_workspaces()`: get a list of SCA Agent workspaces for the organization.
 - `get_workspace_by_name(name)`: get a list of SCA Agent workspaces whose name partially matches `name`.
 - `create_workspace(name)`: create an SCA Agent workspace named `name`. Returns the GUID for the workspace.

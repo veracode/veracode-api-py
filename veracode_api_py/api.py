@@ -12,7 +12,10 @@ from urllib import parse
 import time
 import requests
 import logging
+import json
 from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
 
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
@@ -64,63 +67,54 @@ class VeracodeAPI:
             raise VeracodeAPIError(e)
 
     def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
-            # base request method for a REST request
-            myheaders = {"User-Agent": "api.py"}
-            if method in ["POST", "PUT"]:
-                myheaders.update({'Content-type': 'application/json'})
+        # base request method for a REST request
+        myheaders = {"User-Agent": "api.py"}
+        if method in ["POST", "PUT"]:
+            myheaders.update({'Content-type': 'application/json'})
 
+        retry_strategy = Retry(total=3,
+            status_forcelist=[429, 500, 502, 503, 504],
+            method_whitelist=["HEAD", "GET", "OPTIONS"]
+            )
+        session = requests.Session()
+        session.mount(self.base_rest_url, HTTPAdapter(max_retries=retry_strategy))
+
+        try:
             if method == "GET":
-                # incorporate retries to deal with some failure situations
-                try: 
-                    session = requests.Session()
-                    session.mount(self.base_rest_url, HTTPAdapter(max_retries=3))
-                    request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
-                    prepared_request = request.prepare()
-                    r = session.send(prepared_request, proxies=self.proxies)
-                    if r.status_code == 500 or r.status_code == 504:
-                        time.sleep(1)
-                        r = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,json=body)
-                except requests.exceptions.RequestException as e:
-                    logging.exception(self.connect_error_msg)
-                    raise VeracodeAPIError(e)
+                request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
+                prepared_request = request.prepare()
+                r = session.send(prepared_request, proxies=self.proxies)
             elif method == "POST":
-                try:
-                    r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
-                except requests.exceptions.RequestException as e:
-                    logging.exception(self.connect_error_msg)
-                    raise VeracodeAPIError(e)
+                r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
             elif method == "PUT":
-                try:
-                    r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
-                except requests.exceptions.RequestException as e:
-                    logging.exception(self.connect_error_msg)
-                    raise VeracodeAPIError(e)
+                r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
             elif method == "DELETE":
-                try:
-                    r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
-                except requests.exceptions.RequestException as e:
-                    logging.exception(self.connect_error_msg)
-                    raise VeracodeAPIError(e)
+                r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
             else:
                 raise VeracodeAPIError("Unsupported HTTP method")
+        except requests.exceptions.RequestException as e:
+            logging.exception(self.connect_error_msg)
+            raise VeracodeAPIError(e)
 
-            if not (r.status_code == requests.codes.ok):
-                logging.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
+        if not (r.status_code == requests.codes.ok):
+            logging.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
 
-            if not (r.ok):
-                logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
-                if r.status_code == 401:
-                    logging.exception("Check that your Veracode API account credentials are correct.")
-                else:
-                    logging.exception("Error [{}]: {} for request {}".format(r.status_code,r.text, r.request.url))
-                raise requests.exceptions.RequestException()
-            elif fullresponse:
-                return r
+        if not (r.ok):
+            logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
+            if r.status_code == 401:
+                logging.exception("Check that your Veracode API account credentials are correct.")
             else:
-                if r.text != "":
-                    return r.json()
-                else:
-                    return ""
+                logging.exception("Error [{}]: {} for request {}".
+                    format(r.status_code, r.text, r.request.url))
+            raise requests.exceptions.RequestException()
+
+        if fullresponse:
+            return r
+
+        if r.text != "":
+            return r.json()
+        else:
+            return ""
 
     def _rest_paged_request(self, url, method, element, params=None):
         all_data = []
@@ -137,7 +131,7 @@ class VeracodeAPI:
             page += 1
             more_pages = page < total_pages
         return all_data
-
+    
     #xml apis
 
     def get_app_list(self):
@@ -233,10 +227,19 @@ class VeracodeAPI:
         request_params = {'page': 0} #initialize the page request
         return self._rest_paged_request("api/authn/v2/users","GET","users",request_params)
 
+    def get_user_self (self):
+        #Gets the user info for the current user, using the Veracode Identity API
+        return self._rest_request("api/authn/v2/users/self","GET")
+
     def get_user(self,user_guid):
         #Gets an individual user provided their GUID, using the Veracode Identity API
         uri = "api/authn/v2/users/{}".format(user_guid)
         return self._rest_request(uri,"GET")
+
+    def get_user_by_name(self,username):
+        #Gets all the users who match the provided email address, using the Veracode Identity API
+        request_params = {'user_name': username} #initialize the page request
+        return self._rest_paged_request("api/authn/v2/users","GET","users",request_params)
 
     def get_creds (self):
         return self._rest_request("api/authn/v2/api_credentials","GET")
@@ -244,7 +247,13 @@ class VeracodeAPI:
     def update_user (self,user_guid,roles):
         request_params = {'partial':'TRUE',"incremental": 'TRUE'}
         uri = "api/authn/v2/users/{}".format(user_guid)
-        return self._rest_request(uri,"PUT",request_params,roles)      
+        return self._rest_request(uri,"PUT",request_params,roles)  
+
+    def disable_user (self,user_guid):
+        request_params = {'partial':'TRUE'}
+        uri = 'api/authn/v2/users/{}'.format(user_guid)
+        payload = json.dumps({'active': False})
+        return self._rest_request(uri,"PUT",request_params,payload)
 
 ## SCA APIs - note must be human user to use these, not API user
 
