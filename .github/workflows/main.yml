@@ -33,7 +33,7 @@ jobs:
         
     # zip the project and move it to a staging directory
     - name: Zip Project
-      run: zip -r -R project.zip '*.py' 
+      run: zip -R project.zip '*.py' '*.js' '*.php' '*.ts'
       env:
         build-name: project.zip
     
