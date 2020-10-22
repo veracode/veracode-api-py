@@ -29,11 +29,11 @@ jobs:
           build-name: project.zip
       - uses: actions/upload-artifact@v2 # Copy files from repository to docker container so the next uploadandscan action can access them.
         with:
-          path: folder_to_upload/*.zip # Wildcards can be used to filter the files copied into the container. See: https://github.com/actions/upload-artifact
+          path: project.zip # Wildcards can be used to filter the files copied into the container. See: https://github.com/actions/upload-artifact
       - uses: veracode/veracode-uploadandscan-action@master # Run the uploadandscan action. Inputs are described above.
         with:
           appname: 'veracode-api-py'
-          filepath: 'folder_to_upload/project.zip'
+          filepath: 'project.zip'
           vid: '${{ secrets.VERACODE_API_ID }}'
           vkey: '${{ secrets.VERACODE_API_KEY }}'
           scantimeout: 15
