@@ -49,6 +49,11 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_creds()`: get credentials information (API ID and expiration date) for the current user.
 - `update_user(user_guid, roles)`: update the user identified by `user_guid` with the list of roles passed in `roles`. Because the Identity API does not support adding a single role, the list should be the entire list of existing roles for the user plus whatever new roles. See [veracode-user-bulk-role-assign](https://github.com/tjarrettveracode/veracode-user-bulk-role-assign) for an example.
 - `disable_user(user_guid)`: set the `Active` flag the user identified by `user_guid` to `False`.
+- `delete_user(user_guid)`: delete the user identified by `user_guid`. This is not a reversible action.
+- `get_teams(all_for_org)`: get the list of teams for the user, or (if `all_for_org` is `True`) all teams in the organization.
+- `create_team(team_name,business_unit,members)`: create a team named `team_name`. Optionally pass the business unit guid and/or a list of user names to add to the team.
+- `delete_team(team_guid)`: delete the team identified by `team_guid`.
+- `get_business_units()`: get the list of business units in the organization.
 - `get_workspaces()`: get a list of SCA Agent workspaces for the organization.
 - `get_workspace_by_name(name)`: get a list of SCA Agent workspaces whose name partially matches `name`.
 - `create_workspace(name)`: create an SCA Agent workspace named `name`. Returns the GUID for the workspace.

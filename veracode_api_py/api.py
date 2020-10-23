@@ -16,7 +16,6 @@ import json
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 
@@ -254,6 +253,43 @@ class VeracodeAPI:
         uri = 'api/authn/v2/users/{}'.format(user_guid)
         payload = json.dumps({'active': False})
         return self._rest_request(uri,"PUT",request_params,payload)
+
+    def delete_user (self,user_guid):
+        uri = 'api/authn/v2/users/{}'.format(user_guid)
+        return self._rest_request(uri,"DELETE")
+
+    def get_teams (self, all_for_org=False):
+        #Gets a list of teams using the Veracode Identity API       
+        if all_for_org:
+            request_params = {'all_for_org': True}
+        else:
+            request_params = {'page': 0} #initialize the page request
+        return self._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
+
+    def create_team (self, team_name, business_unit=None, members=[]):        
+        team_def = {'team_name': team_name}
+        
+        if len(members) > 0:
+            # optionally pass a list of usernames to add as team members
+            users = []
+            for member in members:
+                users.append({'user_name': member})
+            team_def.update({'users': users})
+
+        if business_unit != None:
+            bu = {'bu_id': business_unit}
+            team_def.update(bu)
+
+        payload = json.dumps(team_def)
+        return self._rest_request('api/authn/v2/teams','POST',body=payload)
+
+    def delete_team (self, team_guid):
+        uri = 'api/authn/v2/teams/{}'.format(team_guid)
+        return self._rest_request(uri,"DELETE")
+            
+    def get_business_units (self):
+        request_params = {'page': 0}
+        return self._rest_paged_request("api/authn/v2/business_units","GET","business_units",request_params)
 
 ## SCA APIs - note must be human user to use these, not API user
 
