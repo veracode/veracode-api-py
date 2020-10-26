@@ -40,6 +40,7 @@ The following methods call Veracode REST APIs and return JSON.
 
 - `get_apps()` : get a list of Veracode applications (JSON format).
 - `get_app(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
+- `get_app_by_name(name)`: get list of applications whose names contain the search string `name`.
 - `create_app(app_name, business_criticality, business_unit(opt), teams(opt))`: create an application profile.
   - `business_criticality`: one of "VERY HIGH", "HIGH", "MEDIUM", "LOW", "VERY LOW"
   - `business_unit`: the GUID of the business unit to which the application should be assigned

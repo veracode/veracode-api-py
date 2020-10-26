@@ -115,14 +115,14 @@ class VeracodeAPI:
         else:
             return ""
 
-    def _rest_paged_request(self, url, method, element, params=None):
+    def _rest_paged_request(self, uri, method, element, params=None):
         all_data = []
         page = 0
         more_pages = True
 
         while more_pages:
             params['page']=page
-            page_data = self._rest_request(url,method,params)
+            page_data = self._rest_request(uri,method,params)
             total_pages = page_data.get('page', {}).get('total_pages', 0)
             data_page = page_data.get('_embedded', {}).get(element, [])
             all_data += data_page  
@@ -200,6 +200,11 @@ class VeracodeAPI:
             uri = apps_base_uri.format(legacy_id)
 
         return self._rest_request(uri,"GET")
+
+    def get_app_by_name (self,appname):
+        """Gets a list of applications having a name that matches appname, using the Veracode Applications API."""
+        params = {"name": appname}
+        return self._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
     def create_app(self,app_name,business_criticality, business_unit=None, teams=[]):
         app_def = {'name':app_name, 'business_criticality':business_criticality}
@@ -292,7 +297,6 @@ class VeracodeAPI:
         user_def.update({"roles": rolelist})
 
         payload = json.dumps(user_def)
-        print(payload)
         return self._rest_request('api/authn/v2/users','POST',body=payload)
 
     def update_user (self,user_guid,roles):
