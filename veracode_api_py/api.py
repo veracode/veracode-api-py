@@ -201,6 +201,27 @@ class VeracodeAPI:
 
         return self._rest_request(uri,"GET")
 
+    def create_app(self,app_name,business_criticality, business_unit=None, teams=[]):
+        app_def = {'name':app_name, 'business_criticality':business_criticality}
+
+        if len(teams) > 0:
+            # optionally pass a list of teams to add to the application profile
+            team_list = []
+            for team in teams:
+                team_list.append({'guid': team})
+            app_def.update({'teams': team_list})
+
+        if business_unit != None:
+            bu = {'business_unit': {'guid': business_unit}}
+            app_def.update(bu)
+
+        payload = json.dumps({"profile": app_def})
+        return self._rest_request('appsec/v1/applications','POST',body=payload)
+
+    def delete_app (self,guid):
+        uri = 'appsec/v1/applications/{}'.format(guid)
+        return self._rest_request(uri,"DELETE")
+
     def get_policy (self,guid):
         policy_base_uri = "appsec/v1/policies/{}"
         uri = policy_base_uri.format(guid)
@@ -242,6 +263,37 @@ class VeracodeAPI:
 
     def get_creds (self):
         return self._rest_request("api/authn/v2/api_credentials","GET")
+
+    def create_user (self,email,firstname,lastname,username=None,type="HUMAN",roles=[],teams=[]):
+        user_def = { "email_address": email, "first_name": firstname, "last_name": lastname }
+
+        rolelist = []
+        if len(roles) > 0:
+            for role in roles:
+                rolelist.append({"role_name": role})
+            user_def.append({"roles":rolelist})
+
+        if type == "API":
+            user_def.update({"user_name": username})
+            user_def.update({"permissions": [{"permission_name": "apiUser"}]})
+            if len(roles) == 0:
+               rolelist.append({"role_name": "uploadapi"})
+               rolelist.append({"role_name":"apisubmitanyscan"})
+        else:
+            if len(roles) == 0:
+               rolelist.append({"role_name":"submitter"}) 
+
+        teamlist = []
+        if len(teams) > 0:
+            for team in teams:
+                teamlist.append({"team_id": team})
+            user_def.update({"teams": teamlist})
+
+        user_def.update({"roles": rolelist})
+
+        payload = json.dumps(user_def)
+        print(payload)
+        return self._rest_request('api/authn/v2/users','POST',body=payload)
 
     def update_user (self,user_guid,roles):
         request_params = {'partial':'TRUE',"incremental": 'TRUE'}

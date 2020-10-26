@@ -36,24 +36,46 @@ The following methods call Veracode XML APIs and return XML output.
 
 The following methods call Veracode REST APIs and return JSON.
 
+#### Applications, Policy and Findings
+
 - `get_apps()` : get a list of Veracode applications (JSON format).
 - `get_app(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
+- `create_app(app_name, business_criticality, business_unit(opt), teams(opt))`: create an application profile.
+  - `business_criticality`: one of "VERY HIGH", "HIGH", "MEDIUM", "LOW", "VERY LOW"
+  - `business_unit`: the GUID of the business unit to which the application should be assigned
+  - `teams`: a list of the GUIDs of the teams to which the application should be assigned
+- `delete_app(guid)`: delete the application identified by `guid`. This is not a reversible action.
 - `get_policy(guid)`: get information for the policy corresponding to `guid`.
 - `get_findings(app,scantype(opt),annot(opt))`: get the findings for `app` (guid).
   - `scantype`: Defaults to STATIC findings, but can be STATIC, DYNAMIC, MANUAL, SCA, or ALL (static, dynamic, manual).
   - `annot`: Defaults to TRUE but can be FALSE
+
+#### Users
+
 - `get_users()`: get a list of users for the organization.
 - `get_user_self()`: get user information for the current user.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
 - `get_user_by_name(username)`: look up info for an individual user based on their user_name.
 - `get_creds()`: get credentials information (API ID and expiration date) for the current user.
+- `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt))`: create a user based on the provided information.
+  - `type`: `"HUMAN"` or `"API"`. Defaults to `"HUMAN"`. If `"API"` specified, must also provide `username`.
+  - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users).
 - `update_user(user_guid, roles)`: update the user identified by `user_guid` with the list of roles passed in `roles`. Because the Identity API does not support adding a single role, the list should be the entire list of existing roles for the user plus whatever new roles. See [veracode-user-bulk-role-assign](https://github.com/tjarrettveracode/veracode-user-bulk-role-assign) for an example.
 - `disable_user(user_guid)`: set the `Active` flag the user identified by `user_guid` to `False`.
 - `delete_user(user_guid)`: delete the user identified by `user_guid`. This is not a reversible action.
+
+#### Teams
+
 - `get_teams(all_for_org)`: get the list of teams for the user, or (if `all_for_org` is `True`) all teams in the organization.
 - `create_team(team_name,business_unit,members)`: create a team named `team_name`. Optionally pass the business unit guid and/or a list of user names to add to the team.
 - `delete_team(team_guid)`: delete the team identified by `team_guid`.
+
+#### Business Units
+
 - `get_business_units()`: get the list of business units in the organization.
+
+#### SCA Agent
+
 - `get_workspaces()`: get a list of SCA Agent workspaces for the organization.
 - `get_workspace_by_name(name)`: get a list of SCA Agent workspaces whose name partially matches `name`.
 - `create_workspace(name)`: create an SCA Agent workspace named `name`. Returns the GUID for the workspace.
