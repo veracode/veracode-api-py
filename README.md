@@ -69,6 +69,7 @@ The following methods call Veracode REST APIs and return JSON.
 
 - `get_teams(all_for_org)`: get the list of teams for the user, or (if `all_for_org` is `True`) all teams in the organization.
 - `create_team(team_name,business_unit,members)`: create a team named `team_name`. Optionally pass the business unit guid and/or a list of user names to add to the team.
+- `update_team(team_guid,team_name(opt),business_unit(opt),members(opt))`: update the team identified by `team_guid` with the provided information.
 - `delete_team(team_guid)`: delete the team identified by `team_guid`.
 
 #### Business Units

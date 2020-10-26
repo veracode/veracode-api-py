@@ -339,6 +339,29 @@ class VeracodeAPI:
         payload = json.dumps(team_def)
         return self._rest_request('api/authn/v2/teams','POST',body=payload)
 
+    def update_team (self, team_guid, team_name="", business_unit=None, members=[]):
+        requestbody = {}
+        
+        if team_name != "":
+            requestbody.update({"team_name": team_name})
+
+        if business_unit != None:
+            requestbody.update({"business_unit": {"bu_id": business_unit}})
+
+        if len(members) > 0:
+            users = []
+            for member in members:
+                users.append({"user_name": member})
+            requestbody.update({"users": users})
+
+        if requestbody == {}:
+            logging.error("No update specified for team {}".format(team_guid))
+
+        payload = json.dumps(requestbody)
+        params = {"partial":True, "incremental":True}
+        uri = 'api/authn/v2/teams/{}'.format(team_guid)
+        return self._rest_request(uri,'PUT',body=payload,params=params)
+
     def delete_team (self, team_guid):
         uri = 'api/authn/v2/teams/{}'.format(team_guid)
         return self._rest_request(uri,"DELETE")
@@ -361,8 +384,11 @@ class VeracodeAPI:
         return self._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
 
     def create_workspace(self,name):
-        r = self._rest_request(self.sca_base_url,"POST",body=name,fullresponse=True)
-        return r.headers.get('location','')
+        #pass payload with name, return guid to workspace
+        payload = json.dumps({"name": name})
+        r = self._rest_request(self.sca_base_url,"POST",body=payload,fullresponse=True)
+        loc = r.headers.get('location','')
+        return loc.split("/")[-1]
 
     def add_workspace_team(self,workspace_guid,team_id):
         return self._rest_request(self.sca_base_url + "/{}/teams/{}".format(workspace_guid,team_id),"PUT")
