@@ -50,6 +50,9 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_findings(app,scantype(opt),annot(opt))`: get the findings for `app` (guid).
   - `scantype`: Defaults to STATIC findings, but can be STATIC, DYNAMIC, MANUAL, SCA, or ALL (static, dynamic, manual).
   - `annot`: Defaults to TRUE but can be FALSE
+- `add_annotation(app,issue_list,comment,action)`: add an annotation (comment, mitigation proposal/acceptance/rejection) to the findings in `issue_list` for `app` (guid). Note that you must have the Mitigation Approver role (regular user) to use the ACCEPTED or REJECTED action, or the Mitigation and Comments API role for an API service account to use this call.
+  - `issue_list`: must be passed as a Python list of `issue_id`s
+  - `action`: must be one of COMMENT, POTENTIAL_FALSE_POSITIVE, APP_BY_DESIGN, OS_ENV, NET_ENV, LIBRARY, ACCEPT_RISK, ACCEPTED, REJECTED
 
 #### Users
 

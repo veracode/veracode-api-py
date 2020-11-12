@@ -22,6 +22,8 @@ from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from .constants import Constants
 from .exceptions import VeracodeAPIError
 
+log = logging.getLogger(__name__)
+
 class VeracodeAPI:
 
     def __init__(self, proxies=None):
@@ -52,17 +54,17 @@ class VeracodeAPI:
                     time.sleep(self.retry_seconds)
                     return self._request(url,method,params)
                 elif r.content is None:
-                    logging.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
+                    log.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
                                   .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers, r.content))
                     raise VeracodeAPIError("HTTP response body is empty")
                 else:
                     return r.content
             else:
-                logging.debug("HTTP error for request:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
+                log.debug("HTTP error for request:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
                               .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers, r.content))
                 raise VeracodeAPIError("HTTP error: {}".format(r.status_code))
         except requests.exceptions.RequestException as e:
-            logging.exception("Connection error")
+            log.exception("Connection error")
             raise VeracodeAPIError(e)
 
     def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
@@ -92,18 +94,18 @@ class VeracodeAPI:
             else:
                 raise VeracodeAPIError("Unsupported HTTP method")
         except requests.exceptions.RequestException as e:
-            logging.exception(self.connect_error_msg)
+            log.exception(self.connect_error_msg)
             raise VeracodeAPIError(e)
 
         if not (r.status_code == requests.codes.ok):
-            logging.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
+            log.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
 
         if not (r.ok):
-            logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
+            log.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
             if r.status_code == 401:
-                logging.exception("Check that your Veracode API account credentials are correct.")
+                log.exception("Check that your Veracode API account credentials are correct.")
             else:
-                logging.exception("Error [{}]: {} for request {}".
+                log.exception("Error [{}]: {} for request {}".
                     format(r.status_code, r.text, r.request.url))
             raise requests.exceptions.RequestException()
 
@@ -245,6 +247,19 @@ class VeracodeAPI:
         uri = "appsec/v2/applications/{}/findings".format(app)
         return self._rest_paged_request(uri,"GET","findings",request_params)
 
+    def add_annotation(self,app,issue_list,comment,action):
+        #pass issue_list as a list of issue ids
+        uri = "appsec/v2/applications/{}/annotations".format(app)
+
+        annotation_def = {'comment': comment, 'action': action}
+
+        converted_list = [str(element) for element in issue_list]
+        issue_list_string = ','.join(converted_list)
+        annotation_def['issue_list'] = issue_list_string 
+        
+        payload = json.dumps(annotation_def)
+        return self._rest_request(uri,"POST",body=payload)
+
     ## Identity APIs
 
     def get_users(self):
@@ -355,7 +370,7 @@ class VeracodeAPI:
             requestbody.update({"users": users})
 
         if requestbody == {}:
-            logging.error("No update specified for team {}".format(team_guid))
+            log.error("No update specified for team {}".format(team_guid))
 
         payload = json.dumps(requestbody)
         params = {"partial":True, "incremental":True}
