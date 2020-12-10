@@ -50,6 +50,9 @@ The following methods call Veracode REST APIs and return JSON.
 #### Sandboxes
 
 - `get_app_sandboxes(guid)`: get the sandboxes associated with the application identified by `guid`.
+- `create_sandbox(app,name,auto_recreate(opt),custom_fields(opt))`: create a sandbox in the application identified by `app`. Custom fields must be specified as a list of dictionaries of `name`/`value` pairs, e.g. [{'name': 'Custom 1','value': 'foo'}].
+- `update_sandbox(app,sandbox,name,auto_recreate(opt),custom_fields(opt))`: update the `sandbox` (guid) in `app` (guid) with the provided values. Note that partial updates are NOT supported, so you need to provide all values including those you don't wish to change.
+- `delete_sandbox(app,sandbox)`: delete `sandbox` (guid) in `app` (guid).
 
 #### Policy
 

@@ -235,6 +235,30 @@ class VeracodeAPI:
         uri = 'appsec/v1/applications/{}/sandboxes'.format(guid)
         return self._rest_paged_request(uri,"GET","sandboxes",request_params)
 
+    def create_sandbox (self, app, name, auto_recreate=False, custom_fields=[]):
+        uri = 'appsec/v1/applications/{}/sandboxes'.format(app)
+        sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
+
+        if len(custom_fields) > 0:
+            sandbox_def.update({"custom_fields": custom_fields})
+
+        payload = json.dumps(sandbox_def)
+        return self._rest_request(uri,'POST',body=payload)
+
+    def update_sandbox (self, app, sandbox, name, auto_recreate=False, custom_fields=[]):
+        uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
+        sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
+
+        if len(custom_fields) > 0:
+            sandbox_def.update({"custom_fields": custom_fields})
+
+        payload = json.dumps(sandbox_def)
+        return self._rest_request(uri,'PUT',body=payload)
+
+    def delete_sandbox (self, app, sandbox):
+        uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
+        return self._rest_request(uri,'DELETE')
+
     def get_policy (self,guid):
         policy_base_uri = "appsec/v1/policies/{}"
         uri = policy_base_uri.format(guid)
