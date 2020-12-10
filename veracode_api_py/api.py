@@ -189,6 +189,10 @@ class VeracodeAPI:
 
     ## Appsec APIs
 
+    def healthcheck(self):
+        uri = 'healthcheck/status'
+        return self._rest_request(uri,"GET")
+
     def get_apps(self):
         request_params = {}
         return self._rest_paged_request('appsec/v1/applications',"GET", params=request_params, element="applications")
