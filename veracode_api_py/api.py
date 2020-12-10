@@ -155,12 +155,13 @@ class VeracodeAPI:
             params = {"app_id": app_id, "sandbox_id": sandbox_id}
         return self._request(self.baseurl + "/4.0/getbuildlist.do", "GET", params=params)
     
-    def get_build_info(self, app_id, build_id, sandbox_id=None):
+    def get_build_info(self, app_id, build_id=None, sandbox_id=None):
         """Returns build info for a given build ID."""
-        if sandbox_id is None:
-            params = {"app_id": app_id, "build_id": build_id}
-        else:
-            params = {"app_id": app_id, "build_id": build_id, "sandbox_id": sandbox_id}
+        params = {"app_id": app_id}
+        if sandbox_id != None:
+            params["sandbox_id"] = sandbox_id
+        if build_id != None:
+            params["build_id"] = build_id
         return self._request(self.baseurl + "/5.0/getbuildinfo.do", "GET", params=params)
 
     def get_detailed_report(self, build_id):
@@ -229,6 +230,11 @@ class VeracodeAPI:
         uri = 'appsec/v1/applications/{}'.format(guid)
         return self._rest_request(uri,"DELETE")
 
+    def get_app_sandboxes (self,guid):
+        request_params = {}
+        uri = 'appsec/v1/applications/{}/sandboxes'.format(guid)
+        return self._rest_paged_request(uri,"GET","sandboxes",request_params)
+
     def get_policy (self,guid):
         policy_base_uri = "appsec/v1/policies/{}"
         uri = policy_base_uri.format(guid)
@@ -246,6 +252,27 @@ class VeracodeAPI:
         
         uri = "appsec/v2/applications/{}/findings".format(app)
         return self._rest_paged_request(uri,"GET","findings",request_params)
+
+    def get_static_flaw_info(self,app,issueid,sandbox=None):
+        if sandbox != None:
+            uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info?context={}".format(app,issueid,sandbox)
+        else:
+            uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info".format(app,issueid)
+
+        return self._rest_request(uri,"GET")
+
+    def get_dynamic_flaw_info(self,app,issueid):
+        uri = "appsec/v2/applications/{}/findings/{}/dynamic_flaw_info".format(app,issueid)
+
+        return self._rest_request(uri,"GET")
+
+    def get_summary_report(self,app,sandbox=None):
+        if sandbox != None:
+            uri = "appsec/v2/applications/{}/summary_report?context={}".format(app,sandbox)
+        else:
+            uri = "appsec/v2/applications/{}/summary_report".format(app)
+
+        return self._rest_request(uri,"GET")
 
     def add_annotation(self,app,issue_list,comment,action):
         #pass issue_list as a list of issue ids
