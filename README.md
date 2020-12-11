@@ -36,7 +36,11 @@ The following methods call Veracode XML APIs and return XML output.
 
 The following methods call Veracode REST APIs and return JSON.
 
-#### Applications, Policy and Findings
+#### Healthcheck
+
+- `healthcheck()`: returns an empty response with HTTP 200 if authentication succeeds.
+
+#### Applications
 
 - `get_apps()` : get a list of Veracode applications (JSON format).
 - `get_app(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
@@ -46,10 +50,29 @@ The following methods call Veracode REST APIs and return JSON.
   - `business_unit`: the GUID of the business unit to which the application should be assigned
   - `teams`: a list of the GUIDs of the teams to which the application should be assigned
 - `delete_app(guid)`: delete the application identified by `guid`. This is not a reversible action.
+
+#### Sandboxes
+
+- `get_app_sandboxes(guid)`: get the sandboxes associated with the application identified by `guid`.
+- `create_sandbox(app,name,auto_recreate(opt),custom_fields(opt))`: create a sandbox in the application identified by `app`. Custom fields must be specified as a list of dictionaries of `name`/`value` pairs, e.g. [{'name': 'Custom 1','value': 'foo'}].
+- `update_sandbox(app,sandbox,name,auto_recreate(opt),custom_fields(opt))`: update the `sandbox` (guid) in `app` (guid) with the provided values. Note that partial updates are NOT supported, so you need to provide all values including those you don't wish to change.
+- `delete_sandbox(app,sandbox)`: delete `sandbox` (guid) in `app` (guid).
+
+#### Policy
+
 - `get_policy(guid)`: get information for the policy corresponding to `guid`.
+
+#### Findings
+
 - `get_findings(app,scantype(opt),annot(opt))`: get the findings for `app` (guid).
   - `scantype`: Defaults to STATIC findings, but can be STATIC, DYNAMIC, MANUAL, SCA, or ALL (static, dynamic, manual).
   - `annot`: Defaults to TRUE but can be FALSE
+- `get_summary_report(app,sandbox(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid).
+- `get_static_flaw_info(app,issueid,sandbox(opt))`: get the static flaw information, including data paths, for the finding identified by `issueid` in `app` (guid) or its `sandbox` (guid).
+- `get_dynamic_flaw_info(app,issueid)`: get the dynamic flaw information, including request/response data, for the finding identified by `issueid` in `app` (guid).
+- `add_annotation(app,issue_list,comment,action)`: add an annotation (comment, mitigation proposal/acceptance/rejection) to the findings in `issue_list` for `app` (guid). Note that you must have the Mitigation Approver role (regular user) to use the ACCEPTED or REJECTED action, or the Mitigation and Comments API role for an API service account to use this call.
+  - `issue_list`: must be passed as a Python list of `issue_id`s
+  - `action`: must be one of COMMENT, POTENTIAL_FALSE_POSITIVE, APP_BY_DESIGN, OS_ENV, NET_ENV, LIBRARY, ACCEPT_RISK, ACCEPTED, REJECTED
 
 #### Users
 
