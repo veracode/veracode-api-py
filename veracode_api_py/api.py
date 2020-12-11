@@ -22,6 +22,8 @@ from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from .constants import Constants
 from .exceptions import VeracodeAPIError
 
+log = logging.getLogger(__name__)
+
 class VeracodeAPI:
 
     def __init__(self, proxies=None):
@@ -52,17 +54,17 @@ class VeracodeAPI:
                     time.sleep(self.retry_seconds)
                     return self._request(url,method,params)
                 elif r.content is None:
-                    logging.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
+                    log.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
                                   .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers, r.content))
                     raise VeracodeAPIError("HTTP response body is empty")
                 else:
                     return r.content
             else:
-                logging.debug("HTTP error for request:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
+                log.debug("HTTP error for request:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
                               .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers, r.content))
                 raise VeracodeAPIError("HTTP error: {}".format(r.status_code))
         except requests.exceptions.RequestException as e:
-            logging.exception("Connection error")
+            log.exception("Connection error")
             raise VeracodeAPIError(e)
 
     def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
@@ -92,18 +94,18 @@ class VeracodeAPI:
             else:
                 raise VeracodeAPIError("Unsupported HTTP method")
         except requests.exceptions.RequestException as e:
-            logging.exception(self.connect_error_msg)
+            log.exception(self.connect_error_msg)
             raise VeracodeAPIError(e)
 
         if not (r.status_code == requests.codes.ok):
-            logging.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
+            log.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
 
         if not (r.ok):
-            logging.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
+            log.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
             if r.status_code == 401:
-                logging.exception("Check that your Veracode API account credentials are correct.")
+                log.exception("Check that your Veracode API account credentials are correct.")
             else:
-                logging.exception("Error [{}]: {} for request {}".
+                log.exception("Error [{}]: {} for request {}".
                     format(r.status_code, r.text, r.request.url))
             raise requests.exceptions.RequestException()
 
@@ -153,12 +155,13 @@ class VeracodeAPI:
             params = {"app_id": app_id, "sandbox_id": sandbox_id}
         return self._request(self.baseurl + "/4.0/getbuildlist.do", "GET", params=params)
     
-    def get_build_info(self, app_id, build_id, sandbox_id=None):
+    def get_build_info(self, app_id, build_id=None, sandbox_id=None):
         """Returns build info for a given build ID."""
-        if sandbox_id is None:
-            params = {"app_id": app_id, "build_id": build_id}
-        else:
-            params = {"app_id": app_id, "build_id": build_id, "sandbox_id": sandbox_id}
+        params = {"app_id": app_id}
+        if sandbox_id != None:
+            params["sandbox_id"] = sandbox_id
+        if build_id != None:
+            params["build_id"] = build_id
         return self._request(self.baseurl + "/5.0/getbuildinfo.do", "GET", params=params)
 
     def get_detailed_report(self, build_id):
@@ -185,6 +188,10 @@ class VeracodeAPI:
     # rest apis
 
     ## Appsec APIs
+
+    def healthcheck(self):
+        uri = 'healthcheck/status'
+        return self._rest_request(uri,"GET")
 
     def get_apps(self):
         request_params = {}
@@ -227,6 +234,35 @@ class VeracodeAPI:
         uri = 'appsec/v1/applications/{}'.format(guid)
         return self._rest_request(uri,"DELETE")
 
+    def get_app_sandboxes (self,guid):
+        request_params = {}
+        uri = 'appsec/v1/applications/{}/sandboxes'.format(guid)
+        return self._rest_paged_request(uri,"GET","sandboxes",request_params)
+
+    def create_sandbox (self, app, name, auto_recreate=False, custom_fields=[]):
+        uri = 'appsec/v1/applications/{}/sandboxes'.format(app)
+        sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
+
+        if len(custom_fields) > 0:
+            sandbox_def.update({"custom_fields": custom_fields})
+
+        payload = json.dumps(sandbox_def)
+        return self._rest_request(uri,'POST',body=payload)
+
+    def update_sandbox (self, app, sandbox, name, auto_recreate=False, custom_fields=[]):
+        uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
+        sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
+
+        if len(custom_fields) > 0:
+            sandbox_def.update({"custom_fields": custom_fields})
+
+        payload = json.dumps(sandbox_def)
+        return self._rest_request(uri,'PUT',body=payload)
+
+    def delete_sandbox (self, app, sandbox):
+        uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
+        return self._rest_request(uri,'DELETE')
+
     def get_policy (self,guid):
         policy_base_uri = "appsec/v1/policies/{}"
         uri = policy_base_uri.format(guid)
@@ -244,6 +280,40 @@ class VeracodeAPI:
         
         uri = "appsec/v2/applications/{}/findings".format(app)
         return self._rest_paged_request(uri,"GET","findings",request_params)
+
+    def get_static_flaw_info(self,app,issueid,sandbox=None):
+        if sandbox != None:
+            uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info?context={}".format(app,issueid,sandbox)
+        else:
+            uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info".format(app,issueid)
+
+        return self._rest_request(uri,"GET")
+
+    def get_dynamic_flaw_info(self,app,issueid):
+        uri = "appsec/v2/applications/{}/findings/{}/dynamic_flaw_info".format(app,issueid)
+
+        return self._rest_request(uri,"GET")
+
+    def get_summary_report(self,app,sandbox=None):
+        if sandbox != None:
+            uri = "appsec/v2/applications/{}/summary_report?context={}".format(app,sandbox)
+        else:
+            uri = "appsec/v2/applications/{}/summary_report".format(app)
+
+        return self._rest_request(uri,"GET")
+
+    def add_annotation(self,app,issue_list,comment,action):
+        #pass issue_list as a list of issue ids
+        uri = "appsec/v2/applications/{}/annotations".format(app)
+
+        annotation_def = {'comment': comment, 'action': action}
+
+        converted_list = [str(element) for element in issue_list]
+        issue_list_string = ','.join(converted_list)
+        annotation_def['issue_list'] = issue_list_string 
+        
+        payload = json.dumps(annotation_def)
+        return self._rest_request(uri,"POST",body=payload)
 
     ## Identity APIs
 
@@ -355,7 +425,7 @@ class VeracodeAPI:
             requestbody.update({"users": users})
 
         if requestbody == {}:
-            logging.error("No update specified for team {}".format(team_guid))
+            log.error("No update specified for team {}".format(team_guid))
 
         payload = json.dumps(requestbody)
         params = {"partial":True, "incremental":True}
