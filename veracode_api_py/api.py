@@ -232,12 +232,15 @@ class VeracodeAPI:
 
     def delete_app (self,guid):
         uri = 'appsec/v1/applications/{}'.format(guid)
-        return self._rest_request(uri,"DELETE")
+        return self._rest_request(uri,'DELETE')
+
+    def get_custom_fields (self):
+        return self._rest_request('appsec/v1/custom_fields','GET')
 
     def get_app_sandboxes (self,guid):
         request_params = {}
         uri = 'appsec/v1/applications/{}/sandboxes'.format(guid)
-        return self._rest_paged_request(uri,"GET","sandboxes",request_params)
+        return self._rest_paged_request(uri,'GET','sandboxes',request_params)
 
     def create_sandbox (self, app, name, auto_recreate=False, custom_fields=[]):
         uri = 'appsec/v1/applications/{}/sandboxes'.format(app)

@@ -50,6 +50,7 @@ The following methods call Veracode REST APIs and return JSON.
   - `business_unit`: the GUID of the business unit to which the application should be assigned
   - `teams`: a list of the GUIDs of the teams to which the application should be assigned
 - `delete_app(guid)`: delete the application identified by `guid`. This is not a reversible action.
+- `get_custom_fields()`: get a list of app profile custom fields available for your organization.
 
 #### Sandboxes
 
