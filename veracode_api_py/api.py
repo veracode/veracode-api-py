@@ -187,7 +187,7 @@ class VeracodeAPI:
 
     # rest apis
 
-    ## Appsec APIs
+    ## Application, Sandbox and Policy APIs
 
     def healthcheck(self):
         uri = 'healthcheck/status'
@@ -271,6 +271,8 @@ class VeracodeAPI:
         uri = policy_base_uri.format(guid)
         return self._rest_request(uri,"GET")
 
+    # Findings and Reporting APIs
+
     def get_findings(self,app,scantype='STATIC',annot='TRUE'):
         #Gets a list of  findings for app using the Veracode Findings API
         request_params = {}
@@ -317,6 +319,71 @@ class VeracodeAPI:
         
         payload = json.dumps(annotation_def)
         return self._rest_request(uri,"POST",body=payload)
+
+    ## Collections APIs
+
+    def _get_collections(self,params):
+        return self._rest_paged_request("appsec/v1/collections","GET","collections",params=params)
+
+    def get_collections(self):
+        request_params = {}
+        return self._get_collections(request_params)
+
+    def get_collections_by_name(self,collection_name):
+        params = {"name": collection_name}
+        return self._get_collections(params)
+
+    def get_collections_by_business_unit(self,business_unit_name):
+        params = {"business_unit": business_unit_name}
+        return self._get_collections(params)
+
+    def get_collections_statistics(self):
+        return self._rest_request("appsec/v1/collections/statistics","GET")
+
+    def get_collection(self,guid):
+        uri = "appsec/v1/collections/{}".format(guid)
+        return self._rest_request(uri,"GET")
+
+    def get_collection_assets(self,guid):
+        uri = "appsec/v1/collections/{}/assets".format(guid)
+        return self._rest_paged_request(uri,"GET","assets",params={})
+
+    def _create_or_update_collection(self,method,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[],guid=None):
+        if method == 'CREATE':
+            uri = 'appsec/v1/collections'
+            httpmethod = 'POST'
+        elif method == 'UPDATE':
+            uri = 'appsec/v1/collections/{}'.format(guid)
+            httpmethod = 'PUT'
+        else:   
+            return
+        
+        payload = {"name": name, "description": description}
+        if tags != '':
+            t = {'tags': tags}
+            payload.update(t)
+        if business_unit_guid != None:
+            bu = {'business_unit': {'guid': business_unit_guid} }
+            payload.update(bu)
+        if len(custom_fields) > 0:
+            cf = {'custom_fields': custom_fields}
+            payload.update(cf)
+        if len(assets) > 0:
+            asset_list = []
+            for asset in assets:
+                this_asset = {'guid':asset,'type': 'APPLICATION'}
+                asset_list.append(this_asset)
+                al = {'asset_infos': asset_list}
+                payload.update(al)
+        return self._rest_request(uri,httpmethod,params={},body=json.dumps(payload))
+
+    def create_collection(self,name,description="",tags='',business_unit_guid=None,custom_fields=[],assets=[]):
+        return self._create_or_update_collection(method="CREATE",name=name,description=description,
+                    tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=None)
+
+    def update_collection(self,guid,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[]):
+        return self._create_or_update_collection(method="UPDATE",name=name,description=description,
+                    tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=guid)
 
     ## Identity APIs
 
