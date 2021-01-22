@@ -49,6 +49,7 @@ The following methods call Veracode REST APIs and return JSON.
   - `business_criticality`: one of "VERY HIGH", "HIGH", "MEDIUM", "LOW", "VERY LOW"
   - `business_unit`: the GUID of the business unit to which the application should be assigned
   - `teams`: a list of the GUIDs of the teams to which the application should be assigned
+- `update_app(guid, app_name, business_criticality, business_unit(opt), teams(opt))`: update an application profile. Note that partial updates are NOT supported, so you need to provide all values including those that aren't changing.
 - `delete_app(guid)`: delete the application identified by `guid`. This is not a reversible action.
 - `get_custom_fields()`: get a list of app profile custom fields available for your organization.
 
@@ -85,6 +86,7 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_collection_assets(guid)`: get a list of assets and detailed policy information for the collection identified by `guid`.
 - `create_collection(name, description(opt), tags(opt), business_unit_guid(opt),custom_fields(opt list),assets(opt list of application guids))`: create a collection with the provided settings.
 - `update_collection(guid, name, description(opt), tags(opt), business_unit_guid(opt),custom_fields(opt list),assets(opt list of application guids))`: update the collection identified by `guid` with the provided settings.
+- `delete_collection(guid)`: delete the collection identified by `guid`.
 
 #### Users
 
@@ -92,7 +94,6 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_user_self()`: get user information for the current user.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
 - `get_user_by_name(username)`: look up info for an individual user based on their user_name.
-- `get_creds()`: get credentials information (API ID and expiration date) for the current user.
 - `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt))`: create a user based on the provided information.
   - `type`: `"HUMAN"` or `"API"`. Defaults to `"HUMAN"`. If `"API"` specified, must also provide `username`.
   - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users).
@@ -110,6 +111,17 @@ The following methods call Veracode REST APIs and return JSON.
 #### Business Units
 
 - `get_business_units()`: get the list of business units in the organization.
+- `get_business_unit(guid)`: get the business unit identified by `guid`.
+- `create_business_unit(name,teams)`: create a business unit. `teams` is a list of `team_id` GUIDs.
+- `update_business_unit(guid,name,teams)`: update the business unit identified by `guid`.
+- `delete_business_unit(guid)`: delete the business unit identified by `guid`.
+
+#### API Credentials
+
+- `get_creds()`: get credentials information (API ID and expiration date) for the current user.
+- `get_creds(api_id)`: get credentials information (API ID and expiration date) for the user identified by `api_id`.
+- `renew_creds()`: renew credentials for the current user. NOTE: you must note the return from this call as the API key cannot be viewed again.
+- `revoke_creds(api_id)`: revoke immediately the API credentials identified by `api_id`.
 
 #### SCA Agent
 
@@ -118,10 +130,27 @@ The following methods call Veracode REST APIs and return JSON.
 - `create_workspace(name)`: create an SCA Agent workspace named `name`. Returns the GUID for the workspace.
 - `add_workspace_team(workspace_guid,team_id)`: add the team identified by `team_id` (int) to the workspace identified by `workspace_guid`.
 - `delete_workspace(workspace_guid)`: delete the workspace identified by `workspace_guid`.
+- `get_projects(workspace_guid)`: get a list of projects for the workspace identified by `workspace_guid`.
+- `get_agents(workspace_guid)`: get a list of agents for the workspace identified by `workspace_guid`.
+- `get_agent(workspace_guid,agent_guid)`: get the agent identified by `agent_guid` in the workspace identified by `workspace_guid`.
+- `create_agent(workspace_guid,name,agent_type(opt))`: create an agent in the workspace identified by `workspace_guid`. Default for `agent_type` is `CLI`.
+- `delete_agent(workspace_guid,agent_guid)`: delete the agent identified by `agent_guid`.
+- `get_agent_tokens(workspace_guid, agent_guid)`: get token IDs for the agent identified by `agent_guid` in the workspace identified by `workspace_guid`.
+- `get_agent_token(workspace_guid, agent_guid, token_id)`: get the token ID identified by `token_id`.
+- `regenerate_agent_token(workspace_guid, agent_guid)`: regenerate the token for the agent identified by `agent_id`.
+- `revoke_agent_token(workspace_guid, agent_guid, token_id)`: revoke the token identified by `token_id`.
+- `get_issues(workspace_guid)`: get the list of issues for the workspace identified by `workspace_guid`.
+- `get_issue(issue_id)`: get the issue identified by `issue_id`.
+- `get_scan(scan_id)`: get the scan identified by `scan_id` (returned in `get_issue`).
+- `get_libraries(workspace_guid,unmatched(bool,opt))`: get the libraries associated with the workspace identified by `workspace_guid`.
+- `get_library(library_id)`: get the library identified by `library_id` (e.g. "maven:commons-fileupload:commons-fileupload:1.3.2:")
+- `get_vulnerability(vulnerability_id)`: get the vulnerability identified by `vulnerability_id` (an integer value, visible in the output of `get_issues`).
+- `get_license(license_id)`: get the license identified by `license_id` (a string, e.g. "GPL30").
+- `get_sca_events(date_gte,event_group,event_type)`: get the audit events for the arguments passed. Be careful with the arguments for this and try to limit by date as it will fetch all pages of data, which might be a lot.
 
 ## Notes
 
 1. Different API calls require different roles. Consult the [Veracode Help Center](https://help.veracode.com/go/c_role_permissions).
 2. SCA APIs must be called with a human user.
-3. This library does not include a complete set of Veracode API methods.
+3. This library does not include a complete set of Veracode API methods. In particular, it only provides a handful of XML API methods.quit
 4. Contributions are welcome.

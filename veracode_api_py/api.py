@@ -8,530 +8,295 @@
 #
 #           and file permission set appropriately (chmod 600)
 
-from urllib import parse
-import time
 import requests
 import logging
-import json
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 
 from .constants import Constants
 from .exceptions import VeracodeAPIError
-
-log = logging.getLogger(__name__)
+from .applications import Applications, Sandboxes, CustomFields
+from .findings import Findings, SummaryReport
+from .policy import Policies
+from .sca import Workspaces
+from .collections import Collections
+from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
+from .healthcheck import Healthcheck
+from .xmlapi import XMLAPI
 
 class VeracodeAPI:
 
     def __init__(self, proxies=None):
-        self.baseurl = "https://analysiscenter.veracode.com/api"
+        self.baseurl = 'https://analysiscenter.veracode.com/api'
         requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.proxies = proxies
-        self.base_rest_url = "https://api.veracode.com/"
         self.retry_seconds = 120
         self.connect_error_msg = "Connection Error"
-        self.sca_base_url = "srcclr/v3/workspaces"
 
-    # helper functions
-
-    def _request(self, url, method, params=None):
-        # base request method for XML APIs, handles what little error handling there is around these APIs
-        if method not in ["GET", "POST"]:
-            raise VeracodeAPIError("Unsupported HTTP method")
-
-        try:
-            session = requests.Session()
-            session.mount(self.baseurl, HTTPAdapter(max_retries=3))
-            request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),headers={"User-Agent": "api.py"})
-            prepared_request = request.prepare()
-            r = session.send(prepared_request, proxies=self.proxies)
-            if 200 <= r.status_code <= 299:
-                if r.status_code == 204:
-                    #retry after wait
-                    time.sleep(self.retry_seconds)
-                    return self._request(url,method,params)
-                elif r.content is None:
-                    log.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
-                                  .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers, r.content))
-                    raise VeracodeAPIError("HTTP response body is empty")
-                else:
-                    return r.content
-            else:
-                log.debug("HTTP error for request:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
-                              .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers, r.content))
-                raise VeracodeAPIError("HTTP error: {}".format(r.status_code))
-        except requests.exceptions.RequestException as e:
-            log.exception("Connection error")
-            raise VeracodeAPIError(e)
-
-    def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
-        # base request method for a REST request
-        myheaders = {"User-Agent": "api.py"}
-        if method in ["POST", "PUT"]:
-            myheaders.update({'Content-type': 'application/json'})
-
-        retry_strategy = Retry(total=3,
-            status_forcelist=[429, 500, 502, 503, 504],
-            method_whitelist=["HEAD", "GET", "OPTIONS"]
-            )
-        session = requests.Session()
-        session.mount(self.base_rest_url, HTTPAdapter(max_retries=retry_strategy))
-
-        try:
-            if method == "GET":
-                request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
-                prepared_request = request.prepare()
-                r = session.send(prepared_request, proxies=self.proxies)
-            elif method == "POST":
-                r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
-            elif method == "PUT":
-                r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
-            elif method == "DELETE":
-                r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
-            else:
-                raise VeracodeAPIError("Unsupported HTTP method")
-        except requests.exceptions.RequestException as e:
-            log.exception(self.connect_error_msg)
-            raise VeracodeAPIError(e)
-
-        if not (r.status_code == requests.codes.ok):
-            log.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
-
-        if not (r.ok):
-            log.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
-            if r.status_code == 401:
-                log.exception("Check that your Veracode API account credentials are correct.")
-            else:
-                log.exception("Error [{}]: {} for request {}".
-                    format(r.status_code, r.text, r.request.url))
-            raise requests.exceptions.RequestException()
-
-        if fullresponse:
-            return r
-
-        if r.text != "":
-            return r.json()
-        else:
-            return ""
-
-    def _rest_paged_request(self, uri, method, element, params=None):
-        all_data = []
-        page = 0
-        more_pages = True
-
-        while more_pages:
-            params['page']=page
-            page_data = self._rest_request(uri,method,params)
-            total_pages = page_data.get('page', {}).get('total_pages', 0)
-            data_page = page_data.get('_embedded', {}).get(element, [])
-            all_data += data_page  
-            
-            page += 1
-            more_pages = page < total_pages
-        return all_data
-    
     #xml apis
 
     def get_app_list(self):
-        """Returns all application profiles."""
-        return self._request(self.baseurl + "/4.0/getapplist.do", "GET")
+        return XMLAPI().get_app_list()
 
     def get_app_info(self, app_id):
-        """Returns application profile info for a given app ID."""
-        return self._request(self.baseurl + "/5.0/getappinfo.do", "GET", params={"app_id": app_id})
+        return XMLAPI().get_app_info(app_id)
 
     def get_sandbox_list(self, app_id):
-        """Returns a list of sandboxes for a given app ID"""
-        return self._request(self.baseurl + "/5.0/getsandboxlist.do", "GET", params={"app_id": app_id})
+        return XMLAPI().get_sandbox_list(app_id)
 
     def get_build_list(self, app_id, sandbox_id=None):
-        """Returns all builds for a given app ID."""
-        if sandbox_id is None:
-            params = {"app_id": app_id}
-        else:
-            params = {"app_id": app_id, "sandbox_id": sandbox_id}
-        return self._request(self.baseurl + "/4.0/getbuildlist.do", "GET", params=params)
+        return XMLAPI().get_build_list(app_id, sandbox_id)
     
     def get_build_info(self, app_id, build_id=None, sandbox_id=None):
-        """Returns build info for a given build ID."""
-        params = {"app_id": app_id}
-        if sandbox_id != None:
-            params["sandbox_id"] = sandbox_id
-        if build_id != None:
-            params["build_id"] = build_id
-        return self._request(self.baseurl + "/5.0/getbuildinfo.do", "GET", params=params)
+        return XMLAPI().get_build_info(app_id,build_id,sandbox_id)
 
     def get_detailed_report(self, build_id):
-        """Returns a detailed report for a given build ID."""
-        return self._request(self.baseurl + "/5.0/detailedreport.do", "GET", params={"build_id": build_id})
+        return XMLAPI().get_detailed_report(build_id)
 
     def set_mitigation_info(self,build_id,flaw_id_list,action,comment):
-        """Adds a new mitigation proposal, acceptance, rejection, or comment for a set of flaws for an application."""
-        actiontype = Constants.ANNOT_TYPE.get(action, 'comment')        
-        payload = {'build_id': build_id, 'flaw_id_list': flaw_id_list, 'action': actiontype, 'comment': comment}
-        return self._request(self.baseurl + "/updatemitigationinfo.do", "POST", params=payload)
+        return XMLAPI().set_mitigation_info(build_id,flaw_id_list,action,comment)
 
     def generate_archer(self,payload):
-        return self._request(self.baseurl + "/3.0/generatearcherreport.do", "GET",params=payload)
+        return XMLAPI().generate_archer(payload)
 
     def download_archer(self, token=None):
-        if token==None:
-            payload = None
-        else:
-            payload = {'token': token}
-
-        return self._request(self.baseurl + "/3.0/downloadarcherreport.do", "GET", params=payload)
+        return XMLAPI().download_archer(token)
 
     # rest apis
 
-    ## Application, Sandbox and Policy APIs
+    ## Application and Sandbox APIs
 
     def healthcheck(self):
-        uri = 'healthcheck/status'
-        return self._rest_request(uri,"GET")
+        return Healthcheck().healthcheck()
 
     def get_apps(self):
-        request_params = {}
-        return self._rest_paged_request('appsec/v1/applications',"GET", params=request_params, element="applications")
+        return Applications().get_all()
 
     def get_app (self,guid=None,legacy_id=None):
-        """Gets a single applications in the current customer account using the Veracode Application API."""
-        if legacy_id == None:
-            apps_base_uri = "appsec/v1/applications" + "/{}"
-            uri = apps_base_uri.format(guid)
-        else:
-            apps_base_uri = "appsec/v1/applications?legacy_id={}"
-            uri = apps_base_uri.format(legacy_id)
-
-        return self._rest_request(uri,"GET")
+        return Applications().get(guid,legacy_id)
 
     def get_app_by_name (self,appname):
-        """Gets a list of applications having a name that matches appname, using the Veracode Applications API."""
-        params = {"name": appname}
-        return self._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
+        return Applications().get_by_name(appname)
 
     def create_app(self,app_name,business_criticality, business_unit=None, teams=[]):
-        app_def = {'name':app_name, 'business_criticality':business_criticality}
-
-        if len(teams) > 0:
-            # optionally pass a list of teams to add to the application profile
-            team_list = []
-            for team in teams:
-                team_list.append({'guid': team})
-            app_def.update({'teams': team_list})
-
-        if business_unit != None:
-            bu = {'business_unit': {'guid': business_unit}}
-            app_def.update(bu)
-
-        payload = json.dumps({"profile": app_def})
-        return self._rest_request('appsec/v1/applications','POST',body=payload)
+        return Applications().create(app_name,business_criticality,business_unit,teams)
 
     def delete_app (self,guid):
-        uri = 'appsec/v1/applications/{}'.format(guid)
-        return self._rest_request(uri,'DELETE')
+        return Applications().delete(guid)
 
     def get_custom_fields (self):
-        return self._rest_request('appsec/v1/custom_fields','GET')
+        return CustomFields().get_all()
 
     def get_app_sandboxes (self,guid):
-        request_params = {}
-        uri = 'appsec/v1/applications/{}/sandboxes'.format(guid)
-        return self._rest_paged_request(uri,'GET','sandboxes',request_params)
+        return Sandboxes().get_all(guid)
 
     def create_sandbox (self, app, name, auto_recreate=False, custom_fields=[]):
-        uri = 'appsec/v1/applications/{}/sandboxes'.format(app)
-        sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
-
-        if len(custom_fields) > 0:
-            sandbox_def.update({"custom_fields": custom_fields})
-
-        payload = json.dumps(sandbox_def)
-        return self._rest_request(uri,'POST',body=payload)
+        return Sandboxes().create(app,name,auto_recreate,custom_fields)
 
     def update_sandbox (self, app, sandbox, name, auto_recreate=False, custom_fields=[]):
-        uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
-        sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
-
-        if len(custom_fields) > 0:
-            sandbox_def.update({"custom_fields": custom_fields})
-
-        payload = json.dumps(sandbox_def)
-        return self._rest_request(uri,'PUT',body=payload)
+        return Sandboxes().update(app,sandbox,name,auto_recreate,custom_fields)
 
     def delete_sandbox (self, app, sandbox):
-        uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
-        return self._rest_request(uri,'DELETE')
+        return Sandboxes().delete(app,sandbox)
+
+    # Policy APIs
+
+    def get_policies (self):
+        return Policies().get_all()
 
     def get_policy (self,guid):
-        policy_base_uri = "appsec/v1/policies/{}"
-        uri = policy_base_uri.format(guid)
-        return self._rest_request(uri,"GET")
+        return Policies().get(guid)
+
+    def create_policy(self, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods={}):
+        return Policies().create(name, description, vendor_policy, finding_rules, scan_frequency_rules, grace_periods)
+
+    def delete_policy (self,guid):
+        return Policies().delete(guid)
+
+    def update_policy(self, guid, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods={}):
+        return Policies().update(guid, name, description, vendor_policy, finding_rules, scan_frequency_rules, grace_periods)
 
     # Findings and Reporting APIs
 
     def get_findings(self,app,scantype='STATIC',annot='TRUE'):
-        #Gets a list of  findings for app using the Veracode Findings API
-        request_params = {}
-
-        if scantype in ['STATIC', 'DYNAMIC', 'MANUAL','SCA']:
-            request_params['scan_type'] = scantype
-        #note that scantype='ALL' will result in no scan_type parameter as in API
-            
-        request_params['include_annot'] = annot
-        
-        uri = "appsec/v2/applications/{}/findings".format(app)
-        return self._rest_paged_request(uri,"GET","findings",request_params)
+        return Findings().get_findings(app,scantype,annot)
 
     def get_static_flaw_info(self,app,issueid,sandbox=None):
-        if sandbox != None:
-            uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info?context={}".format(app,issueid,sandbox)
-        else:
-            uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info".format(app,issueid)
-
-        return self._rest_request(uri,"GET")
+        return Findings().get_static_flaw_info(app,issueid,sandbox)
 
     def get_dynamic_flaw_info(self,app,issueid):
-        uri = "appsec/v2/applications/{}/findings/{}/dynamic_flaw_info".format(app,issueid)
-
-        return self._rest_request(uri,"GET")
+        return Findings().get_dynamic_flaw_info(app,issueid)
 
     def get_summary_report(self,app,sandbox=None):
-        if sandbox != None:
-            uri = "appsec/v2/applications/{}/summary_report?context={}".format(app,sandbox)
-        else:
-            uri = "appsec/v2/applications/{}/summary_report".format(app)
-
-        return self._rest_request(uri,"GET")
+        return SummaryReport().get_summary_report(app,sandbox)
 
     def add_annotation(self,app,issue_list,comment,action):
-        #pass issue_list as a list of issue ids
-        uri = "appsec/v2/applications/{}/annotations".format(app)
-
-        annotation_def = {'comment': comment, 'action': action}
-
-        converted_list = [str(element) for element in issue_list]
-        issue_list_string = ','.join(converted_list)
-        annotation_def['issue_list'] = issue_list_string 
-        
-        payload = json.dumps(annotation_def)
-        return self._rest_request(uri,"POST",body=payload)
+        return Findings().add_annotation(app,issue_list,comment,action)
 
     ## Collections APIs
 
-    def _get_collections(self,params):
-        return self._rest_paged_request("appsec/v1/collections","GET","collections",params=params)
-
     def get_collections(self):
-        request_params = {}
-        return self._get_collections(request_params)
+        return Collections().get_all()
 
     def get_collections_by_name(self,collection_name):
-        params = {"name": collection_name}
-        return self._get_collections(params)
+        return Collections().get_by_name(collection_name)
 
     def get_collections_by_business_unit(self,business_unit_name):
-        params = {"business_unit": business_unit_name}
-        return self._get_collections(params)
+        return Collections().get_by_business_unit(business_unit_name)
 
     def get_collections_statistics(self):
-        return self._rest_request("appsec/v1/collections/statistics","GET")
+        return Collections().get_statistics()
 
     def get_collection(self,guid):
-        uri = "appsec/v1/collections/{}".format(guid)
-        return self._rest_request(uri,"GET")
+        return Collections().get(guid)
 
     def get_collection_assets(self,guid):
-        uri = "appsec/v1/collections/{}/assets".format(guid)
-        return self._rest_paged_request(uri,"GET","assets",params={})
-
-    def _create_or_update_collection(self,method,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[],guid=None):
-        if method == 'CREATE':
-            uri = 'appsec/v1/collections'
-            httpmethod = 'POST'
-        elif method == 'UPDATE':
-            uri = 'appsec/v1/collections/{}'.format(guid)
-            httpmethod = 'PUT'
-        else:   
-            return
-        
-        payload = {"name": name, "description": description}
-        if tags != '':
-            t = {'tags': tags}
-            payload.update(t)
-        if business_unit_guid != None:
-            bu = {'business_unit': {'guid': business_unit_guid} }
-            payload.update(bu)
-        if len(custom_fields) > 0:
-            cf = {'custom_fields': custom_fields}
-            payload.update(cf)
-        if len(assets) > 0:
-            asset_list = []
-            for asset in assets:
-                this_asset = {'guid':asset,'type': 'APPLICATION'}
-                asset_list.append(this_asset)
-                al = {'asset_infos': asset_list}
-                payload.update(al)
-        return self._rest_request(uri,httpmethod,params={},body=json.dumps(payload))
+        return Collections().get_assets(guid)
 
     def create_collection(self,name,description="",tags='',business_unit_guid=None,custom_fields=[],assets=[]):
-        return self._create_or_update_collection(method="CREATE",name=name,description=description,
-                    tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=None)
+        return Collections().create(name,description,tags,business_unit_guid,custom_fields,assets)
 
     def update_collection(self,guid,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[]):
-        return self._create_or_update_collection(method="UPDATE",name=name,description=description,
-                    tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=guid)
+        return Collections().update(name,description,tags,business_unit_guid,custom_fields,assets)
+
+    def delete_collection(self,guid):
+        return Collections().delete(guid)
 
     ## Identity APIs
 
     def get_users(self):
-        #Gets a list of users using the Veracode Identity API        
-        request_params = {'page': 0} #initialize the page request
-        return self._rest_paged_request("api/authn/v2/users","GET","users",request_params)
+        return Users().get_all()
 
     def get_user_self (self):
-        #Gets the user info for the current user, using the Veracode Identity API
-        return self._rest_request("api/authn/v2/users/self","GET")
+        return Users().get_self()
 
     def get_user(self,user_guid):
-        #Gets an individual user provided their GUID, using the Veracode Identity API
-        uri = "api/authn/v2/users/{}".format(user_guid)
-        return self._rest_request(uri,"GET")
+        return Users().get(user_guid)
 
     def get_user_by_name(self,username):
-        #Gets all the users who match the provided email address, using the Veracode Identity API
-        request_params = {'user_name': username} #initialize the page request
-        return self._rest_paged_request("api/authn/v2/users","GET","users",request_params)
-
-    def get_creds (self):
-        return self._rest_request("api/authn/v2/api_credentials","GET")
+        return Users().get_by_name(username)
 
     def create_user (self,email,firstname,lastname,username=None,type="HUMAN",roles=[],teams=[]):
-        user_def = { "email_address": email, "first_name": firstname, "last_name": lastname }
-
-        rolelist = []
-        if len(roles) > 0:
-            for role in roles:
-                rolelist.append({"role_name": role})
-            user_def.append({"roles":rolelist})
-
-        if type == "API":
-            user_def.update({"user_name": username})
-            user_def.update({"permissions": [{"permission_name": "apiUser"}]})
-            if len(roles) == 0:
-               rolelist.append({"role_name": "uploadapi"})
-               rolelist.append({"role_name":"apisubmitanyscan"})
-        else:
-            if len(roles) == 0:
-               rolelist.append({"role_name":"submitter"}) 
-
-        teamlist = []
-        if len(teams) > 0:
-            for team in teams:
-                teamlist.append({"team_id": team})
-            user_def.update({"teams": teamlist})
-
-        user_def.update({"roles": rolelist})
-
-        payload = json.dumps(user_def)
-        return self._rest_request('api/authn/v2/users','POST',body=payload)
+        return Users().create(email,firstname,lastname,username,type,roles,teams)
 
     def update_user (self,user_guid,roles):
-        request_params = {'partial':'TRUE',"incremental": 'TRUE'}
-        uri = "api/authn/v2/users/{}".format(user_guid)
-        return self._rest_request(uri,"PUT",request_params,roles)  
+        return Users().update(user_guid,roles)
 
     def disable_user (self,user_guid):
-        request_params = {'partial':'TRUE'}
-        uri = 'api/authn/v2/users/{}'.format(user_guid)
-        payload = json.dumps({'active': False})
-        return self._rest_request(uri,"PUT",request_params,payload)
+        return Users().disable(user_guid)
 
     def delete_user (self,user_guid):
-        uri = 'api/authn/v2/users/{}'.format(user_guid)
-        return self._rest_request(uri,"DELETE")
+        return Users().delete(user_guid)
 
     def get_teams (self, all_for_org=False):
-        #Gets a list of teams using the Veracode Identity API       
-        if all_for_org:
-            request_params = {'all_for_org': True}
-        else:
-            request_params = {'page': 0} #initialize the page request
-        return self._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
+        return Teams().get_all()
 
     def create_team (self, team_name, business_unit=None, members=[]):        
-        team_def = {'team_name': team_name}
-        
-        if len(members) > 0:
-            # optionally pass a list of usernames to add as team members
-            users = []
-            for member in members:
-                users.append({'user_name': member})
-            team_def.update({'users': users})
-
-        if business_unit != None:
-            bu = {'bu_id': business_unit}
-            team_def.update(bu)
-
-        payload = json.dumps(team_def)
-        return self._rest_request('api/authn/v2/teams','POST',body=payload)
+        return Teams().create(team_name,business_unit,members)
 
     def update_team (self, team_guid, team_name="", business_unit=None, members=[]):
-        requestbody = {}
-        
-        if team_name != "":
-            requestbody.update({"team_name": team_name})
-
-        if business_unit != None:
-            requestbody.update({"business_unit": {"bu_id": business_unit}})
-
-        if len(members) > 0:
-            users = []
-            for member in members:
-                users.append({"user_name": member})
-            requestbody.update({"users": users})
-
-        if requestbody == {}:
-            log.error("No update specified for team {}".format(team_guid))
-
-        payload = json.dumps(requestbody)
-        params = {"partial":True, "incremental":True}
-        uri = 'api/authn/v2/teams/{}'.format(team_guid)
-        return self._rest_request(uri,'PUT',body=payload,params=params)
+        return Teams().update(team_guid,team_name,business_unit,members)
 
     def delete_team (self, team_guid):
-        uri = 'api/authn/v2/teams/{}'.format(team_guid)
-        return self._rest_request(uri,"DELETE")
+        return Teams().delete(team_guid)
             
     def get_business_units (self):
-        request_params = {'page': 0}
-        return self._rest_paged_request("api/authn/v2/business_units","GET","business_units",request_params)
+        return BusinessUnits().get_all()
+
+    def get_business_unit (self, guid):
+        return BusinessUnits().get(guid)
+
+    def create_business_unit (self, name, teams=[]):
+        return BusinessUnits().create(name,teams)
+
+    def update_business_unit (self, guid, name='', teams=[]):
+        return BusinessUnits().update(guid,name,teams)
+
+    def delete_business_unit (self, guid):
+        return BusinessUnits().delete(guid)
+
+    def get_creds (self,api_id=None):
+        if api_id != None:
+            return APICredentials().get(api_id)
+        else:
+            return APICredentials().get_self()
+
+    def renew_creds (self):
+        return APICredentials().renew()
+
+    def revoke_creds (self, api_id):
+        return APICredentials().revoke(api_id)
+
+    def get_roles (self):
+        return Roles().get_all()
 
 ## SCA APIs - note must be human user to use these, not API user
 
     def get_workspaces(self):
-        #Gets existing workspaces
-        request_params = {}
-        return self._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
+        return Workspaces().get_all()
 
     def get_workspace_by_name(self,name):
-        #Does a name filter on the workspaces list. Note that this is a partial match. Only returns the first match
-        name = parse.quote(name) #urlencode any spaces or special characters
-        request_params = {'filter[workspace]': name}
-        return self._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
+        return Workspaces().get_by_name(name)
 
     def create_workspace(self,name):
-        #pass payload with name, return guid to workspace
-        payload = json.dumps({"name": name})
-        r = self._rest_request(self.sca_base_url,"POST",body=payload,fullresponse=True)
-        loc = r.headers.get('location','')
-        return loc.split("/")[-1]
+        return Workspaces().create(name)
 
     def add_workspace_team(self,workspace_guid,team_id):
-        return self._rest_request(self.sca_base_url + "/{}/teams/{}".format(workspace_guid,team_id),"PUT")
+        return Workspaces().add_team(workspace_guid,team_id)
 
     def delete_workspace(self,workspace_guid):
-        return self._rest_request(self.sca_base_url + "/{}".format(workspace_guid),"DELETE") 
+        return Workspaces().delete(workspace_guid)
+
+    def get_projects(self,workspace_guid):
+        return Workspaces().get_projects(workspace_guid)
+
+    def get_project(self,workspace_guid,project_guid):
+        return Workspaces().get_project(workspace_guid,project_guid)
+
+    def get_agents(self,workspace_guid):
+        return Workspaces().get_agents(workspace_guid)
+
+    def get_agent(self,workspace_guid,agent_guid):
+        return Workspaces().get_agent(workspace_guid,agent_guid)
+
+    def create_agent(self,workspace_guid,name,agent_type='CLI'):
+        return Workspaces().create_agent(workspace_guid,name,agent_type)
+
+    def get_agent_tokens(self,workspace_guid,agent_guid):
+        return Workspaces().get_agent_tokens(workspace_guid,agent_guid)
+
+    def get_agent_token(self,workspace_guid,agent_guid,token_id):
+        return Workspaces().get_agent_token(workspace_guid,agent_guid,token_id)
+        
+    def regenerate_agent_token(self,workspace_guid,agent_guid):
+        return Workspaces().regenerate_agent_token(workspace_guid,agent_guid)
+
+    def revoke_agent_token(self,workspace_guid,agent_guid,token_id):
+        return Workspaces().revoke_agent_token(workspace_guid,agent_guid,token_id)
+
+    def get_issues(self,workspace_guid):
+        return Workspaces().get_issues(workspace_guid)
+
+    def get_issue(self,issue_id):
+        return Workspaces().get_issues(issue_id)
+
+    def get_libraries(self,workspace_guid,unmatched=False):
+        return Workspaces().get_libraries(workspace_guid, unmatched)
+
+    def get_library(self,library_id):
+        return Workspaces().get_library(library_id)
+
+    def get_vulnerability(self,vulnerability_id):
+        return Workspaces().get_vulnerability(vulnerability_id)
+
+    def get_license(self,license_id):
+        return Workspaces().get_license(license_id)
+
+    def get_sca_events(self,date_gte=None,event_group=None,event_type=None):
+        return Workspaces().get_events(date_gte,event_group,event_type)
+
+    def get_sca_scan(self,scan_id):
+        return Workspaces().get_scan(scan_id)
+    
