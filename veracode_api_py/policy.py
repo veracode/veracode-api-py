@@ -17,10 +17,14 @@ class Policies():
         uri = "appsec/v1/policies/{}".format(guid)
         return APIHelper()._rest_request(uri,"DELETE")
 
-    def create (self, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods={}):
+    def create (self, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
+        if grace_periods == None:
+            grace_periods = {}
         return self._create_or_update("CREATE",name,description,vendor_policy,finding_rules,scan_frequency_rules,grace_periods)
 
-    def update(self,guid, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods={}):
+    def update(self,guid, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
+        if grace_periods == None:
+            grace_periods = {}
         return self._create_or_update("UPDATE",name,description,vendor_policy,finding_rules,scan_frequency_rules,grace_periods,guid)
 
     def format_finding_rule(self,rule_type,scan_types=[],rule_value=''):
@@ -48,7 +52,9 @@ class Policies():
         grace_periods["sca_blacklist_grace_period"] = sca_blocklist
         return grace_periods
 
-    def _create_or_update(self, method, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods={}, guid=None):
+    def _create_or_update(self, method, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None, guid=None):
+        if grace_periods == None:
+            grace_periods = {}
         if method == 'CREATE':
             uri = 'appsec/v1/policies'
             httpmethod = 'POST'

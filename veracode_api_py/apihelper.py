@@ -24,7 +24,7 @@ class APIHelper():
         self.base_rest_url = "https://api.veracode.com/"
         self.retry_seconds = 120
         self.connect_error_msg = "Connection Error"
-        vlog.setup_logging(self,debug=debug)
+        # vlog.setup_logging(self,debug=debug)
 
     # helper functions
 

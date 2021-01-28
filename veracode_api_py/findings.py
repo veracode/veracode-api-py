@@ -5,10 +5,11 @@ import json
 from .apihelper import APIHelper
 
 class Findings():
-    def get_findings(self,app,scantype='STATIC',annot='TRUE'):
+    def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None):
         #Gets a list of  findings for app using the Veracode Findings API
-        request_params = {}
-
+        if request_params == None:
+            request_params = {}
+        
         if scantype in ['STATIC', 'DYNAMIC', 'MANUAL','SCA']:
             request_params['scan_type'] = scantype
         #note that scantype='ALL' will result in no scan_type parameter as in API

@@ -120,8 +120,8 @@ class VeracodeAPI:
 
     # Findings and Reporting APIs
 
-    def get_findings(self,app,scantype='STATIC',annot='TRUE'):
-        return Findings().get_findings(app,scantype,annot)
+    def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None):
+        return Findings().get_findings(app,scantype,annot,request_params)
 
     def get_static_flaw_info(self,app,issueid,sandbox=None):
         return Findings().get_static_flaw_info(app,issueid,sandbox)

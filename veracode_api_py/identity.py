@@ -130,10 +130,10 @@ class BusinessUnits():
 
    def get_all(self):
       request_params = {'page': 0}
-      return APIHelper()._rest_paged_request(base_uri,"GET","business_units",request_params)
+      return APIHelper()._rest_paged_request(self.base_uri,"GET","business_units",request_params)
 
    def get(self,guid):
-      return APIHelper()._rest_request(base_uri + "/{}".format(guid),"GET")
+      return APIHelper()._rest_request(self.base_uri + "/{}".format(guid),"GET")
 
    def create(self,name,teams=[]):
       payload = {"bu_name":name}
@@ -144,7 +144,7 @@ class BusinessUnits():
             team_list.append({"team_id": team})
          payload["teams"] = team_list
 
-      return APIHelper()._rest_request(base_uri,"POST",body=json.dumps(payload))
+      return APIHelper()._rest_request(self.base_uri,"POST",body=json.dumps(payload))
 
    def update(self,guid,name="",teams=[]):
       payload = {}
@@ -158,24 +158,24 @@ class BusinessUnits():
             team_list.append({"team_id": team})
          payload["teams"] = team_list
 
-      return APIHelper()._rest_request(base_uri + "/{}".format(guid),"PUT",body=json.dumps(payload),params={"partial":True, "incremental":True})
+      return APIHelper()._rest_request(self.base_uri + "/{}".format(guid),"PUT",body=json.dumps(payload),params={"partial":True, "incremental":True})
 
    def delete(self,guid):
-      return APIHelper()._rest_request(base_uri + "/{}".format(guid),"DELETE")
+      return APIHelper()._rest_request(self.base_uri + "/{}".format(guid),"DELETE")
 
 class APICredentials():
    base_uri = "api/authn/v2/api_credentials"
    def get_self (self):
-      return APIHelper()._rest_request(base_uri,"GET")
+      return APIHelper()._rest_request(self.base_uri,"GET")
 
    def get (self, api_id):
-      return APIHelper()._rest_request(base_uri + '/{}'.format(api_id),"GET")
+      return APIHelper()._rest_request(self.base_uri + '/{}'.format(api_id),"GET")
 
    def renew (self):
-      return APIHelper()._rest_request(base_uri,"POST",body=json.dumps({}))
+      return APIHelper()._rest_request(self.base_uri,"POST",body=json.dumps({}))
 
    def revoke (self, api_id):
-      return APIHelper()._rest_request(base_uri + '/{}'.format(api_id), "DELETE")
+      return APIHelper()._rest_request(self.base_uri + '/{}'.format(api_id), "DELETE")
 
 class Roles():
    def get_all(self):
