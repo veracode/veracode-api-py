@@ -10,6 +10,7 @@ class Collections():
       'PASSED': 'Passed',
       'CONDITIONAL_PASS': 'Conditional Pass',
       'NOT_ASSESSED': 'Not Assessed',
+      'NOT_EVALUATED': 'Not Evaluated',
       'out_of_compliance': 'Out of Compliance',
       'within_grace_period': 'Within Grace Period',
       'compliant': 'Compliant'
