@@ -10,3 +10,7 @@ class Constants():
           "FP":"fp", \
           "LIBRARY":"library", \
           "ACCEPTRISK": 'acceptrisk'}
+
+     AGENT_TYPE = [ "CLI", "MAVEN", "GRADLE", "JENKINS", "BAMBOO", "CIRCLECI", "CODESHIP", "PIPELINES", "TRAVIS", "WINDOWSCI" ]
+
+     SCA_EVENT_GROUP = [ 'WORKSPACE', 'AGENT', 'SCAN', 'PROJECT', 'RULES']
