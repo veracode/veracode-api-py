@@ -78,6 +78,8 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Collections
 
+**Note**: The Collections feature is available only to Veracode customers in the Collections Early Adopter program. As the Collections feature is not GA yet, the functionality of the feature will change over time. This script is provided for illustration purposes only.
+
 - `get_collections()`: get all collections for the organization.
 - `get_collections_by_name(collection_name)`: get all collections with a name that partially matches `collection_name`.
 - `get_collections_by_business_unit(business_unit_name)`: get all collections associated with `business_unit_name` (exact match).
