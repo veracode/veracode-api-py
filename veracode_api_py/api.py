@@ -66,10 +66,15 @@ class VeracodeAPI:
 
     # rest apis
 
-    ## Application and Sandbox APIs
+    ## Healthcheck APIs
 
     def healthcheck(self):
         return Healthcheck().healthcheck()
+
+    def status(self):
+        return Healthcheck().status()
+
+    ## Application and Sandbox APIs
 
     def get_apps(self):
         return Applications().get_all()
@@ -120,8 +125,8 @@ class VeracodeAPI:
 
     # Findings and Reporting APIs
 
-    def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None):
-        return Findings().get_findings(app,scantype,annot,request_params)
+    def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None,sandbox=None):
+        return Findings().get_findings(app,scantype,annot,request_params,sandbox)
 
     def get_static_flaw_info(self,app,issueid,sandbox=None):
         return Findings().get_static_flaw_info(app,issueid,sandbox)

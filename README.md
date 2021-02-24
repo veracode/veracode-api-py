@@ -39,6 +39,7 @@ The following methods call Veracode REST APIs and return JSON.
 #### Healthcheck
 
 - `healthcheck()`: returns an empty response with HTTP 200 if authentication succeeds.
+- `status()`: returns detailed status of Veracode services, mirroring https://status.veracode.com. 
 
 #### Applications
 
@@ -66,9 +67,11 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Findings
 
-- `get_findings(app,scantype(opt),annot(opt))`: get the findings for `app` (guid).
+- `get_findings(app,scantype(opt),annot(opt),request_params(opt),sandbox(opt))`: get the findings for `app` (guid).
   - `scantype`: Defaults to STATIC findings, but can be STATIC, DYNAMIC, MANUAL, SCA, or ALL (static, dynamic, manual).
   - `annot`: Defaults to TRUE but can be FALSE
+  - `sandbox`: The guid of the sandbox in `app` for which you want findings. (Use the Sandboxes APIs to get the sandbox guid.)
+  - `request_params`: Dictionary of additional query parameters. See the full [Findings API specification](https://help.veracode.com/r/c_findings_v2_intro) for some of the other options available.
 - `get_summary_report(app,sandbox(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid).
 - `get_static_flaw_info(app,issueid,sandbox(opt))`: get the static flaw information, including data paths, for the finding identified by `issueid` in `app` (guid) or its `sandbox` (guid).
 - `get_dynamic_flaw_info(app,issueid)`: get the dynamic flaw information, including request/response data, for the finding identified by `issueid` in `app` (guid).
@@ -78,7 +81,7 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Collections
 
-**Note**: The Collections feature is available only to Veracode customers in the Collections Early Adopter program. As the Collections feature is not GA yet, the functionality of the feature will change over time. This script is provided for illustration purposes only.
+**Note**: The Collections feature is available only to Veracode customers in the Collections Early Adopter program. As the Collections feature is not generally available yet, the functionality of the feature will change over time. This script is provided for illustration purposes only.
 
 - `get_collections()`: get all collections for the organization.
 - `get_collections_by_name(collection_name)`: get all collections with a name that partially matches `collection_name`.

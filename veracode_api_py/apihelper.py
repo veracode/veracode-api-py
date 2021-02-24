@@ -28,7 +28,7 @@ class APIHelper():
 
     # helper functions
 
-    def _rest_request(self, url, method, params=None,body=None,fullresponse=False):
+    def _rest_request(self, url, method, params=None,body=None,fullresponse=False,use_base_url=True):
         # base request method for a REST request
         myheaders = {"User-Agent": "api.py"}
         if method in ["POST", "PUT"]:
@@ -41,17 +41,20 @@ class APIHelper():
         session = requests.Session()
         session.mount(self.base_rest_url, HTTPAdapter(max_retries=retry_strategy))
 
+        if use_base_url:
+            url = self.base_rest_url + url
+
         try:
             if method == "GET":
-                request = requests.Request(method, self.base_rest_url + url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
+                request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders)
                 prepared_request = request.prepare()
                 r = session.send(prepared_request, proxies=self.proxies)
             elif method == "POST":
-                r = requests.post(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
+                r = requests.post(url, params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders,data=body)
             elif method == "PUT":
-                r = requests.put(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
+                r = requests.put(url, params=params,auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,data=body)
             elif method == "DELETE":
-                r = requests.delete(self.base_rest_url + url,params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
+                r = requests.delete(url, params=params,auth=RequestsAuthPluginVeracodeHMAC(),headers=myheaders)
             else:
                 raise VeracodeAPIError("Unsupported HTTP method")
         except requests.exceptions.RequestException as e:
@@ -73,8 +76,7 @@ class APIHelper():
 
         if fullresponse:
             return r
-
-        if r.text != "":
+        elif r.text != "":
             return r.json()
         else:
             return ""

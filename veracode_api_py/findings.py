@@ -5,7 +5,7 @@ import json
 from .apihelper import APIHelper
 
 class Findings():
-    def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None):
+    def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None,sandbox=None):
         #Gets a list of  findings for app using the Veracode Findings API
         if request_params == None:
             request_params = {}
@@ -15,6 +15,9 @@ class Findings():
         #note that scantype='ALL' will result in no scan_type parameter as in API
             
         request_params['include_annot'] = annot
+
+        if sandbox != None:
+            request_params['context'] = sandbox
         
         uri = "appsec/v2/applications/{}/findings".format(app)
         return APIHelper()._rest_paged_request(uri,"GET","findings",request_params)
