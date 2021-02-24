@@ -34,9 +34,12 @@ class Findings():
         uri = "appsec/v2/applications/{}/findings/{}/dynamic_flaw_info".format(app,issueid)
         return APIHelper()._rest_request(uri,"GET")
 
-    def add_annotation(self,app,issue_list,comment,action):
+    def add_annotation(self,app,issue_list,comment,action,sandbox=None):
         #pass issue_list as a list of issue ids
         uri = "appsec/v2/applications/{}/annotations".format(app)
+
+        if sandbox != None:
+            params = {'context': sandbox}
 
         annotation_def = {'comment': comment, 'action': action}
 
@@ -45,7 +48,7 @@ class Findings():
         annotation_def['issue_list'] = issue_list_string 
         
         payload = json.dumps(annotation_def)
-        return APIHelper()._rest_request(uri,"POST",body=payload)
+        return APIHelper()._rest_request(uri,"POST",body=payload,params=params)
 
 class SummaryReport():
     def get_summary_report(self,app,sandbox=None):

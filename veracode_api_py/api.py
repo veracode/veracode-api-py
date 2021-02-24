@@ -137,8 +137,8 @@ class VeracodeAPI:
     def get_summary_report(self,app,sandbox=None):
         return SummaryReport().get_summary_report(app,sandbox)
 
-    def add_annotation(self,app,issue_list,comment,action):
-        return Findings().add_annotation(app,issue_list,comment,action)
+    def add_annotation(self,app,issue_list,comment,action,sandbox=None):
+        return Findings().add_annotation(app,issue_list,comment,action,sandbox)
 
     ## Collections APIs
 
