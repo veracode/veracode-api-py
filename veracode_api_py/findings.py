@@ -40,6 +40,8 @@ class Findings():
 
         if sandbox != None:
             params = {'context': sandbox}
+        else:
+            params = None
 
         annotation_def = {'comment': comment, 'action': action}
 

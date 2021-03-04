@@ -1,6 +1,7 @@
 #xmlapi.py - API class for legacy XML API calls
 
 from .apihelper import APIHelper
+from .constants import Constants
 
 class XMLAPI():
 

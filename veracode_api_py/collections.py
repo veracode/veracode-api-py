@@ -1,6 +1,7 @@
 #collections.py - API class for Collections API calls
 
 import json
+from urllib import parse
 
 from .apihelper import APIHelper
 
@@ -22,11 +23,11 @@ class Collections():
       return self._get_collections(request_params)
 
    def get_by_name(self,collection_name):
-      params = {"name": collection_name}
+      params = {"name": parse.quote(collection_name)}
       return self._get_collections(params)
 
    def get_by_business_unit(self,business_unit_name):
-      params = {"business_unit": business_unit_name}
+      params = {"business_unit": parse.quote(business_unit_name)}
       return self._get_collections(params)
 
    def get_statistics(self):
