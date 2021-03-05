@@ -1,6 +1,7 @@
 #applications.py - API class for Applications API calls
 
 import json
+from urllib import parse
 
 from .apihelper import APIHelper
 
@@ -21,7 +22,7 @@ class Applications():
 
     def get_by_name (self,appname):
         """Gets a list of applications having a name that matches appname, using the Veracode Applications API."""
-        params = {"name": appname}
+        params = {"name": parse.quote(appname)}
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
     def create(self,app_name,business_criticality, business_unit=None, teams=[]):

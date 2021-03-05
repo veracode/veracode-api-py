@@ -2,6 +2,7 @@
 
 import json
 import logging
+from urllib import parse
 
 from .apihelper import APIHelper
 
@@ -24,14 +25,14 @@ class Users():
 
    def get_by_name(self,username):
       #Gets all the users who match the provided email address, using the Veracode Identity API
-      request_params = {'user_name': username} #initialize the page request
+      request_params = {'user_name': parse.quote(username)} #initialize the page request
       return APIHelper()._rest_paged_request("api/authn/v2/users","GET","users",request_params)
 
    def get_user_search(self,search_term=None, api_id=None, role_id=None, login_status=None, saml_user=None, team_id=None, detailed=False):
       request_params = {'detailed': detailed}
       
       if search_term != None:
-         request_params['search_term'] = search_term
+         request_params['search_term'] = parse.quote(search_term)
 
       if api_id != None:
          request_params['api_id'] = api_id
