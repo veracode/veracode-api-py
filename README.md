@@ -153,6 +153,30 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_license(license_id)`: get the license identified by `license_id` (a string, e.g. "GPL30").
 - `get_sca_events(date_gte,event_group,event_type)`: get the audit events for the arguments passed. Be careful with the arguments for this and try to limit by date as it will fetch all pages of data, which might be a lot.
 
+### Dynamic Analysis
+
+- `get_analyses()`: get a list of dynamic analyses to which you have access.
+- `get_analyses_by_name(name)`: get a list of dynamic analyses matching `name`.
+- `get_analyses_by_target_url(url)`: get a list of dynamic analyses containing `url`.
+- `get_analyses_by_search_term(search_term)`: get a list of dynamic analyses matching `search_term`.
+- `get_analysis(analysis_id)`: get the analysis identified by `analysis_id` (guid).
+- `get_analysis_audits(analysis_id)`: get the audits for the analysis identified by `analysis_id` (guid).
+- `get_analysis_scans(analysis_id)`: get the scans for the analysis identified by `analysis_id` (guid).
+- `get_analysis_scanner_variables(analysis_id)`: get the scanner variables for the analysis identified by `analysis_id` (guid).
+- `create_analysis(name,scans,schedule_frequency='ONCE',business_unit_guid (opt),email (opt),owner (opt))`: create an analysis with the provided settings. Use `setup_scan` and related functions to construct the list of scans.
+- `update_analysis(guid,name,scans,schedule_frequency='ONCE',business_unit_guid (opt),email (opt),owner (opt))`: update the analysis identified by `guid` with the provided settings.
+- `update_analysis_scanner_variable(analysis_guid,scanner_variable_guid,reference_key,value,description)`: update the scanner variable identified by the `scanner_variable_guid` for the analysis identified by `analysis_guid`.
+- `delete_analysis_scanner_variable(analysis_guid,scanner_variable_guid)`: delete the scanner variable identified by the `scanner_variable_guid` for the analysis identified by `analysis_guid`.
+- `delete_analysis(analysis_guid)`: delete the analysis identified by `analysis_guid`.
+- `get_dyn_scan(scan_guid)`: get the scan identified by `scan_guid`. Get `scan_guid` from `get_analysis_scans()`.
+- `get_dyn_scan_audits(scan_guid)`: get the audits for the scan identified by `scan_guid`.
+- `get_dyn_scan_config(scan_guid)`: get the scan config for the scan identified by `scan_guid`.
+- `delete_dyn_scan(scan_guid)`: delete the scan identified by `scan_guid`.
+- `get_scan_scanner_variables(scan_id)`: get the scanner variables for the scan identified by `scan_guid`.
+- `update_scan_scanner_variable(scan_guid,scanner_variable_guid,reference_key,value,description)`: update the scanner variable identified by the `scanner_variable_guid` for the scan identified by `scan_guid`.
+- `delete_scan_scanner_variable(scan_guid,scanner_variable_guid)`: delete the scanner variable identified by the `scanner_variable_guid` for the scan identified by `scan_guid`.
+
+
 ## Notes
 
 1. Different API calls require different roles. Consult the [Veracode Help Center](https://help.veracode.com/go/c_role_permissions).
