@@ -11,6 +11,7 @@
 import requests
 import logging
 from requests.adapters import HTTPAdapter
+from typing import List
 
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
@@ -24,6 +25,7 @@ from .sca import Workspaces
 from .collections import Collections
 from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
 from .healthcheck import Healthcheck
+from .dynamic import Analyses, Scans, Occurrences, Configuration, CodeGroups, ScanCapacitySummary, ScanOccurrences, ScannerVariables, DynUtils
 from .xmlapi import XMLAPI
 
 class VeracodeAPI:
@@ -304,4 +306,164 @@ class VeracodeAPI:
 
     def get_sca_scan(self,scan_id):
         return Workspaces().get_scan(scan_id)
+
+    #dynamic APIs
+
+    def get_analyses(self):
+        return Analyses().get_all()
+
+    def get_analyses_by_name(self,name):
+        return Analyses().get_by_name(analysis_name=name)
+
+    def get_analyses_by_target_url(self,url):
+        return Analyses().get_by_target_url(target_url=url)
+
+    def get_analyses_by_search_term(self,search_term):
+        return Analyses().get_by_search_term(search_term=search_term)
+
+    def get_analysis(self,analysis_id):
+        return Analyses().get(guid=analysis_id)
     
+    def get_analysis_audits(self,analysis_id):
+        return Analyses().get_audits(guid=analysis_id)
+
+    def get_analysis_scans(self,analysis_id):
+        return Analyses().get_scans(guid=analysis_id)
+
+    def get_analysis_scanner_variables(self,analysis_id):
+        return Analyses().get_scanner_variables(guid=analysis_id)
+
+    def create_analysis(self,name,scans,schedule_frequency='ONCE',business_unit_guid=None,email=None,owner=None):
+        return Analyses().create(name,scans,schedule_frequency,business_unit_guid,email,owner)
+
+    def update_analysis(self,guid,name,scans,schedule_frequency='ONCE',business_unit_guid=None,email=None,owner=None):
+        return Analyses().update(guid,name,scans,schedule_frequency,business_unit_guid,email,owner)
+    
+    def update_analysis_scanner_variable(self,analysis_guid,scanner_variable_guid,reference_key,value,description):
+        return Analyses().update_scanner_variable(analysis_guid,scanner_variable_guid,reference_key,value,description)
+
+    def delete_analysis_scanner_variable(self,analysis_guid,scanner_variable_guid):
+        return Analyses().delete_scanner_variable(analysis_guid,scanner_variable_guid)
+
+    def delete_analysis(self,analysis_guid):
+        return Analyses().delete(guid=analysis_guid)
+    
+    def get_dyn_scan(self,scan_guid):
+        return Scans().get(guid=scan_guid)
+
+    def get_dyn_scan_audits(self,scan_guid):
+        return Scans().get_audits(guid=scan_guid)
+
+    def get_dyn_scan_config(self,scan_guid):
+        return Scans().get_configuration(guid=scan_guid)
+
+    def update_dyn_scan(self,scan_guid,scan):
+        return Scans().update(guid=scan_guid,scan=scan)
+
+    def delete_dyn_scan(self,scan_guid):
+        return Scans().delete(guid=scan_guid)
+
+    def get_scan_scanner_variables(self,scan_id):
+        return Scans().get_scanner_variables(guid=scan_id)
+
+    def update_scan_scanner_variable(self,scan_guid,scanner_variable_guid,reference_key,value,description):
+        return Scans().update_scanner_variable(scan_guid,scanner_variable_guid,reference_key,value,description)
+
+    def delete_scan_scanner_variable(self,scan_guid,scanner_variable_guid):
+        return Scans().delete_scanner_variable(scan_guid,scanner_variable_guid)
+
+    def get_analysis_occurrences(self):
+        return Occurrences().get_all()
+
+    def get_analysis_occurrence(self,occurrence_guid):
+        return Occurrences().get(guid=occurrence_guid)
+
+    def stop_analysis_occurrence(self,occurrence_guid,save_or_delete):
+        return Occurrences().stop(guid=occurrence_guid,save_or_delete=save_or_delete)
+
+    def get_scan_occurrences(self,occurrence_guid):
+        return Occurrences().get_scan_occurrences(guid=occurrence_guid)
+
+    def get_scan_occurrence(self,scan_occ_guid):
+        return ScanOccurrences().get(guid=scan_occ_guid)
+
+    def stop_scan_occurrence(self,scan_occ_guid,save_or_delete):
+        return ScanOccurrences().stop(guid=scan_occ_guid, save_or_delete=save_or_delete)
+
+    def get_scan_occurrence_configuration(self,scan_occ_guid):
+        return ScanOccurrences().get_configuration(guid=scan_occ_guid)
+
+    def get_scan_occurrence_verification_report(self,scan_occ_guid):
+        return ScanOccurrences().get_verification_report(guid=scan_occ_guid)
+
+    def get_scan_occurrence_notes_report(self,scan_occ_guid):
+        return ScanOccurrences().get_scan_notes_report(guid=scan_occ_guid)
+
+    def get_scan_occurrence_screenshots(self,scan_occ_guid):
+        return ScanOccurrences().get_screenshots(guid=scan_occ_guid)
+
+    def get_codegroups(self):
+        return CodeGroups().get_all()
+
+    def get_codegroup(self,name):
+        return CodeGroups().get(name=name)
+
+    def get_dynamic_configuration(self):
+        return Configuration().get()
+
+    def get_dynamic_scan_capacity_summary(self):
+        return ScanCapacitySummary().get()
+
+    def get_global_scanner_variables(self):
+        return ScannerVariables().get_all()
+
+    def get_global_scanner_variable(self,guid):
+        return ScannerVariables().get(guid)
+    
+    def create_global_scanner_variable(self,reference_key,value,description):
+        return ScannerVariables().create(reference_key,value,description)
+
+    def update_global_scanner_variable(self,guid,reference_key,value,description):
+        return ScannerVariables().update(guid,reference_key,value,description)
+
+    def delete_global_scanner_variable(self,guid):
+        return ScannerVariables().delete(guid)
+
+    def dyn_setup_user_agent(self,custom_header,type):
+        return DynUtils().setup_user_agent(custom_header,type)
+
+    def dyn_setup_custom_host(self,host_name,ip_address):
+        return DynUtils().setup_custom_host(host_name,ip_address)
+
+    def dyn_setup_blocklist(self, urls:List):
+        return DynUtils().setup_blocklist(urls)
+
+    def dyn_setup_url(self,url,directory_restriction_type='DIRECTORY_AND_SUBDIRECTORY',http_and_https=True):
+        return DynUtils().setup_url(url,directory_restriction_type,http_and_https)
+
+    def dyn_setup_scan_setting(self,blocklist_configs:list,custom_hosts:List, user_agent:None):
+        return DynUtils().setup_scan_setting(blocklist_configs,custom_hosts,user_agent)
+
+    def dyn_setup_scan_contact_info(self,email,first_and_last_name,telephone):
+        return DynUtils().setup_scan_contact_info(email,first_and_last_name,telephone)
+
+    def dyn_setup_crawl_script(self,script_body,script_type='SELENIUM'):
+        return DynUtils().setup_crawl_script(script_body,script_type)
+
+    def dyn_setup_crawl_configuration(self,scripts:List,disabled=False):
+        return DynUtils().setup_crawl_configuration(scripts,disabled)
+
+    def dyn_setup_login_logout_script(self,script_body,script_type='SELENIUM'):
+        return DynUtils().setup_login_logout_script(script_body,script_type)
+
+    def dyn_setup_auth(self,authtype,username,password,domain=None,base64_pkcs12=None,cert_name=None, login_script_data=None, logout_script_data=None):
+        return DynUtils().setup_auth(authtype,username,password,domain,base64_pkcs12,cert_name,login_script_data,logout_script_data)
+
+    def dyn_setup_auth_config(self,authentication_node:dict):
+        return DynUtils().setup_auth_config(authentication_node)
+
+    def dyn_setup_scan_config_request(self, url, allowed_hosts:List, auth_config=None, crawl_config=None, scan_setting=None):
+        return DynUtils().setup_scan_config_request(url,allowed_hosts,auth_config,crawl_config,scan_setting)
+
+    def dyn_setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid=None):
+        return DynUtils().setup_scan(scan_config_request,scan_contact_info, linked_app_guid)
