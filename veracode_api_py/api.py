@@ -465,5 +465,5 @@ class VeracodeAPI:
     def dyn_setup_scan_config_request(self, url, allowed_hosts:List, auth_config=None, crawl_config=None, scan_setting=None):
         return DynUtils().setup_scan_config_request(url,allowed_hosts,auth_config,crawl_config,scan_setting)
 
-    def dyn_setup_scan(self, scan_config_request, scan_contact_info=None):
-        return DynUtils().setup_scan(scan_config_request,scan_contact_info)
+    def dyn_setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid=None):
+        return DynUtils().setup_scan(scan_config_request,scan_contact_info, linked_app_guid)

@@ -299,8 +299,10 @@ class DynUtils():
          payload.update(crawl_config)
       return { 'scan_config_request': payload }
 
-   def setup_scan(self, scan_config_request, scan_contact_info=None):
+   def setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid=None):
       payload = {}
       payload.update( scan_config_request )
       payload.update(scan_contact_info)
+      if linked_app_guid != None:
+         payload.update({'linked_platform_app_uuid': linked_app_guid})
       return payload
