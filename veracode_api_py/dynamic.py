@@ -119,7 +119,10 @@ class Scans():
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri, 'DELETE')
 
-   #def update
+   def update(self,guid,scan):
+      # use DynUtils().setup_scan() to create the scans parameter
+      uri = self.base_url + '/{}'.format(guid)
+      return APIHelper()._rest_request(uri,'PUT',body=json.dumps(scan))
 
    def get_scanner_variables(self,guid):
       uri = self.base_url + "/{}/scanner_variables".format(guid)

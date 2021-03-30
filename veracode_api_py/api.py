@@ -357,6 +357,9 @@ class VeracodeAPI:
     def get_dyn_scan_config(self,scan_guid):
         return Scans().get_configuration(guid=scan_guid)
 
+    def update_dyn_scan(self,scan_guid,scan):
+        return Scans().update(guid=scan_guid,scan=scan)
+
     def delete_dyn_scan(self,scan_guid):
         return Scans().delete(guid=scan_guid)
 
