@@ -199,18 +199,18 @@ The following methods call Veracode REST APIs and return JSON.
 - `dyn_setup_custom_host(host_name,ip_address)`: set up the payload to specify the custom host for a dynamic scan.
 - `dyn_setup_blocklist( urls:List)`: set up the payload to specify the blocklist for a dynamic scan.
 - `dyn_setup_url(url,directory_restriction_type='DIRECTORY_AND_SUBDIRECTORY',http_and_https=True)`: set up the payload to specify a URL object for a dynamic scan. This payload can be used in other setup calls that require a `url`.
-- `dyn_setup_scan_setting(blocklist_configs:list,custom_hosts:List, user_agent:None)`: set up the payload to specify a scan setting for a dynamic scan.
+- `dyn_setup_scan_setting(blocklist_configs:list,custom_hosts:List, user_agent(opt))`: set up the payload to specify a scan setting for a dynamic scan.
 - `dyn_setup_scan_contact_info(email,first_and_last_name,telephone)`: set up the payload to specify contact information for a dynamic scan.
 - `dyn_setup_crawl_script(script_body,script_type='SELENIUM')`: set up the payload to specify crawl script information for a dynamic scan.
 - `dyn_setup_crawl_configuration(scripts:List,disabled=False)`: set up the payload to specify crawl configuration for a dynamic scan.
 - `dyn_setup_login_logout_script(script_body,script_type='SELENIUM')`: set up the payload to specify login/logout script information for a dynamic scan.
-- `dyn_setup_auth(authtype,username,password,domain=None,base64_pkcs12=None,cert_name=None, login_script_data=None, logout_script_data=None)`: set up the payload to specify authentication information for a specific authtype for a dynamic scan. The following parameters are required:
-  - `authtype`: `AUTO`: `username`, `password`
-  - `authtype`: `BASIC`: `username`, `password`, `domain` (opt)
-  - `authtype`: `CERT`: `base64_pkcs12`, `cert_name`, `password`
-  - `authtype`: `FORM`: `login_script_data`, `logout_script_data`
+- `dyn_setup_auth(authtype,username,password,domain(opt),base64_pkcs12(opt),cert_name(opt), login_script_data(opt), logout_script_data(opt))`: set up the payload to specify authentication information for a specific authtype for a dynamic scan. The following parameters are required:
+  - `AUTO`: `username`, `password`
+  - `BASIC`: `username`, `password`, `domain` (opt)
+  - `CERT`: `base64_pkcs12`, `cert_name`, `password`
+  - `FORM`: `login_script_data`, `logout_script_data`
 - `dyn_setup_auth_config(authentication_node:dict)`: set up the payload to specify authentication information for a dynamic scan. Set up `authentication_node` with `dyn_setup_auth`.
-- `dyn_setup_scan_config_request( url, allowed_hosts:List, auth_config=None, crawl_config=None, scan_setting=None)`: set up the payload to specify the scan config request for a dynamic scan. `url` and `allowed_hosts` are set up using `dyn_setup_url()`. `crawl_config` is setup using `dyn_setup_crawl_configuration()`. `scan_setting` is setup using `dyn_setup_scan_setting()`.
+- `dyn_setup_scan_config_request( url, allowed_hosts:List, auth_config(opt), crawl_config(opt), scan_setting(opt))`: set up the payload to specify the scan config request for a dynamic scan. `url` and `allowed_hosts` are set up using `dyn_setup_url()`. `crawl_config` is setup using `dyn_setup_crawl_configuration()`. `scan_setting` is setup using `dyn_setup_scan_setting()`.
 - `dyn_setup_scan( scan_config_request, scan_contact_info(opt), linked_app_guid(opt))`: set up the payload to specify the scan for a Dynamic Analysis. `scan_config_request` is setup using `dyn_setup_scan_config_request()` and `scan_contact_info` is set up using `dyn_setup_scan_contact_info()`. Specify `linked_app_guid` (using `get_apps()` or `get_app()`) to link the scan results to an application profile.
 
 ## Notes
