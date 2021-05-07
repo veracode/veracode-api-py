@@ -101,10 +101,11 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_user_by_name(username)`: look up info for an individual user based on their user_name.
 - `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt))`: create a user based on the provided information.
   - `type`: `"HUMAN"` or `"API"`. Defaults to `"HUMAN"`. If `"API"` specified, must also provide `username`.
-  - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users).
+  - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users). Provide the role names from `get_roles()`.
 - `update_user(user_guid, roles)`: update the user identified by `user_guid` with the list of roles passed in `roles`. Because the Identity API does not support adding a single role, the list should be the entire list of existing roles for the user plus whatever new roles. See [veracode-user-bulk-role-assign](https://github.com/tjarrettveracode/veracode-user-bulk-role-assign) for an example.
 - `disable_user(user_guid)`: set the `Active` flag the user identified by `user_guid` to `False`.
 - `delete_user(user_guid)`: delete the user identified by `user_guid`. This is not a reversible action.
+- `get_roles()`: get a list of available roles to assign to users.
 
 #### Teams
 

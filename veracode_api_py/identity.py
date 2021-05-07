@@ -58,7 +58,7 @@ class Users():
       if len(roles) > 0:
          for role in roles:
                rolelist.append({"role_name": role})
-         user_def.append({"roles":rolelist})
+         user_def.update({"roles":rolelist})
 
       if type == "API":
          user_def.update({"user_name": username})
@@ -69,6 +69,11 @@ class Users():
       else:
          if len(roles) == 0:
             rolelist.append({"role_name":"submitter"}) 
+
+      if username is not None:
+         user_def.update({"user_name": username})
+      else:
+         user_def.update({"user_name": email})
 
       teamlist = []
       if len(teams) > 0:
