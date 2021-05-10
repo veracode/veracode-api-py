@@ -94,7 +94,7 @@ class Workspaces():
                uri = self.sca_base_url + '/{}/libraries/unmatched'.format(workspace_guid)
           else:
                uri = self.sca_base_url + '/{}/libraries'.format(workspace_guid)
-          return APIHelper()._rest_request(uri,"GET")
+          return APIHelper()._rest_paged_request(uri,"GET",'libraries',{})
 
      def get_library(self,library_id):
           uri = "srcclr/v3/libraries/{}".format(library_id)
