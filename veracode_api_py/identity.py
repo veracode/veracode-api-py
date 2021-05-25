@@ -103,6 +103,21 @@ class Users():
       payload = json.dumps(changes)
       return APIHelper()._rest_request(uri,"PUT",request_params,body=payload)
 
+   def update_email_address(self,user_guid,email_address,ignore_verification=False):
+      request_params = {'partial':'TRUE',"incremental": 'FALSE'}
+      if ignore_verification:
+         request_params['adminNoVerificationEmail'] = 'TRUE'
+      uri = "api/authn/v2/users/{}".format(user_guid)
+      user_def = {'email_address': email_address}
+      payload = json.dumps(user_def)
+      return APIHelper()._rest_request(uri,"PUT",request_params,body=payload)
+
+   def reset_password(self,user_legacy_id):
+      # Sends a password reset email for the specified user
+      # If user has not yet activated, re-sends activation email instead
+      uri = "api/authn/v2/users/{}/resetPassword".format(user_legacy_id)
+      return APIHelper()._rest_request(uri,"POST")
+
    def disable(self,user_guid):
       request_params = {'partial':'TRUE'}
       uri = 'api/authn/v2/users/{}'.format(user_guid)
