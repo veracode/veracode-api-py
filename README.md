@@ -106,6 +106,10 @@ The following methods call Veracode REST APIs and return JSON.
 - `update_user(user_guid,changes)`: update a user based upon the provided information.
   - `user_guid`: the unique identifier of the user to be updated.
   - `changes`: the attributes of the user to be changed. Must be JSON whose format follows the [Identity API specification](https://app.swaggerhub.com/apis/Veracode/veracode-identity_api/1.0#/ResourceOfUserResource) of a valid user object.
+- `update_user_email_address(user_guid,email_address,ignore_verification(opt))`: updates the email address of the specified user.
+  - `ignore_verification`: Boolean. Defaults to `False`. If `True`, immediately updates email address without requiring the user to verify the change via email. If the user has not yet activated the account, this must be set to `True`.
+- `send_password_reset(user_legacy_id)`: sends a password reset email to the specified user. If the user has yet to activate their account, sends a new activation email instead.
+  - NOTE: this function uses the `user_legacy_id` value (as opposed to the `user_guid` value), which can be obtained via a call to `get_user()`.
 - `disable_user(user_guid)`: set the `Active` flag the user identified by `user_guid` to `False`.
 - `delete_user(user_guid)`: delete the user identified by `user_guid`. This is not a reversible action.
 - `get_roles()`: get a list of available roles to assign to users.

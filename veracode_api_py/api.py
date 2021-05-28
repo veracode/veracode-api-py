@@ -193,6 +193,12 @@ class VeracodeAPI:
 
     def update_user (self,user_guid,changes):
         return Users().update(user_guid,changes)
+    
+    def update_user_email_address (self,user_guid,email_address,ignore_verification=False):
+        return Users().update_email_address(user_guid,email_address,ignore_verification)
+    
+    def send_password_reset (self,user_legacy_id):
+        return Users().reset_password(user_legacy_id)
 
     def disable_user (self,user_guid):
         return Users().disable(user_guid)
