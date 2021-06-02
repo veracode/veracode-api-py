@@ -97,7 +97,6 @@ class Analyses():
          org_info.update({'owner': owner})
       payload.update({'org_info': org_info})
       payload.update({"visibility": {"setup_type": "SEC_LEADS_ONLY", "team_identifiers": []}})
-      print(json.dumps(payload))
       return APIHelper()._rest_request(uri,httpmethod,params={},body=json.dumps(payload))
 
 class Scans():
