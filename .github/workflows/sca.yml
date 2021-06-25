@@ -1,0 +1,40 @@
+# This workflow will initiate a Veracode SCA Scan. Requires the following secrets:
+# SRCCLR_API_TOKEN - generated when creating a new integration under the Agents tab
+# SCM_GITHUB - https://docs.github.com/en/github/authenticating-to-github/keeping-your-account-and-data-secure/creating-a-personal-access-token
+# USER_EMAIL - email address, used in pull requests
+# USER_NAME - username, used in pull requests
+
+name: Veracode SCA Scan
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main      
+  pull_request:
+    branches:
+      - master
+      - main  
+
+jobs:
+  opensource-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: SCA Agent scan
+      env: # Set the secret as an input
+        SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
+        SRCCLR_SCM_TYPE: GITHUB
+        SRCCLR_SCM_TOKEN: ${{ secrets.SCM_GITHUB }} 
+        SRCCLR_PR_ON: methods
+        SRCCLR_NO_BREAKING_UPDATES: true
+        SRCCLR_IGNORE_CLOSED_PRS: true
+        SRCCLR_SCM_URL: https://github.com/$GITHUB_REPOSITORY
+        EXTRA_ARGS: '--update-advisor --pull-request --unmatched'
+      run: |
+        git config --global user.email "${{ secrets.USER_EMAIL }}"
+        git config --global user.name "${{ secrets.USER_NAME }}"
+        curl -sSL https://download.sourceclear.com/ci.sh | sh -s -- scan $EXTRA_ARGS
