@@ -1,2 +1,4 @@
 requests>=2.24.0
 veracode-api-signing>=19.9.0
+urllib3 == 1.26.5
+Pygments == 2.7.4
