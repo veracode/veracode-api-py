@@ -4,7 +4,10 @@ import json
 
 from .apihelper import APIHelper
 
+LINE_NUMBER_SLOP = 3 #adjust to allow for line number movement  
+
 class Findings():
+    
     def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None,sandbox=None):
         #Gets a list of  findings for app using the Veracode Findings API
         if request_params == None:
@@ -51,6 +54,106 @@ class Findings():
         
         payload = json.dumps(annotation_def)
         return APIHelper()._rest_request(uri,"POST",body=payload,params=params)
+
+    def match(self,origin_finding,potential_matches,approved_matches_only=True):
+        # match a finding against an array of potential matches
+        match = None
+
+        if approved_matches_only:
+            potential_matches = self._filter_approved(potential_matches)
+
+        #flatten findings arrays to make processing easier
+        scan_type = origin_finding['scan_type']
+        of = self._create_match_format_policy(policy_findings=[origin_finding],finding_type=scan_type)
+        pm = self._create_match_format_policy(policy_findings=potential_matches,finding_type=scan_type)
+
+        if scan_type == 'STATIC':
+            match = self._match_static (of[0], pm)
+        elif scan_type == 'DYNAMIC':
+            match = self._match_dynamic (of[0], pm)
+        return match
+
+    def _match_static(self,origin_finding,potential_matches):
+        match = None
+        if origin_finding['source_file'] is not None:
+            #attempt precise match first
+            match = next((pf for pf in potential_matches if ((origin_finding['cwe'] == int(pf['cwe'])) & 
+                (origin_finding['source_file'].find(pf['source_file']) > -1 ) & 
+                (origin_finding['line'] == pf['line'] ))), None)
+
+            if match is None:
+                #then fall to fuzzy match
+                match = next((pf for pf in potential_matches if ((origin_finding['cwe'] == int(pf['cwe'])) & 
+                    (origin_finding['source_file'].find(pf['source_file']) > -1 ) & 
+                    ((origin_finding['line'] - LINE_NUMBER_SLOP) <= pf['line'] <= (origin_finding['line'] + LINE_NUMBER_SLOP)))), None)
+
+            if match is None:
+                #then fall to nondebug as a last resort
+                match = self._get_matched_static_finding_nondebug(origin_finding,potential_matches)
+        else:
+            # if we don't have source file info try matching on procedure and relative location
+            match = self._get_matched_static_finding_nondebug(origin_finding,potential_matches)
+
+        return match
+
+    def _get_matched_static_finding_nondebug(self,origin_finding, potential_findings):
+        match = None
+
+        match = next((pf for pf in potential_findings if ((origin_finding['cwe'] == int(pf['cwe'])) & 
+                    (origin_finding['procedure'].find(pf['procedure']) > -1 ) & 
+                    (origin_finding['relative_location'] == pf['relative_location'] ))), None)
+        return match
+
+    def _match_dynamic (self, origin_finding, potential_matches):
+        match = None
+
+        match = next((pf for pf in potential_matches if ((origin_finding['cwe'] == int(pf['cwe'])) & 
+            (origin_finding['path'] == pf['path']) &
+            (origin_finding['vulnerable_parameter'] == pf['vulnerable_parameter']))), None)
+
+        return match
+
+    def _filter_approved(self,findings):
+        return [f for f in findings if (f['finding_status']['resolution_status'] == 'APPROVED')]
+
+    def _format_file_path(self,file_path):
+        # special case - omit prefix for teamcity work directories, which look like this:
+        # teamcity/buildagent/work/d2a72efd0db7f7d7
+        suffix_length = len(file_path)
+
+        buildagent_loc = file_path.find('teamcity/buildagent/work/')
+
+        if buildagent_loc > 0:
+            #strip everything starting with this prefix plus the 17 characters after
+            # (25 characters for find string, 16 character random hash value, plus / )
+            formatted_file_path = file_path[(buildagent_loc + 42):suffix_length]
+        else:
+            formatted_file_path = file_path
+
+        return formatted_file_path
+
+    def _create_match_format_policy(self, policy_findings, finding_type):
+        findings = []
+
+        if finding_type == 'STATIC':
+            thesefindings = [{'id': pf['issue_id'],
+                    'resolution': pf['finding_status']['resolution'],
+                    'cwe': pf['finding_details']['cwe']['id'],
+                    'procedure': pf['finding_details'].get('procedure'),
+                    'relative_location': pf['finding_details'].get('relative_location'),
+                    'source_file': self._format_file_path(pf['finding_details'].get('file_path')),
+                    'line': pf['finding_details'].get('file_line_number'),
+                    'finding': pf} for pf in policy_findings]
+            findings.extend(thesefindings)
+        elif finding_type == 'DYNAMIC':
+            thesefindings = [{'id': pf['issue_id'],
+                    'resolution': pf['finding_status']['resolution'],
+                    'cwe': pf['finding_details']['cwe']['id'],
+                    'path': pf['finding_details']['path'],
+                    'vulnerable_parameter': pf['finding_details'].get('vulnerable_parameter',''), # vulnerable_parameter may not be populated for some info leak findings
+                    'finding': pf} for pf in policy_findings]
+            findings.extend(thesefindings)
+        return findings
 
 class SummaryReport():
     def get_summary_report(self,app,sandbox=None):

@@ -142,6 +142,9 @@ class VeracodeAPI:
     def add_annotation(self,app,issue_list,comment,action,sandbox=None):
         return Findings().add_annotation(app,issue_list,comment,action,sandbox)
 
+    def match_findings(self,origin_finding,potential_matches,approved_findings_only=True):
+        return Findings().match(origin_finding,potential_matches,approved_findings_only)
+
     ## Collections APIs
 
     def get_collections(self):
