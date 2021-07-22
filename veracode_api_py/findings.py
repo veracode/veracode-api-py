@@ -119,6 +119,10 @@ class Findings():
     def _format_file_path(self,file_path):
         # special case - omit prefix for teamcity work directories, which look like this:
         # teamcity/buildagent/work/d2a72efd0db7f7d7
+
+        if file_path is None:
+            return ''
+            
         suffix_length = len(file_path)
 
         buildagent_loc = file_path.find('teamcity/buildagent/work/')
