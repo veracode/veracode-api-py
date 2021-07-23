@@ -73,9 +73,29 @@ class Findings():
             match = self._match_dynamic (of[0], pm)
         return match
 
+    def format_file_path(self,file_path):
+        # special case - omit prefix for teamcity work directories, which look like this:
+        # teamcity/buildagent/work/d2a72efd0db7f7d7
+
+        if file_path is None:
+            return ''
+            
+        suffix_length = len(file_path)
+
+        buildagent_loc = file_path.find('teamcity/buildagent/work/')
+
+        if buildagent_loc > 0:
+            #strip everything starting with this prefix plus the 17 characters after
+            # (25 characters for find string, 16 character random hash value, plus / )
+            formatted_file_path = file_path[(buildagent_loc + 42):suffix_length]
+        else:
+            formatted_file_path = file_path
+
+        return formatted_file_path
+
     def _match_static(self,origin_finding,potential_matches):
         match = None
-        if origin_finding['source_file'] is not None:
+        if origin_finding['source_file'] not in ('', None):
             #attempt precise match first
             match = next((pf for pf in potential_matches if ((origin_finding['cwe'] == int(pf['cwe'])) & 
                 (origin_finding['source_file'].find(pf['source_file']) > -1 ) & 
@@ -116,26 +136,6 @@ class Findings():
     def _filter_approved(self,findings):
         return [f for f in findings if (f['finding_status']['resolution_status'] == 'APPROVED')]
 
-    def _format_file_path(self,file_path):
-        # special case - omit prefix for teamcity work directories, which look like this:
-        # teamcity/buildagent/work/d2a72efd0db7f7d7
-
-        if file_path is None:
-            return ''
-            
-        suffix_length = len(file_path)
-
-        buildagent_loc = file_path.find('teamcity/buildagent/work/')
-
-        if buildagent_loc > 0:
-            #strip everything starting with this prefix plus the 17 characters after
-            # (25 characters for find string, 16 character random hash value, plus / )
-            formatted_file_path = file_path[(buildagent_loc + 42):suffix_length]
-        else:
-            formatted_file_path = file_path
-
-        return formatted_file_path
-
     def _create_match_format_policy(self, policy_findings, finding_type):
         findings = []
 
@@ -145,7 +145,7 @@ class Findings():
                     'cwe': pf['finding_details']['cwe']['id'],
                     'procedure': pf['finding_details'].get('procedure'),
                     'relative_location': pf['finding_details'].get('relative_location'),
-                    'source_file': self._format_file_path(pf['finding_details'].get('file_path')),
+                    'source_file': self.format_file_path(pf['finding_details'].get('file_path')),
                     'line': pf['finding_details'].get('file_line_number'),
                     'finding': pf} for pf in policy_findings]
             findings.extend(thesefindings)
