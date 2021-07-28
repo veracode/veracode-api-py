@@ -78,7 +78,9 @@ The following methods call Veracode REST APIs and return JSON.
 - `add_annotation(app,issue_list,comment,action,sandbox(opt))`: add an annotation (comment, mitigation proposal/acceptance/rejection) to the findings in `issue_list` for `app` (guid) (or optionally `sandbox` (guid)). Note that you must have the Mitigation Approver role (regular user) to use the ACCEPTED or REJECTED action, or the Mitigation and Comments API role for an API service account to use this call.
   - `issue_list`: must be passed as a Python list of `issue_id`s
   - `action`: must be one of COMMENT, POTENTIAL_FALSE_POSITIVE, APP_BY_DESIGN, OS_ENV, NET_ENV, LIBRARY, ACCEPT_RISK, ACCEPTED, REJECTED
-- `match_findings(origin_finding,potential_matches,approved_findings_only(opt))`: return a matching finding from `potential_matches` for the `origin_finding`, based on the finding type.
+- `match_findings(origin_finding,potential_matches,approved_findings_only(opt),allow_fuzzy_match(opt))`: return a matching finding from `potential_matches` for the `origin_finding`, based on the finding type.
+  - `approved_findings_only`: limits matches to findings with approved mitigations.
+  - `allow_fuzzy_match`: look for matches within a range of source lines around the origin finding. This allows for code movement but can result in flaws being mismatched; use sparingly.
 
 #### Collections
 

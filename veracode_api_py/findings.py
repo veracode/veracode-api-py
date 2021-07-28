@@ -55,7 +55,7 @@ class Findings():
         payload = json.dumps(annotation_def)
         return APIHelper()._rest_request(uri,"POST",body=payload,params=params)
 
-    def match(self,origin_finding,potential_matches,approved_matches_only=True):
+    def match(self,origin_finding,potential_matches,approved_matches_only=True,allow_fuzzy_match=False):
         # match a finding against an array of potential matches
         match = None
 
@@ -68,7 +68,7 @@ class Findings():
         pm = self._create_match_format_policy(policy_findings=potential_matches,finding_type=scan_type)
 
         if scan_type == 'STATIC':
-            match = self._match_static (of[0], pm)
+            match = self._match_static (of[0], pm, allow_fuzzy_match)
         elif scan_type == 'DYNAMIC':
             match = self._match_dynamic (of[0], pm)
         return match
@@ -93,7 +93,7 @@ class Findings():
 
         return formatted_file_path
 
-    def _match_static(self,origin_finding,potential_matches):
+    def _match_static(self,origin_finding,potential_matches,allow_fuzzy_match=False):
         match = None
         if origin_finding['source_file'] not in ('', None):
             #attempt precise match first
@@ -101,7 +101,7 @@ class Findings():
                 (origin_finding['source_file'].find(pf['source_file']) > -1 ) & 
                 (origin_finding['line'] == pf['line'] ))), None)
 
-            if match is None:
+            if match is None and allow_fuzzy_match:
                 #then fall to fuzzy match
                 match = next((pf for pf in potential_matches if ((origin_finding['cwe'] == int(pf['cwe'])) & 
                     (origin_finding['source_file'].find(pf['source_file']) > -1 ) & 
