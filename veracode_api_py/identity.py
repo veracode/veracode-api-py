@@ -87,7 +87,7 @@ class Users():
       return APIHelper()._rest_request('api/authn/v2/users','POST',body=payload)
 
    def update_roles(self,user_guid,roles):
-      request_params = {'partial': 'TRUE',"incremental": 'TRUE'}
+      request_params = {'partial': 'TRUE',"incremental": 'FALSE'}
       uri = "api/authn/v2/users/{}".format(user_guid)
 
       rolelist = []
