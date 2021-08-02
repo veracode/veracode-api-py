@@ -1,4 +1,8 @@
+import setuptools 
 from distutils.core import setup
+
+with open("README.md", "r", encoding="utf-8") as fh:
+    long_description = fh.read()
 
 setup(
   name = 'veracode_api_py',         
@@ -6,6 +10,8 @@ setup(
   version = '0.9.19',      
   license='MIT',        
   description = 'Python helper library for working with the Veracode APIs. Handles retries, pagination, and other features of the modern Veracode REST APIs.',   
+  long_description = long_description,
+  long_description_content_type="text/markdown",
   author = 'Tim Jarrett',                  
   author_email = 'tjarrett@veracode.com',      
   url = 'https://github.com/tjarrettveracode',   
@@ -21,4 +27,5 @@ setup(
     'License :: OSI Approved :: MIT License',   
     'Programming Language :: Python :: 3'
   ],
+  python_requires=">3.7"
 )
