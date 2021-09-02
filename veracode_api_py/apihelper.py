@@ -10,23 +10,47 @@ from requests.packages.urllib3.util.retry import Retry
 
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
+from veracode_api_signing.credentials import get_credentials
+from veracode_api_signing.regions import get_region_for_api_credential
 
 from .exceptions import VeracodeAPIError
 from .log import VeracodeLog as vlog
+from .constants import Constants
 
 logger = logging.getLogger(__name__)
 
 class APIHelper():
+    api_key_id = None
+    api_key_secret = None 
+    region = None
+
     def __init__(self, proxies=None, debug=False):
-        self.baseurl = "https://analysiscenter.veracode.com/api"
+        self.baseurl = self._get_baseurl()
         requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.proxies = proxies
-        self.base_rest_url = "https://api.veracode.com/"
+        self.base_rest_url = self._get_baseresturl()
         self.retry_seconds = 120
         self.connect_error_msg = "Connection Error"
         # vlog.setup_logging(self,debug=debug)
 
     # helper functions
+
+    def _get_baseurl(self):
+        return self._get_region_url('xml')
+
+    def _get_baseresturl(self):
+        return self._get_region_url('rest')
+
+    def _get_region_url(self,type):
+        if self.api_key_id is None or self.api_key_secret is None:
+            self.api_key_id, self.api_key_secret = get_credentials()
+        if self.region is None:
+            self.region = get_region_for_api_credential(self.api_key_id)
+
+        if type == 'xml':
+            return Constants().REGIONS[self.region]['base_xml_url']
+        elif type == 'rest':
+            return Constants().REGIONS[self.region]['base_rest_url']
 
     def _rest_request(self, url, method, params=None,body=None,fullresponse=False,use_base_url=True):
         # base request method for a REST request
