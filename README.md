@@ -43,6 +43,8 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Applications
 
+_Note_: You can also access these methods from the `Applications` object.
+
 - `get_apps()` : get a list of Veracode applications (JSON format).
 - `get_app(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
 - `get_app_by_name(name)`: get list of applications whose names contain the search string `name`.
@@ -56,6 +58,8 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Sandboxes
 
+_Note_: You can also access these methods from the `Sandboxes` object.
+
 - `get_app_sandboxes(guid)`: get the sandboxes associated with the application identified by `guid`.
 - `create_sandbox(app,name,auto_recreate(opt),custom_fields(opt))`: create a sandbox in the application identified by `app`. Custom fields must be specified as a list of dictionaries of `name`/`value` pairs, e.g. [{'name': 'Custom 1','value': 'foo'}].
 - `update_sandbox(app,sandbox,name,auto_recreate(opt),custom_fields(opt))`: update the `sandbox` (guid) in `app` (guid) with the provided values. Note that partial updates are NOT supported, so you need to provide all values including those you don't wish to change.
@@ -63,16 +67,23 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Policy
 
+_Note_: You can also access these methods from the `Policies` object.
+
+- `get_policies`: Get a list of available policies.
 - `get_policy(guid)`: get information for the policy corresponding to `guid`.
+- `create_policy(name,description,vendor_policy(opt),finding_rules(opt),scan_frequency_rules(opt),grace_period_rules(opt))`: create a policy
+- `edit_policy(guid,name,description,vendor_policy(opt),finding_rules(opt),scan_frequency_rules(opt),grace_period_rules(opt))`: edit a policy
+- `delete_policy(guid)`: dekete a policy
 
 #### Findings
+
+_Note_: You can also access these methods from the `Findings` object.
 
 - `get_findings(app,scantype(opt),annot(opt),request_params(opt),sandbox(opt))`: get the findings for `app` (guid).
   - `scantype`: Defaults to STATIC findings, but can be STATIC, DYNAMIC, MANUAL, SCA, or ALL (static, dynamic, manual).
   - `annot`: Defaults to TRUE but can be FALSE
   - `sandbox`: The guid of the sandbox in `app` for which you want findings. (Use the Sandboxes APIs to get the sandbox guid.)
   - `request_params`: Dictionary of additional query parameters. See the full [Findings API specification](https://help.veracode.com/r/c_findings_v2_intro) for some of the other options available.
-- `get_summary_report(app,sandbox(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid).
 - `get_static_flaw_info(app,issueid,sandbox(opt))`: get the static flaw information, including data paths, for the finding identified by `issueid` in `app` (guid) or its `sandbox` (guid).
 - `get_dynamic_flaw_info(app,issueid)`: get the dynamic flaw information, including request/response data, for the finding identified by `issueid` in `app` (guid).
 - `add_annotation(app,issue_list,comment,action,sandbox(opt))`: add an annotation (comment, mitigation proposal/acceptance/rejection) to the findings in `issue_list` for `app` (guid) (or optionally `sandbox` (guid)). Note that you must have the Mitigation Approver role (regular user) to use the ACCEPTED or REJECTED action, or the Mitigation and Comments API role for an API service account to use this call.
@@ -82,9 +93,15 @@ The following methods call Veracode REST APIs and return JSON.
   - `approved_findings_only`: limits matches to findings with approved mitigations.
   - `allow_fuzzy_match`: look for matches within a range of source lines around the origin finding. This allows for code movement but can result in flaws being mismatched; use sparingly.
 
+_Note_: You can also access this method from the `SummaryReport` object.
+
+- `get_summary_report(app,sandbox(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid).
+
 #### Collections
 
 **Note**: The Collections feature is available only to Veracode customers in the Collections Early Adopter program. As the Collections feature is not generally available yet, the functionality of the feature will change over time. This script is provided for illustration purposes only.
+
+_Note_: You can also access this method from the `Collections` object.
 
 - `get_collections()`: get all collections for the organization.
 - `get_collections_by_name(collection_name)`: get all collections with a name that partially matches `collection_name`.
@@ -97,6 +114,8 @@ The following methods call Veracode REST APIs and return JSON.
 - `delete_collection(guid)`: delete the collection identified by `guid`.
 
 #### Users
+
+_Note_: You can also access this method from the `Users` object.
 
 - `get_users()`: get a list of users for the organization.
 - `get_user_self()`: get user information for the current user.
@@ -119,12 +138,16 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Teams
 
+_Note_: You can also access this method from the `Teams` object.
+
 - `get_teams(all_for_org)`: get the list of teams for the user, or (if `all_for_org` is `True`) all teams in the organization.
 - `create_team(team_name,business_unit,members)`: create a team named `team_name`. Optionally pass the business unit guid and/or a list of user names to add to the team.
 - `update_team(team_guid,team_name(opt),business_unit(opt),members(opt))`: update the team identified by `team_guid` with the provided information.
 - `delete_team(team_guid)`: delete the team identified by `team_guid`.
 
 #### Business Units
+
+_Note_: You can also access this method from the `BusinessUnits` object.
 
 - `get_business_units()`: get the list of business units in the organization.
 - `get_business_unit(guid)`: get the business unit identified by `guid`.
@@ -134,12 +157,16 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### API Credentials
 
+_Note_: You can also access this method from the `APICredentials` object.
+
 - `get_creds()`: get credentials information (API ID and expiration date) for the current user.
 - `get_creds(api_id)`: get credentials information (API ID and expiration date) for the user identified by `api_id`.
 - `renew_creds()`: renew credentials for the current user. NOTE: you must note the return from this call as the API key cannot be viewed again.
 - `revoke_creds(api_id)`: revoke immediately the API credentials identified by `api_id`.
 
 #### SCA Agent
+
+''Note'': You can also access these methods from the `Workspaces` object.
 
 - `get_workspaces()`: get a list of SCA Agent workspaces for the organization.
 - `get_workspace_by_name(name)`: get a list of SCA Agent workspaces whose name partially matches `name`.
@@ -166,6 +193,8 @@ The following methods call Veracode REST APIs and return JSON.
 
 #### Dynamic Analysis
 
+_Note_: You can also access these methods from the `Analyses` object.
+
 - `get_analyses()`: get a list of dynamic analyses to which you have access.
 - `get_analyses_by_name(name)`: get a list of dynamic analyses matching `name`.
 - `get_analyses_by_target_url(url)`: get a list of dynamic analyses containing `url`.
@@ -179,6 +208,9 @@ The following methods call Veracode REST APIs and return JSON.
 - `update_analysis_scanner_variable(analysis_guid,scanner_variable_guid,reference_key,value,description)`: update the scanner variable identified by the `scanner_variable_guid` for the analysis identified by `analysis_guid`.
 - `delete_analysis_scanner_variable(analysis_guid,scanner_variable_guid)`: delete the scanner variable identified by the `scanner_variable_guid` for the analysis identified by `analysis_guid`.
 - `delete_analysis(analysis_guid)`: delete the analysis identified by `analysis_guid`.
+
+_Note_: You can also access these methods from the `Scans` object.
+
 - `get_dyn_scan(scan_guid)`: get the scan identified by `scan_guid`. Get `scan_guid` from `get_analysis_scans()`.
 - `get_dyn_scan_audits(scan_guid)`: get the audits for the scan identified by `scan_guid`.
 - `get_dyn_scan_config(scan_guid)`: get the scan config for the scan identified by `scan_guid`.
@@ -187,9 +219,15 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_scan_scanner_variables(scan_id)`: get the scanner variables for the scan identified by `scan_guid`.
 - `update_scan_scanner_variable(scan_guid,scanner_variable_guid,reference_key,value,description)`: update the scanner variable identified by the `scanner_variable_guid` for the scan identified by `scan_guid`.
 - `delete_scan_scanner_variable(scan_guid,scanner_variable_guid)`: delete the scanner variable identified by the `scanner_variable_guid` for the scan identified by `scan_guid`.
+
+_Note_: You can also access these methods from the `Occurrences` object.
+
 - `get_analysis_occurrences()`: get all dynamic analysis occurrences.
 - `get_analysis_occurrence(occurrence_guid)`: get the dynamic analysis occurrence identified by `occurrence_guid`.
 - `stop_analysis_occurrence(occurrence_guid,save_or_delete)`: stop the dynamic analysis occurrence identified by `occurrence_guid`. Analysis results identified so far are processed according to `save_or_delete`.
+
+_Note_: You can also access these methods from the `ScanOccurrences` object.
+
 - `get_scan_occurrences(occurrence_guid)`: get the scan occurrences for the dynamic analysis occurrence identified by `occurrence_guid`.
 - `get_scan_occurrence(scan_occ_guid)`: get the scan occurrence identified by `scan_occ_guid`.
 - `stop_scan_occurrence(scan_occ_guid,save_or_delete)`: stop the scan occurrence identified by `scan_occ_guid`. Scan results identified so far are processed according to `save_or_delete`.
@@ -197,15 +235,30 @@ The following methods call Veracode REST APIs and return JSON.
 - `get_scan_occurrence_verification_report(scan_occ_guid)`: get the verification report of the scan occurrence identified by `scan_occ_guid`.
 - `get_scan_occurrence_notes_report(scan_occ_guid)`: get the scan notes report of the scan occurrence identified by `scan_occ_guid`.
 - `get_scan_occurrence_screenshots(scan_occ_guid)`: get the screenshots of the scan occurrence identified by `scan_occ_guid`.
+
+_Note_: You can also access these methods from the `CodeGroups` object.
+
 - `get_codegroups()`: get the allowable code values for all code groups for Dynamic Analysis.
 - `get_codegroup(name)`: get the allowable code values for the Dynamic Analysis code group identified by `name`.
+
+_Note_: You can also access these methods from the `Configuration` object.
+
 - `get_dynamic_configuration()`: get the default Dynamic Analysis configuration.
+
+_Note_: You can also access these methods from the `ScanCapacitySummary` object.
+
 - `get_dynamic_scan_capacity_summary()`: get the Dynamic Analysis scan capacity summary.
+
+_Note_: You can also access these methods from the `ScannerVariables` object.
+
 - `get_global_scanner_variables()`: get the list of global Dynamic Analysis scanner variables.
 - `get_global_scanner_variable(guid)`: get the Dynamic Analysis global scanner variable identified by `guid`.
 - `create_global_scanner_variable(reference_key,value,description)`: create a global Dynamic Analysis scanner variable.
 - `update_global_scanner_variable(guid,reference_key,value,description)`: update the global Dynamic Analysis scanner variable identified by `guid`.
 - `delete_global_scanner_variable(guid)`: delete the global Dynamic Analysis scanner variable identified by `guid`.
+
+_Note_: You can also access these methods from the `DynUtils` object.
+
 - `dyn_setup_user_agent(custom_header,type)`: set up the payload to specify the user agent for a dynamic scan.
 - `dyn_setup_custom_host(host_name,ip_address)`: set up the payload to specify the custom host for a dynamic scan.
 - `dyn_setup_blocklist( urls:List)`: set up the payload to specify the blocklist for a dynamic scan.

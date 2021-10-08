@@ -274,6 +274,12 @@ class VeracodeAPI:
     def get_project(self,workspace_guid,project_guid):
         return Workspaces().get_project(workspace_guid,project_guid)
 
+    def get_project_issues(self,workspace_guid,project_guid):
+        return Workspaces().get_project_issues(workspace_guid,project_guid)
+
+    def get_project_libraries(self,workspace_guid,project_guid):
+        return Workspaces().get_project_libraries(workspace_guid,project_guid)
+
     def get_agents(self,workspace_guid):
         return Workspaces().get_agents(workspace_guid)
 
