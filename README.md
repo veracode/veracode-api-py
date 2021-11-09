@@ -121,9 +121,10 @@ _Note_: You can also access this method from the `Users` object.
 - `get_user_self()`: get user information for the current user.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
 - `get_user_by_name(username)`: look up info for an individual user based on their user_name.
-- `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt))`: create a user based on the provided information.
+- `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt),mfa(opt))`: create a user based on the provided information.
   - `type`: `"HUMAN"` or `"API"`. Defaults to `"HUMAN"`. If `"API"` specified, must also provide `username`.
   - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users). Provide the role names from `get_roles()`.
+  - `mfa`: set to `TRUE` to require the user to configure multifactor authentication on first sign in. 
 - `update_user_roles(user_guid, roles)`: update the user identified by `user_guid` with the list of roles passed in `roles`. Because the Identity API does not support adding a single role, the list should be the entire list of existing roles for the user plus whatever new roles. See [veracode-user-bulk-role-assign](https://github.com/tjarrettveracode/veracode-user-bulk-role-assign) for an example.
 - `update_user(user_guid,changes)`: update a user based upon the provided information.
   - `user_guid`: the unique identifier of the user to be updated.

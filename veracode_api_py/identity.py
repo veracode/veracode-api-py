@@ -51,7 +51,7 @@ class Users():
 
       return APIHelper()._rest_paged_request("api/authn/v2/users/search","GET","users",request_params)
 
-   def create(self,email,firstname,lastname,username=None,type="HUMAN",roles=[],teams=[]):
+   def create(self,email,firstname,lastname,username=None,type="HUMAN",roles=[],teams=[],mfa=False):
       user_def = { "email_address": email, "first_name": firstname, "last_name": lastname }
 
       rolelist = []
@@ -82,6 +82,9 @@ class Users():
          user_def.update({"teams": teamlist})
 
       user_def.update({"roles": rolelist})
+
+      if mfa:
+         user_def.update({"pin_required":True})
 
       payload = json.dumps(user_def)
       return APIHelper()._rest_request('api/authn/v2/users','POST',body=payload)
