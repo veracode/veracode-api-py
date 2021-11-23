@@ -52,7 +52,7 @@ class Users():
       return APIHelper()._rest_paged_request("api/authn/v2/users/search","GET","users",request_params)
 
    def create(self,email,firstname,lastname,username=None,type="HUMAN",roles=[],teams=[],mfa=False):
-      user_def = { "email_address": email, "first_name": firstname, "last_name": lastname }
+      user_def = { "email_address": email, "first_name": firstname, "last_name": lastname, "active": True }
 
       rolelist = []
       if len(roles) > 0:
