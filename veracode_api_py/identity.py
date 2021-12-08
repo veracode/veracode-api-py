@@ -28,26 +28,9 @@ class Users():
       request_params = {'user_name': parse.quote(username)} #initialize the page request
       return APIHelper()._rest_paged_request("api/authn/v2/users","GET","users",request_params)
 
-   def get_user_search(self,search_term=None, api_id=None, role_id=None, login_status=None, saml_user=None, team_id=None, detailed=False):
-      request_params = {'detailed': detailed}
-      
-      if search_term != None:
-         request_params['search_term'] = parse.quote(search_term)
-
-      if api_id != None:
-         request_params['api_id'] = api_id
-
-      if role_id != None:
-         request_params['role_id'] = role_id
-      
-      if login_status != None:
-         request_params['login_status'] = login_status
-
-      if saml_user != None:
-         request_params['saml_user'] = saml_user
-
-      if team_id != None:
-         request_params['team_id'] = team_id
+   def get_user_search(self, request_params=None):
+      if request_params == None:
+          request_params = {}
 
       return APIHelper()._rest_paged_request("api/authn/v2/users/search","GET","users",request_params)
 

@@ -188,6 +188,9 @@ class VeracodeAPI:
     def get_user_by_name(self,username):
         return Users().get_by_name(username)
 
+    def get_user_by_search(self, request_params=None):
+        return Users().get_user_search(request_params)
+
     def create_user (self,email,firstname,lastname,username=None,type="HUMAN",roles=[],teams=[],mfa=False):
         return Users().create(email,firstname,lastname,username,type,roles,teams,mfa=mfa)
 
