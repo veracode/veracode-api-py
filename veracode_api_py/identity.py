@@ -9,27 +9,30 @@ from .apihelper import APIHelper
 logger = logging.getLogger(__name__)
 
 class Users():
+   USER_URI = "api/authn/v2/users"
+
    def get_all(self):
       #Gets a list of users using the Veracode Identity API        
       request_params = {'page': 0} #initialize the page request
-      return APIHelper()._rest_paged_request("api/authn/v2/users","GET","users",request_params)
+      return APIHelper()._rest_paged_request(self.USER_URI,"GET","users",request_params)
 
    def get_self (self):
       #Gets the user info for the current user, using the Veracode Identity API
-      return APIHelper()._rest_request("api/authn/v2/users/self","GET")
+      return APIHelper()._rest_request(self.USER_URI + "/self","GET")
 
    def get(self,user_guid):
       #Gets an individual user provided their GUID, using the Veracode Identity API
-      uri = "api/authn/v2/users/{}".format(user_guid)
+      uri = self.USER_URI + "/{}".format(user_guid)
       return APIHelper()._rest_request(uri,"GET")
 
    def get_by_name(self,username):
       #Gets all the users who match the provided email address, using the Veracode Identity API
       request_params = {'user_name': parse.quote(username)} #initialize the page request
-      return APIHelper()._rest_paged_request("api/authn/v2/users","GET","users",request_params)
+      return APIHelper()._rest_paged_request(self.USER_URI,"GET","users",request_params)
 
-   def get_user_search(self,search_term=None, api_id=None, role_id=None, login_status=None, saml_user=None, team_id=None, detailed=False):
-      request_params = {'detailed': detailed}
+   def get_user_search(self,search_term=None, api_id=None, role_id=None, login_status=None, saml_user=None, team_id=None, detailed=False, user_type=None, request_params=None):
+      if request_params == None:
+         request_params = {'detailed': detailed}
       
       if search_term != None:
          request_params['search_term'] = parse.quote(search_term)
@@ -49,7 +52,10 @@ class Users():
       if team_id != None:
          request_params['team_id'] = team_id
 
-      return APIHelper()._rest_paged_request("api/authn/v2/users/search","GET","users",request_params)
+      if user_type != None:
+         request_params['user_type'] = user_type
+         
+      return APIHelper()._rest_paged_request(self.USER_URI + "/search","GET","users",request_params)
 
    def create(self,email,firstname,lastname,username=None,type="HUMAN",roles=[],teams=[],mfa=False):
       user_def = { "email_address": email, "first_name": firstname, "last_name": lastname, "active": True }
@@ -87,11 +93,11 @@ class Users():
          user_def.update({"pin_required":True})
 
       payload = json.dumps(user_def)
-      return APIHelper()._rest_request('api/authn/v2/users','POST',body=payload)
+      return APIHelper()._rest_request(self.USER_URI,'POST',body=payload)
 
    def update_roles(self,user_guid,roles):
       request_params = {'partial': 'TRUE',"incremental": 'FALSE'}
-      uri = "api/authn/v2/users/{}".format(user_guid)
+      uri = self.USER_URI + "/{}".format(user_guid)
 
       rolelist = []
       for role in roles:
@@ -102,7 +108,7 @@ class Users():
 
    def update(self,user_guid,changes):
       request_params = {'partial':'TRUE',"incremental": 'TRUE'}
-      uri = "api/authn/v2/users/{}".format(user_guid)
+      uri = self.USER_URI + "/{}".format(user_guid)
       payload = json.dumps(changes)
       return APIHelper()._rest_request(uri,"PUT",request_params,body=payload)
 
@@ -110,7 +116,7 @@ class Users():
       request_params = {'partial':'TRUE',"incremental": 'FALSE'}
       if ignore_verification:
          request_params['adminNoVerificationEmail'] = 'TRUE'
-      uri = "api/authn/v2/users/{}".format(user_guid)
+      uri = self.USER_URI + "/{}".format(user_guid)
       user_def = {'email_address': email_address}
       payload = json.dumps(user_def)
       return APIHelper()._rest_request(uri,"PUT",request_params,body=payload)
@@ -118,17 +124,17 @@ class Users():
    def reset_password(self,user_legacy_id):
       # Sends a password reset email for the specified user
       # If user has not yet activated, re-sends activation email instead
-      uri = "api/authn/v2/users/{}/resetPassword".format(user_legacy_id)
+      uri = self.USER_URI + "/{}/resetPassword".format(user_legacy_id)
       return APIHelper()._rest_request(uri,"POST")
 
    def disable(self,user_guid):
       request_params = {'partial':'TRUE'}
-      uri = 'api/authn/v2/users/{}'.format(user_guid)
+      uri = self.USER_URI + '/{}'.format(user_guid)
       payload = json.dumps({'active': False})
       return APIHelper()._rest_request(uri,"PUT",request_params,payload)
 
    def delete(self,user_guid):
-      uri = 'api/authn/v2/users/{}'.format(user_guid)
+      uri = self.USER_URI + '/{}'.format(user_guid)
       return APIHelper()._rest_request(uri,"DELETE")
 
 class Teams():

@@ -121,6 +121,7 @@ _Note_: You can also access this method from the `Users` object.
 - `get_user_self()`: get user information for the current user.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
 - `get_user_by_name(username)`: look up info for an individual user based on their user_name.
+- `get_user_by_search(request_params(opt))`: search for users based on Dictionary of additional query parameters. See [Identity API specification](https://app.swaggerhub.com/apis/Veracode/veracode-identity_api/1.0#/user/getUsersBySearchUsingGET)
 - `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt),mfa(opt))`: create a user based on the provided information.
   - `type`: `"HUMAN"` or `"API"`. Defaults to `"HUMAN"`. If `"API"` specified, must also provide `username`.
   - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users). Provide the role names from `get_roles()`.
