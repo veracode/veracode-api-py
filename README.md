@@ -192,6 +192,10 @@ _Note_: You can also access this method from the `APICredentials` object.
 - `get_license(license_id)`: get the license identified by `license_id` (a string, e.g. "GPL30").
 - `get_sca_events(date_gte,event_group,event_type)`: get the audit events for the arguments passed. Be careful with the arguments for this and try to limit by date as it will fetch all pages of data, which might be a lot.
 
+''Note'': You can also access these methods from the `ComponentActivity` object.
+
+- `get_component_activity(component_id)`: get the activity for the component identified by `component_id` (similar to `library_id` above, e.g. "maven:net.minidev:json-smart:1.3.1").
+
 #### Dynamic Analysis
 
 _Note_: You can also access these methods from the `Analyses` object.

@@ -71,11 +71,11 @@ class Workspaces():
 
      def get_agent_tokens(self,workspace_guid,agent_guid):
           uri = self.sca_base_url + '/{}/agents/{}/tokens'.format(workspace_guid,agent_guid)
-          return APIHelper()._rest_paged_request(uri, "GET" )
+          return APIHelper()._rest_paged_request(uri, "GET", "tokens" )
 
      def get_agent_token(self,workspace_guid,agent_guid,token_id):
           uri = self.sca_base_url + '/{}/agents/{}/tokens/{}'.format(workspace_guid,agent_guid,token_id)
-          return APIHelper()._rest_paged_request(uri, "GET" )
+          return APIHelper()._rest_request(uri, "GET" )
 
      def regenerate_agent_token(self,workspace_guid, agent_guid):
           uri = self.sca_base_url + '/{}/agents/{}/tokens:regenerate'.format(workspace_guid,agent_guid)
@@ -130,3 +130,9 @@ class Workspaces():
                params["date_gte"] = date_gte
 
           return APIHelper()._rest_paged_request(baseuri,"GET","events",params)
+
+class ComponentActivity():
+     component_base_uri = "srcclr/v3/component-activity"
+
+     def get(self,component_id):
+          return APIHelper()._rest_request(self.component_base_uri+"/{}".format(component_id),"GET")

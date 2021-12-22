@@ -21,7 +21,7 @@ from .exceptions import VeracodeAPIError
 from .applications import Applications, Sandboxes, CustomFields
 from .findings import Findings, SummaryReport
 from .policy import Policies
-from .sca import Workspaces
+from .sca import ComponentActivity, Workspaces
 from .collections import Collections
 from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
 from .healthcheck import Healthcheck
@@ -324,6 +324,9 @@ class VeracodeAPI:
 
     def get_sca_scan(self,scan_id):
         return Workspaces().get_scan(scan_id)
+
+    def get_component_activity(self,component_id):
+        return ComponentActivity().get(component_id)
 
     #dynamic APIs
 
