@@ -121,7 +121,16 @@ _Note_: You can also access this method from the `Users` object.
 - `get_user_self()`: get user information for the current user.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
 - `get_user_by_name(username)`: look up info for an individual user based on their user_name.
-- `get_user_by_search(request_params(opt))`: search for users based on Dictionary of additional query parameters. See [Identity API specification](https://app.swaggerhub.com/apis/Veracode/veracode-identity_api/1.0#/user/getUsersBySearchUsingGET)
+- `get_user_by_search(search_term, api_id, role_id, login_status, saml_user, team_id, detailed, user_type, request_params)`: search for users based on parameters below (all optional):
+  - `search_term`: string 
+  - `api_id`: search by customer api id
+  - `role_id`: search by role_id (see `get_roles`)
+  - `login_status`: search by login status (e.g. `active`)
+  - `saml_user`: search by saml user ID
+  - `team_id`: serach by team ID (see `get_teams`)
+  - `detailed`: returns additional attributes in summary list of users
+  - `user_type`: search by user type (e.g. `user` or `api`)
+  - `request_params`: optionally pass a dictionary of additional query parameters. See [Identity API specification](https://app.swaggerhub.com/apis/Veracode/veracode-identity_api/1.0#/user/getUsersBySearchUsingGET)
 - `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt),mfa(opt))`: create a user based on the provided information.
   - `type`: `"HUMAN"` or `"API"`. Defaults to `"HUMAN"`. If `"API"` specified, must also provide `username`.
   - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users). Provide the role names from `get_roles()`.
