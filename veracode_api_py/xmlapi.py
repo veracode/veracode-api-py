@@ -40,9 +40,15 @@ class XMLAPI():
         """Returns a detailed report for a given build ID."""
         return APIHelper()._xml_request(self.baseurl + "/5.0/detailedreport.do", "GET", params={"build_id": build_id})
 
-    def set_mitigation_info(self,build_id,flaw_id_list,action,comment):
+    def add_mitigation_info(self,build_id,flaw_id_list,action,comment):
         """Adds a new mitigation proposal, acceptance, rejection, or comment for a set of flaws for an application."""
         actiontype = Constants.ANNOT_TYPE.get(action, 'comment')        
+        payload = {'build_id': build_id, 'flaw_id_list': flaw_id_list, 'action': actiontype, 'comment': comment}
+        return APIHelper()._xml_request(self.baseurl + "/updatemitigationinfo.do", "POST", params=payload)
+
+    def set_mitigation_info(self,build_id,flaw_id_list,action,comment):
+        """Adds a new mitigation proposal, acceptance, rejection, or comment for a set of flaws for an application."""
+        actiontype = Constants.ANNOT_TYPE.get(action, action)        
         payload = {'build_id': build_id, 'flaw_id_list': flaw_id_list, 'action': actiontype, 'comment': comment}
         return APIHelper()._xml_request(self.baseurl + "/updatemitigationinfo.do", "POST", params=payload)
 
