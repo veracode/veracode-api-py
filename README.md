@@ -122,7 +122,7 @@ _Note_: You can also access this method from the `Users` object.
 - `get_user(user_guid)`: get information for an individual user based on `user_guid`.
 - `get_user_by_name(username)`: look up info for an individual user based on their user_name.
 - `get_user_by_search(search_term, api_id, role_id, login_status, saml_user, team_id, detailed, user_type, request_params)`: search for users based on parameters below (all optional):
-  - `search_term`: string 
+  - `search_term`: string
   - `api_id`: search by customer api id
   - `role_id`: search by role_id (see `get_roles`)
   - `login_status`: search by login status (e.g. `active`)
@@ -134,7 +134,7 @@ _Note_: You can also access this method from the `Users` object.
 - `create_user(email,firstname,lastname,type(opt),username(opt),roles(opt),mfa(opt))`: create a user based on the provided information.
   - `type`: `"HUMAN"` or `"API"`. Defaults to `"HUMAN"`. If `"API"` specified, must also provide `username`.
   - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users). Provide the role names from `get_roles()`.
-  - `mfa`: set to `TRUE` to require the user to configure multifactor authentication on first sign in. 
+  - `mfa`: set to `TRUE` to require the user to configure multifactor authentication on first sign in.
 - `update_user_roles(user_guid, roles)`: update the user identified by `user_guid` with the list of roles passed in `roles`. Because the Identity API does not support adding a single role, the list should be the entire list of existing roles for the user plus whatever new roles. See [veracode-user-bulk-role-assign](https://github.com/tjarrettveracode/veracode-user-bulk-role-assign) for an example.
 - `update_user(user_guid,changes)`: update a user based upon the provided information.
   - `user_guid`: the unique identifier of the user to be updated.
@@ -205,6 +205,10 @@ _Note_: You can also access this method from the `APICredentials` object.
 ''Note'': You can also access these methods from the `ComponentActivity` object.
 
 - `get_component_activity(component_id)`: get the activity for the component identified by `component_id` (similar to `library_id` above, e.g. "maven:net.minidev:json-smart:1.3.1").
+
+''Note'': You can also access these methods from the `SBOM` object.
+
+- `get_sbom(app_guid)`: generate an SBOM in CycloneDX format for the application represented by `app_guid`. Get the `app_guid` from the Applications API. **Note**: this only works for applications that have linked SCA Agent projects.
 
 #### Dynamic Analysis
 

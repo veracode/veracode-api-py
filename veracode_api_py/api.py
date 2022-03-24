@@ -21,7 +21,7 @@ from .exceptions import VeracodeAPIError
 from .applications import Applications, Sandboxes, CustomFields
 from .findings import Findings, SummaryReport
 from .policy import Policies
-from .sca import ComponentActivity, Workspaces
+from .sca import ComponentActivity, Workspaces, SBOM
 from .collections import Collections
 from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
 from .healthcheck import Healthcheck
@@ -331,6 +331,9 @@ class VeracodeAPI:
     def get_component_activity(self,component_id):
         return ComponentActivity().get(component_id)
 
+    def get_sbom(self,app_guid):
+        return SBOM().get(app_guid)
+
     #dynamic APIs
 
     def get_analyses(self):
@@ -357,11 +360,11 @@ class VeracodeAPI:
     def get_analysis_scanner_variables(self,analysis_id):
         return Analyses().get_scanner_variables(guid=analysis_id)
 
-    def create_analysis(self,name,scans,schedule_frequency='ONCE',business_unit_guid=None,email=None,owner=None):
-        return Analyses().create(name,scans,schedule_frequency,business_unit_guid,email,owner)
+    def create_analysis(self,name,scans,business_unit_guid=None,email=None,owner=None):
+        return Analyses().create(name,scans,business_unit_guid,email,owner)
 
-    def update_analysis(self,guid,name,scans,schedule_frequency='ONCE',business_unit_guid=None,email=None,owner=None):
-        return Analyses().update(guid,name,scans,schedule_frequency,business_unit_guid,email,owner)
+    def update_analysis(self,guid,name,scans,business_unit_guid=None,email=None,owner=None):
+        return Analyses().update(guid,name,scans,business_unit_guid,email,owner)
     
     def update_analysis_scanner_variable(self,analysis_guid,scanner_variable_guid,reference_key,value,description):
         return Analyses().update_scanner_variable(analysis_guid,scanner_variable_guid,reference_key,value,description)
