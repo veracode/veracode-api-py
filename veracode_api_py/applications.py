@@ -6,8 +6,14 @@ from urllib import parse
 from .apihelper import APIHelper
 
 class Applications():    
-    def get_all(self):
-        return APIHelper()._rest_paged_request('appsec/v1/applications',"GET", params={}, element="applications")
+    def get_all(self,policy_check_after=None):
+        if policy_check_after == None:
+            params={}
+        else:
+            params={"policy_compliance_checked_after": policy_check_after}
+
+        return APIHelper()._rest_paged_request('appsec/v1/applications',"GET", params=params, 
+                                                element="applications")
 
     def get (self,guid=None,legacy_id=None):
         """Gets a single applications in the current customer account using the Veracode Application API."""
