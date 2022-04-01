@@ -138,7 +138,7 @@ class ComponentActivity():
           return APIHelper()._rest_request(self.component_base_uri+"/{}".format(component_id),"GET")
 
 class SBOM():
-     entity_base_uri = "srcclr/v3/entities"
+     entity_base_uri = "srcclr/sbom/v1/targets"
 
      def get(self,app_guid):
-          return APIHelper()._rest_request(self.entity_base_uri+"/{}/sbom".format(app_guid),"GET",params={"type":"application"})
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/cyclonedx".format(app_guid),"GET",params={"type":"application"})
