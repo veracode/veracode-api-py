@@ -12,6 +12,7 @@ import requests
 import logging
 from requests.adapters import HTTPAdapter
 from typing import List
+from uuid import UUID
 
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
@@ -265,52 +266,52 @@ class VeracodeAPI:
     def create_workspace(self,name):
         return Workspaces().create(name)
 
-    def add_workspace_team(self,workspace_guid,team_id):
+    def add_workspace_team(self,workspace_guid: UUID,team_id: UUID):
         return Workspaces().add_team(workspace_guid,team_id)
 
-    def delete_workspace(self,workspace_guid):
+    def delete_workspace(self,workspace_guid: UUID):
         return Workspaces().delete(workspace_guid)
 
-    def get_projects(self,workspace_guid):
+    def get_projects(self,workspace_guid: UUID):
         return Workspaces().get_projects(workspace_guid)
 
-    def get_project(self,workspace_guid,project_guid):
+    def get_project(self,workspace_guid: UUID,project_guid: UUID):
         return Workspaces().get_project(workspace_guid,project_guid)
 
-    def get_project_issues(self,workspace_guid,project_guid):
+    def get_project_issues(self,workspace_guid: UUID,project_guid: UUID):
         return Workspaces().get_project_issues(workspace_guid,project_guid)
 
-    def get_project_libraries(self,workspace_guid,project_guid):
+    def get_project_libraries(self,workspace_guid: UUID,project_guid: UUID):
         return Workspaces().get_project_libraries(workspace_guid,project_guid)
 
-    def get_agents(self,workspace_guid):
+    def get_agents(self,workspace_guid: UUID):
         return Workspaces().get_agents(workspace_guid)
 
-    def get_agent(self,workspace_guid,agent_guid):
+    def get_agent(self,workspace_guid: UUID,agent_guid: UUID):
         return Workspaces().get_agent(workspace_guid,agent_guid)
 
-    def create_agent(self,workspace_guid,name,agent_type='CLI'):
+    def create_agent(self,workspace_guid: UUID,name,agent_type='CLI'):
         return Workspaces().create_agent(workspace_guid,name,agent_type)
 
-    def get_agent_tokens(self,workspace_guid,agent_guid):
+    def get_agent_tokens(self,workspace_guid: UUID,agent_guid: UUID):
         return Workspaces().get_agent_tokens(workspace_guid,agent_guid)
 
-    def get_agent_token(self,workspace_guid,agent_guid,token_id):
+    def get_agent_token(self,workspace_guid: UUID,agent_guid: UUID,token_id: UUID):
         return Workspaces().get_agent_token(workspace_guid,agent_guid,token_id)
         
-    def regenerate_agent_token(self,workspace_guid,agent_guid):
+    def regenerate_agent_token(self,workspace_guid: UUID,agent_guid: UUID):
         return Workspaces().regenerate_agent_token(workspace_guid,agent_guid)
 
-    def revoke_agent_token(self,workspace_guid,agent_guid,token_id):
+    def revoke_agent_token(self,workspace_guid: UUID,agent_guid: UUID,token_id: UUID):
         return Workspaces().revoke_agent_token(workspace_guid,agent_guid,token_id)
 
-    def get_issues(self,workspace_guid):
+    def get_issues(self,workspace_guid: UUID):
         return Workspaces().get_issues(workspace_guid)
 
-    def get_issue(self,issue_id):
+    def get_issue(self,issue_id: UUID):
         return Workspaces().get_issues(issue_id)
 
-    def get_libraries(self,workspace_guid,unmatched=False):
+    def get_libraries(self,workspace_guid: UUID,unmatched=False):
         return Workspaces().get_libraries(workspace_guid, unmatched)
 
     def get_library(self,library_id):
@@ -325,13 +326,13 @@ class VeracodeAPI:
     def get_sca_events(self,date_gte=None,event_group=None,event_type=None):
         return Workspaces().get_events(date_gte,event_group,event_type)
 
-    def get_sca_scan(self,scan_id):
+    def get_sca_scan(self,scan_id: UUID):
         return Workspaces().get_scan(scan_id)
 
     def get_component_activity(self,component_id):
         return ComponentActivity().get(component_id)
 
-    def get_sbom(self,app_guid):
+    def get_sbom(self,app_guid: UUID):
         return SBOM().get(app_guid)
 
     #dynamic APIs

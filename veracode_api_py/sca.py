@@ -2,6 +2,7 @@
 
 import json
 from urllib import parse
+from uuid import UUID 
 
 from .apihelper import APIHelper
 from .constants import Constants
@@ -27,73 +28,73 @@ class Workspaces():
           loc = r.headers.get('location','')
           return loc.split("/")[-1]
 
-     def add_team(self,workspace_guid,team_id):
+     def add_team(self,workspace_guid: UUID,team_id: UUID):
           return APIHelper()._rest_request(self.sca_base_url + "/{}/teams/{}".format(workspace_guid,team_id),"PUT")
 
-     def delete(self,workspace_guid):
+     def delete(self,workspace_guid: UUID):
           return APIHelper()._rest_request(self.sca_base_url + "/{}".format(workspace_guid),"DELETE") 
 
      def get_teams(self):
           return APIHelper()._rest_paged_request("srcclr/v3/teams","GET","teams",{})
 
-     def get_projects(self,workspace_guid):
+     def get_projects(self,workspace_guid: UUID):
           return APIHelper()._rest_paged_request(self.sca_base_url + '/{}/projects'.format(workspace_guid),"GET","projects",{})
 
-     def get_project(self,workspace_guid,project_guid):
+     def get_project(self,workspace_guid: UUID,project_guid:UUID ):
           uri = self.sca_base_url + '/{}/projects/{}'.format(workspace_guid,project_guid)
           return APIHelper()._rest_request(uri,"GET")
 
-     def get_project_issues(self,workspace_guid,project_guid):
+     def get_project_issues(self,workspace_guid: UUID,project_guid: UUID):
           uri = self.sca_base_url + '/{}/projects/{}/issues'.format(workspace_guid,project_guid)
           return APIHelper()._rest_paged_request(uri,"GET","issues",{})
 
-     def get_project_libraries(self,workspace_guid,project_guid):
+     def get_project_libraries(self,workspace_guid: UUID,project_guid: UUID):
           uri = self.sca_base_url + '/{}/projects/{}/libraries'.format(workspace_guid,project_guid)
           return APIHelper()._rest_paged_request(uri,"GET","libraries",{})
 
-     def get_agents(self,workspace_guid):
+     def get_agents(self,workspace_guid: UUID):
           return APIHelper()._rest_paged_request(self.sca_base_url + '/{}/agents'.format(workspace_guid),"GET","agents",{})
 
-     def get_agent(self,workspace_guid,agent_guid):
+     def get_agent(self,workspace_guid: UUID,agent_guid: UUID):
           uri = self.sca_base_url + '/{}/agents/{}'.format(workspace_guid,agent_guid)
           return APIHelper()._rest_request(uri,"GET")
 
-     def create_agent(self,workspace_guid,name,agent_type='CLI'):
+     def create_agent(self,workspace_guid: UUID,name,agent_type='CLI'):
           if agent_type not in Constants().AGENT_TYPE:
                raise ValueError("{} is not in the list of valid agent types ({})".format(agent_type,Constants().AGENT_TYPE))
           uri = self.sca_base_url + '/{}/agents'.format(workspace_guid)
           body = {'agent_type': agent_type, 'name': name}
           return APIHelper()._rest_request(uri,"POST",body=json.dumps(body))
 
-     def delete_agent(self,workspace_guid,agent_guid):
+     def delete_agent(self,workspace_guid: UUID,agent_guid: UUID):
           uri = self.sca_base_url + '/{}/agents/{}'.format(workspace_guid,agent_guid)
           return APIHelper()._rest_request(uri,"DELETE")
 
-     def get_agent_tokens(self,workspace_guid,agent_guid):
+     def get_agent_tokens(self,workspace_guid: UUID,agent_guid: UUID):
           uri = self.sca_base_url + '/{}/agents/{}/tokens'.format(workspace_guid,agent_guid)
           return APIHelper()._rest_paged_request(uri, "GET", "tokens" )
 
-     def get_agent_token(self,workspace_guid,agent_guid,token_id):
+     def get_agent_token(self,workspace_guid: UUID,agent_guid: UUID,token_id: UUID):
           uri = self.sca_base_url + '/{}/agents/{}/tokens/{}'.format(workspace_guid,agent_guid,token_id)
           return APIHelper()._rest_request(uri, "GET" )
 
-     def regenerate_agent_token(self,workspace_guid, agent_guid):
+     def regenerate_agent_token(self,workspace_guid: UUID, agent_guid: UUID):
           uri = self.sca_base_url + '/{}/agents/{}/tokens:regenerate'.format(workspace_guid,agent_guid)
           return APIHelper()._rest_request(uri,"POST")
 
-     def revoke_agent_token(self,workspace_guid, agent_guid, token_id):
+     def revoke_agent_token(self,workspace_guid: UUID, agent_guid: UUID, token_id: UUID):
           uri = self.sca_base_url + '/{}/agents/{}/tokens/{}'.format(workspace_guid,agent_guid,token_id)
           return APIHelper()._rest_request(uri,"DELETE")
 
-     def get_issues(self,workspace_guid):
+     def get_issues(self,workspace_guid: UUID):
           uri = self.sca_base_url + '/{}/issues'.format(workspace_guid)
           return APIHelper()._rest_paged_request(uri,"GET","issues",{})
 
-     def get_issue(self,issue_id):
+     def get_issue(self,issue_id: UUID):
           uri = self.sca_base_url + '/issues/{}'.format(issue_id)
           return APIHelper()._rest_request(uri,"GET")
 
-     def get_libraries(self,workspace_guid,unmatched):
+     def get_libraries(self,workspace_guid: UUID,unmatched):
           if unmatched:
                uri = self.sca_base_url + '/{}/libraries/unmatched'.format(workspace_guid)
           else:
@@ -112,7 +113,7 @@ class Workspaces():
           uri = "srcclr/v3/licenses/{}".format(license_id)
           return APIHelper()._rest_request(uri,"GET")
 
-     def get_scan(self,scan_id):
+     def get_scan(self,scan_id: UUID):
           return APIHelper()._rest_request("srcclr/v3/scans/{}".format(scan_id),"GET")
 
      def get_events(self, date_gte=None, event_group=None, event_type=None):
@@ -140,5 +141,5 @@ class ComponentActivity():
 class SBOM():
      entity_base_uri = "srcclr/sbom/v1/targets"
 
-     def get(self,app_guid):
+     def get(self,app_guid: UUID):
           return APIHelper()._rest_request(self.entity_base_uri+"/{}/cyclonedx".format(app_guid),"GET",params={"type":"application"})
