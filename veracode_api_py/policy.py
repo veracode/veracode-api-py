@@ -1,6 +1,7 @@
 #policy.py - API class for Policy API calls
 
 import json
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -9,11 +10,11 @@ class Policies():
     def get_all (self):
         return APIHelper()._rest_paged_request("appsec/v1/policies","GET","policy_versions",{"page": 0})
     
-    def get (self,guid):
+    def get (self,guid: UUID):
         uri = "appsec/v1/policies/{}".format(guid)
         return APIHelper()._rest_request(uri,"GET")
 
-    def delete (self,guid):
+    def delete (self,guid: UUID):
         uri = "appsec/v1/policies/{}".format(guid)
         return APIHelper()._rest_request(uri,"DELETE")
 
@@ -22,7 +23,7 @@ class Policies():
             grace_periods = {}
         return self._create_or_update("CREATE",name,description,vendor_policy,finding_rules,scan_frequency_rules,grace_periods)
 
-    def update(self,guid, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
+    def update(self,guid: UUID, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
         if grace_periods == None:
             grace_periods = {}
         return self._create_or_update("UPDATE",name,description,vendor_policy,finding_rules,scan_frequency_rules,grace_periods,guid)
@@ -52,7 +53,7 @@ class Policies():
         grace_periods["sca_blacklist_grace_period"] = sca_blocklist
         return grace_periods
 
-    def _create_or_update(self, method, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None, guid=None):
+    def _create_or_update(self, method, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None, guid: UUID=None):
         if grace_periods == None:
             grace_periods = {}
         if method == 'CREATE':

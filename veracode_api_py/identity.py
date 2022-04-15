@@ -3,6 +3,7 @@
 import json
 import logging
 from urllib import parse
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -20,7 +21,7 @@ class Users():
       #Gets the user info for the current user, using the Veracode Identity API
       return APIHelper()._rest_request(self.USER_URI + "/self","GET")
 
-   def get(self,user_guid):
+   def get(self,user_guid: UUID):
       #Gets an individual user provided their GUID, using the Veracode Identity API
       uri = self.USER_URI + "/{}".format(user_guid)
       return APIHelper()._rest_request(uri,"GET")
@@ -30,7 +31,7 @@ class Users():
       request_params = {'user_name': parse.quote(username)} #initialize the page request
       return APIHelper()._rest_paged_request(self.USER_URI,"GET","users",request_params)
 
-   def get_user_search(self,search_term=None, api_id=None, role_id=None, login_status=None, saml_user=None, team_id=None, detailed=False, user_type=None, request_params=None):
+   def get_user_search(self,search_term=None, api_id: UUID=None, role_id: UUID=None, login_status=None, saml_user=None, team_id: UUID=None, detailed=False, user_type=None, request_params=None):
       if request_params == None:
          request_params = {'detailed': detailed}
       
@@ -95,7 +96,7 @@ class Users():
       payload = json.dumps(user_def)
       return APIHelper()._rest_request(self.USER_URI,'POST',body=payload)
 
-   def update_roles(self,user_guid,roles):
+   def update_roles(self,user_guid: UUID,roles):
       request_params = {'partial': 'TRUE',"incremental": 'FALSE'}
       uri = self.USER_URI + "/{}".format(user_guid)
 
@@ -106,13 +107,13 @@ class Users():
       payload = json.dumps({"roles": rolelist})
       return APIHelper()._rest_request(uri,"PUT",request_params,body=payload)
 
-   def update(self,user_guid,changes):
+   def update(self,user_guid: UUID,changes):
       request_params = {'partial':'TRUE',"incremental": 'TRUE'}
       uri = self.USER_URI + "/{}".format(user_guid)
       payload = json.dumps(changes)
       return APIHelper()._rest_request(uri,"PUT",request_params,body=payload)
 
-   def update_email_address(self,user_guid,email_address,ignore_verification=False):
+   def update_email_address(self,user_guid: UUID,email_address,ignore_verification=False):
       request_params = {'partial':'TRUE',"incremental": 'FALSE'}
       if ignore_verification:
          request_params['adminNoVerificationEmail'] = 'TRUE'
@@ -127,13 +128,13 @@ class Users():
       uri = self.USER_URI + "/{}/resetPassword".format(user_legacy_id)
       return APIHelper()._rest_request(uri,"POST")
 
-   def disable(self,user_guid):
+   def disable(self,user_guid: UUID):
       request_params = {'partial':'TRUE'}
       uri = self.USER_URI + '/{}'.format(user_guid)
       payload = json.dumps({'active': False})
       return APIHelper()._rest_request(uri,"PUT",request_params,payload)
 
-   def delete(self,user_guid):
+   def delete(self,user_guid: UUID):
       uri = self.USER_URI + '/{}'.format(user_guid)
       return APIHelper()._rest_request(uri,"DELETE")
 
@@ -163,7 +164,7 @@ class Teams():
       payload = json.dumps(team_def)
       return APIHelper()._rest_request('api/authn/v2/teams','POST',body=payload)
 
-   def update(self, team_guid, team_name="", business_unit=None, members=[]):
+   def update(self, team_guid: UUID, team_name="", business_unit: UUID=None, members=[]):
       requestbody = {}
       
       if team_name != "":
@@ -186,7 +187,7 @@ class Teams():
       uri = 'api/authn/v2/teams/{}'.format(team_guid)
       return APIHelper()._rest_request(uri,'PUT',body=payload,params=params)
 
-   def delete(self, team_guid):
+   def delete(self, team_guid: UUID):
       uri = 'api/authn/v2/teams/{}'.format(team_guid)
       return APIHelper()._rest_request(uri,"DELETE")
 
@@ -197,7 +198,7 @@ class BusinessUnits():
       request_params = {'page': 0}
       return APIHelper()._rest_paged_request(self.base_uri,"GET","business_units",request_params)
 
-   def get(self,guid):
+   def get(self,guid: UUID):
       return APIHelper()._rest_request(self.base_uri + "/{}".format(guid),"GET")
 
    def create(self,name,teams=[]):
@@ -211,7 +212,7 @@ class BusinessUnits():
 
       return APIHelper()._rest_request(self.base_uri,"POST",body=json.dumps(payload))
 
-   def update(self,guid,name="",teams=[]):
+   def update(self,guid: UUID,name="",teams=[]):
       payload = {}
 
       if name != "":

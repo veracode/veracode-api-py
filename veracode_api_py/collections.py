@@ -2,6 +2,7 @@
 
 import json
 from urllib import parse
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -33,11 +34,11 @@ class Collections():
    def get_statistics(self):
       return APIHelper()._rest_request("appsec/v1/collections/statistics","GET")
 
-   def get(self,guid):
+   def get(self,guid: UUID):
       uri = "appsec/v1/collections/{}".format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
-   def get_assets(self,guid):
+   def get_assets(self,guid: UUID):
       uri = "appsec/v1/collections/{}/assets".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET","assets",params={})
 
@@ -45,11 +46,11 @@ class Collections():
       return self._create_or_update(method="CREATE",name=name,description=description,
                   tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=None)
 
-   def update(self,guid,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[]):
+   def update(self,guid: UUID,name,description="",tags="",business_unit_guid: UUID=None,custom_fields=[],assets=[]):
       return self._create_or_update(method="UPDATE",name=name,description=description,
                   tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=guid)
 
-   def delete(self,guid):
+   def delete(self,guid: UUID):
       uri = "appsec/v1/collections/{}".format(guid)
       return APIHelper()._rest_request(uri,"DELETE")
 

@@ -3,6 +3,7 @@
 import json
 from urllib import parse
 from typing import List
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -28,46 +29,46 @@ class Analyses():
       params = {"search_term": parse.quote(search_term)}
       return self._get_analyses(params)
 
-   def get(self,guid):
+   def get(self,guid: UUID):
       uri = self.base_url + "/{}".format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
-   def get_audits(self,guid):
+   def get_audits(self,guid: UUID):
       uri = self.base_url + "/{}/audits".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET",'analysis_audits',{'page':0})
 
-   def create_scan(self,guid):
+   def create_scan(self,guid: UUID):
       uri = self.base_url + '/{}/scans'.format(guid)
       payload = {} #TODO add code for all the scan values
       return APIHelper()._rest_request(uri,"POST",json.dumps(payload))
 
-   def get_scans(self,guid):
+   def get_scans(self,guid: UUID):
       uri = self.base_url + "/{}/scans".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET",'scans',{'page': 0})
 
-   def create(self,name,scans,business_unit_guid=None,email=None,owner=None):
+   def create(self,name,scans,business_unit_guid: UUID=None,email=None,owner=None):
       # basic create that adds only metadata. Use Scans().setup() to create a Scans object
       return self._create_or_update(method="CREATE",name=name,scans=scans,
-                  business_unit_guid=business_unit_guid,email=email,owner=owner,guid=None)
+                  business_unit_guid=business_unit_guid,email=email,owner=owner)
 
-   def update(self,guid,name,scans,business_unit_guid=None,email=None,owner=None):
+   def update(self,guid: UUID,name,scans,business_unit_guid: UUID=None,email=None,owner=None):
       return self._create_or_update(method="UPDATE",name=name,scans=scans,
                   business_unit_guid=business_unit_guid,email=email,owner=owner,guid=guid)
 
-   def get_scanner_variables(self,guid):
+   def get_scanner_variables(self,guid: UUID):
       uri = self.base_url + "/{}/scanner_variables".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET", 'scanner_variables', {'page': 0})
 
-   def update_scanner_variable(self,analysis_guid,scanner_variable_guid,reference_key,value,description):
+   def update_scanner_variable(self,analysis_guid: UUID,scanner_variable_guid: UUID,reference_key,value,description):
       uri = self.base_url + '/{}/scanner_variables/{}'.format(analysis_guid,scanner_variable_guid)
       body = { 'reference_key': reference_key, 'value': value, 'description': description }
       return APIHelper()._rest_request(uri,"PUT",body)
 
-   def delete_scanner_variable(self,analysis_guid,scanner_variable_guid):
+   def delete_scanner_variable(self,analysis_guid: UUID,scanner_variable_guid: UUID):
       uri = self.base_url + '/{}/scanner_variables/{}'.format(analysis_guid,scanner_variable_guid)
       return APIHelper()._rest_request(uri,'DELETE')
 
-   def delete(self,guid):
+   def delete(self,guid: UUID):
       uri = self.base_url + "/{}".format(guid)
       return APIHelper()._rest_request(uri,"DELETE")
 
@@ -76,7 +77,7 @@ class Analyses():
    def _get_analyses(self,params):
       return APIHelper()._rest_paged_request(self.base_url,"GET","analyses",params=params)
 
-   def _create_or_update(self,method,name,scans,business_unit_guid=None,email=None,owner=None,guid=None):
+   def _create_or_update(self,method,name,scans,business_unit_guid: UUID=None,email=None,owner=None,guid: UUID=None):
       if method == 'CREATE':
          uri = self.base_url
          httpmethod = 'POST'
@@ -102,37 +103,37 @@ class Analyses():
 class Scans():
    base_url = ROOT_URL + '/scans'
 
-   def get(self, guid):
+   def get(self, guid: UUID):
       uri = self.base_url + "/{}".format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
-   def get_audits(self, guid):
+   def get_audits(self, guid: UUID):
       uri = self.base_url + "/{}/audits".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET",'scan_audits',{'page':0})
 
-   def get_configuration(self,guid):
+   def get_configuration(self,guid: UUID):
       uri = self.base_url + "/{}/configuration".format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
-   def delete(self,guid):
+   def delete(self,guid: UUID):
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri, 'DELETE')
 
-   def update(self,guid,scan):
+   def update(self,guid: UUID,scan):
       # use DynUtils().setup_scan() to create the scans parameter
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri,'PUT',body=json.dumps(scan))
 
-   def get_scanner_variables(self,guid):
+   def get_scanner_variables(self,guid: UUID):
       uri = self.base_url + "/{}/scanner_variables".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET",'scanner_variables',{'page': 0})
 
-   def update_scanner_variable(self,scan_guid,scanner_variable_guid,reference_key,value,description):
+   def update_scanner_variable(self,scan_guid: UUID,scanner_variable_guid: UUID,reference_key,value,description):
       uri = self.base_url + '/{}/scanner_variables/{}'.format(scan_guid,scanner_variable_guid)
       body = { 'reference_key': reference_key, 'value': value, 'description': description }
       return APIHelper()._rest_request(uri,"PUT",body)
 
-   def delete_scanner_variable(self,scan_guid,scanner_variable_guid):
+   def delete_scanner_variable(self,scan_guid: UUID,scanner_variable_guid: UUID):
       uri = self.base_url + '/{}/scanner_variables/{}'.format(scan_guid,scanner_variable_guid)
       return APIHelper()._rest_request(uri,'DELETE')   
 
@@ -142,46 +143,46 @@ class Occurrences():
    def get_all(self):
       return APIHelper()._rest_paged_request(self.base_url,'GET','analysis_occurrences',{'page':0})
 
-   def get(self,guid):
+   def get(self,guid: UUID):
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri, 'GET')
 
-   def stop(self, guid, save_or_delete):
+   def stop(self, guid: UUID, save_or_delete):
       actions = {'SAVE': 'STOP_SAVE', 'DELETE': 'STOP_DELETE'}
       uri = self.base_url + '/{}'.format(guid)
       params = { 'action' : actions[save_or_delete] }
       return APIHelper()._rest_request(uri, 'PUT', json.dumps(params))
 
-   def get_scan_occurrences(self,guid):
-      uri = self.base_url + '/{}/scan_occurrences'
+   def get_scan_occurrences(self,guid: UUID):
+      uri = self.base_url + '/{}/scan_occurrences'.format(guid)
       return APIHelper()._rest_paged_request(uri, 'GET', 'scan_occurrences',{'page':0})
 
 class ScanOccurrences():
    base_url = ROOT_URL + '/scan_occurrences'
 
-   def get(self, guid):
+   def get(self, guid: UUID):
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri,'GET')
 
-   def stop(self,guid,save_or_delete):
+   def stop(self,guid: UUID,save_or_delete):
       actions = {'SAVE': 'STOP_SAVE', 'DELETE': 'STOP_DELETE'}
       uri = self.base_url + '/{}'.format(guid)
       params = { 'action': actions[save_or_delete]}
       return APIHelper()._rest_request(uri,'PUT', json.dumps(params))
 
-   def get_configuration(self,guid):
+   def get_configuration(self,guid: UUID):
       uri = self.base_url + '/{}/configuration'.format(guid)
       return APIHelper()._rest_request(uri,'GET')
    
-   def get_verification_report(self,guid):
+   def get_verification_report(self,guid: UUID):
       uri = self.base_url + '/{}/verification_report'.format(guid)
       return APIHelper()._rest_request(uri,'GET')
 
-   def get_scan_notes_report(self,guid):
+   def get_scan_notes_report(self,guid: UUID):
       uri = self.base_url + '/{}/scan_notes_report'.format(guid)
       return APIHelper()._rest_request(uri,'GET')
 
-   def get_scan_screenshots(self,guid):
+   def get_scan_screenshots(self,guid: UUID):
       uri = self.base_url + '/{}/scan_screenshots'.format(guid)
       return APIHelper()._rest_request(uri,'GET')
 
@@ -211,16 +212,16 @@ class ScannerVariables():
       payload = {'reference_key':reference_key, 'value': value, 'description': description}
       return APIHelper()._rest_request(self.base_url,'POST',json.dumps(payload))
 
-   def get(self,guid):
+   def get(self,guid: UUID):
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
-   def update(self,guid,reference_key,value,description):
+   def update(self,guid: UUID,reference_key,value,description):
       uri = self.base_url + '/{}'.format(guid)
       body = { 'reference_key': reference_key, 'value': value, 'description': description }
       return APIHelper()._rest_request(uri,"PUT",body)
 
-   def delete(self,guid):
+   def delete(self,guid: UUID):
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri,'DELETE')   
 
@@ -298,7 +299,7 @@ class DynUtils():
          payload.update(crawl_config)
       return { 'scan_config_request': payload }
 
-   def setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid=None):
+   def setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid: UUID=None):
       payload = {}
       payload.update( scan_config_request )
       payload.update(scan_contact_info)

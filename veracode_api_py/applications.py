@@ -2,6 +2,7 @@
 
 import json
 from urllib import parse
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -15,7 +16,7 @@ class Applications():
         return APIHelper()._rest_paged_request('appsec/v1/applications',"GET", params=params, 
                                                 element="applications")
 
-    def get (self,guid=None,legacy_id=None):
+    def get (self,guid: UUID=None,legacy_id=None):
         """Gets a single applications in the current customer account using the Veracode Application API."""
         if legacy_id == None:
             apps_base_uri = "appsec/v1/applications" + "/{}"
@@ -34,10 +35,10 @@ class Applications():
     def create(self,app_name,business_criticality, business_unit=None, teams=[]):
         return self._create_or_update("CREATE",app_name,business_criticality,business_unit,teams)
 
-    def update(self,guid,app_name,business_criticality, business_unit=None, teams=[]):
+    def update(self,guid: UUID,app_name,business_criticality, business_unit=None, teams=[]):
         return self._create_or_update("UPDATE",app_name,business_criticality,business_unit,teams,guid)
 
-    def delete(self,guid):
+    def delete(self,guid: UUID):
         uri = 'appsec/v1/applications/{}'.format(guid)
         return APIHelper()._rest_request(uri,'DELETE')
 
@@ -68,7 +69,7 @@ class Applications():
         return APIHelper()._rest_request(uri,httpmethod,body=payload)
 
 class Sandboxes ():
-    def get_all(self,guid):
+    def get_all(self,guid: UUID):
         request_params = {}
         uri = 'appsec/v1/applications/{}/sandboxes'.format(guid)
         return APIHelper()._rest_paged_request(uri,'GET','sandboxes',request_params)
