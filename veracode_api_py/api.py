@@ -170,7 +170,7 @@ class VeracodeAPI:
         return Collections().create(name,description,tags,business_unit_guid,custom_fields,assets)
 
     def update_collection(self,guid,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[]):
-        return Collections().update(name,description,tags,business_unit_guid,custom_fields,assets)
+        return Collections().update(guid,name,description,tags,business_unit_guid,custom_fields,assets)
 
     def delete_collection(self,guid):
         return Collections().delete(guid)
@@ -214,7 +214,7 @@ class VeracodeAPI:
         return Users().delete(user_guid)
 
     def get_teams (self, all_for_org=False):
-        return Teams().get_all()
+        return Teams().get_all(all_for_org)
 
     def create_team (self, team_name, business_unit=None, members=[]):        
         return Teams().create(team_name,business_unit,members)
