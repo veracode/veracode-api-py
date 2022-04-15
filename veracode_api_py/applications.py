@@ -16,7 +16,7 @@ class Applications():
         return APIHelper()._rest_paged_request('appsec/v1/applications',"GET", params=params, 
                                                 element="applications")
 
-    def get (self,guid: UUID=None,legacy_id=None):
+    def get (self,guid: UUID=None,legacy_id: int=None):
         """Gets a single applications in the current customer account using the Veracode Application API."""
         if legacy_id == None:
             apps_base_uri = "appsec/v1/applications" + "/{}"
@@ -27,22 +27,22 @@ class Applications():
 
         return APIHelper()._rest_request(uri,"GET")
 
-    def get_by_name (self,appname):
+    def get_by_name (self,appname: str):
         """Gets a list of applications having a name that matches appname, using the Veracode Applications API."""
         params = {"name": parse.quote(appname)}
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
-    def create(self,app_name,business_criticality, business_unit=None, teams=[]):
+    def create(self,app_name:str ,business_criticality, business_unit: UUID=None, teams=[]):
         return self._create_or_update("CREATE",app_name,business_criticality,business_unit,teams)
 
-    def update(self,guid: UUID,app_name,business_criticality, business_unit=None, teams=[]):
+    def update(self,guid: UUID,app_name:str ,business_criticality, business_unit: UUID=None, teams=[]):
         return self._create_or_update("UPDATE",app_name,business_criticality,business_unit,teams,guid)
 
     def delete(self,guid: UUID):
         uri = 'appsec/v1/applications/{}'.format(guid)
         return APIHelper()._rest_request(uri,'DELETE')
 
-    def _create_or_update(self,method,app_name,business_criticality, business_unit=None, teams=[],guid=None):
+    def _create_or_update(self,method,app_name: str,business_criticality, business_unit: UUID=None, teams=[],guid=None):
         if method == 'CREATE':
             uri = 'appsec/v1/applications'
             httpmethod = 'POST'
@@ -74,7 +74,7 @@ class Sandboxes ():
         uri = 'appsec/v1/applications/{}/sandboxes'.format(guid)
         return APIHelper()._rest_paged_request(uri,'GET','sandboxes',request_params)
 
-    def create(self, app, name, auto_recreate=False, custom_fields=[]):
+    def create(self, app: UUID, name: str, auto_recreate=False, custom_fields=[]):
         uri = 'appsec/v1/applications/{}/sandboxes'.format(app)
         sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
 
@@ -84,7 +84,7 @@ class Sandboxes ():
         payload = json.dumps(sandbox_def)
         return APIHelper()._rest_request(uri,'POST',body=payload)
 
-    def update(self, app, sandbox, name, auto_recreate=False, custom_fields=[]):
+    def update(self, app: UUID, sandbox: UUID, name: str, auto_recreate=False, custom_fields=[]):
         uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
         sandbox_def = {'name': name, 'auto_recreate': auto_recreate}
 
@@ -94,7 +94,7 @@ class Sandboxes ():
         payload = json.dumps(sandbox_def)
         return APIHelper()._rest_request(uri,'PUT',body=payload)
 
-    def delete(self, app, sandbox):
+    def delete(self, app: UUID, sandbox: UUID):
         uri = 'appsec/v1/applications/{}/sandboxes/{}'.format(app,sandbox)
         return APIHelper()._rest_request(uri,'DELETE')
 

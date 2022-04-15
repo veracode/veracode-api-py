@@ -11,15 +11,15 @@ class XMLAPI():
         """Returns all application profiles."""
         return APIHelper()._xml_request(self.baseurl + "/4.0/getapplist.do", "GET")
 
-    def get_app_info(self, app_id):
+    def get_app_info(self, app_id: int):
         """Returns application profile info for a given app ID."""
         return APIHelper()._xml_request(self.baseurl + "/5.0/getappinfo.do", "GET", params={"app_id": app_id})
 
-    def get_sandbox_list(self, app_id):
+    def get_sandbox_list(self, app_id: int):
         """Returns a list of sandboxes for a given app ID"""
         return APIHelper()._xml_request(self.baseurl + "/5.0/getsandboxlist.do", "GET", params={"app_id": app_id})
 
-    def get_build_list(self, app_id, sandbox_id=None):
+    def get_build_list(self, app_id:int, sandbox_id: int=None):
         """Returns all builds for a given app ID."""
         if sandbox_id is None:
             params = {"app_id": app_id}
@@ -27,7 +27,7 @@ class XMLAPI():
             params = {"app_id": app_id, "sandbox_id": sandbox_id}
         return APIHelper()._xml_request(self.baseurl + "/4.0/getbuildlist.do", "GET", params=params)
     
-    def get_build_info(self, app_id, build_id=None, sandbox_id=None):
+    def get_build_info(self, app_id: int, build_id: int=None, sandbox_id: int=None):
         """Returns build info for a given build ID."""
         params = {"app_id": app_id}
         if sandbox_id != None:
@@ -36,11 +36,11 @@ class XMLAPI():
             params["build_id"] = build_id
         return APIHelper()._xml_request(self.baseurl + "/5.0/getbuildinfo.do", "GET", params=params)
 
-    def get_detailed_report(self, build_id):
+    def get_detailed_report(self, build_id: int):
         """Returns a detailed report for a given build ID."""
         return APIHelper()._xml_request(self.baseurl + "/5.0/detailedreport.do", "GET", params={"build_id": build_id})
 
-    def set_mitigation_info(self,build_id,flaw_id_list,action,comment):
+    def set_mitigation_info(self,build_id: int,flaw_id_list,action,comment: str):
         """Adds a new mitigation proposal, acceptance, rejection, or comment for a set of flaws for an application.
         Mitigation action types: ['appdesign','comment','fp','osenv','netenv','library','accepted','rejected','acceptrisk']
         """

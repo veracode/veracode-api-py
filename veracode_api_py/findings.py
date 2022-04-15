@@ -26,7 +26,7 @@ class Findings():
         uri = "appsec/v2/applications/{}/findings".format(app)
         return APIHelper()._rest_paged_request(uri,"GET","findings",request_params)
 
-    def get_static_flaw_info(self,app: UUID,issueid,sandbox: UUID=None):
+    def get_static_flaw_info(self,app: UUID,issueid: int,sandbox: UUID=None):
         if sandbox != None:
             uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info?context={}".format(app,issueid,sandbox)
         else:
@@ -34,11 +34,11 @@ class Findings():
 
         return APIHelper()._rest_request(uri,"GET")
 
-    def get_dynamic_flaw_info(self,app: UUID,issueid):
+    def get_dynamic_flaw_info(self,app: UUID,issueid: int):
         uri = "appsec/v2/applications/{}/findings/{}/dynamic_flaw_info".format(app,issueid)
         return APIHelper()._rest_request(uri,"GET")
 
-    def add_annotation(self,app: UUID,issue_list,comment,action,sandbox: UUID=None):
+    def add_annotation(self,app: UUID,issue_list,comment: str,action,sandbox: UUID=None):
         #pass issue_list as a list of issue ids
         uri = "appsec/v2/applications/{}/annotations".format(app)
 

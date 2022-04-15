@@ -17,7 +17,7 @@ class Analyses():
       request_params = {}
       return self._get_analyses(request_params)
 
-   def get_by_name(self,analysis_name):
+   def get_by_name(self,analysis_name: str):
       params = {"name": parse.quote(analysis_name)}
       return self._get_analyses(params)
 
@@ -25,7 +25,7 @@ class Analyses():
       params = {"target_url": target_url}
       return self._get_analyses(params)
 
-   def get_by_search_term(self,search_term):
+   def get_by_search_term(self,search_term: str):
       params = {"search_term": parse.quote(search_term)}
       return self._get_analyses(params)
 
@@ -46,12 +46,12 @@ class Analyses():
       uri = self.base_url + "/{}/scans".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET",'scans',{'page': 0})
 
-   def create(self,name,scans,business_unit_guid: UUID=None,email=None,owner=None):
+   def create(self,name: str,scans,business_unit_guid: UUID=None,email=None,owner: str=None):
       # basic create that adds only metadata. Use Scans().setup() to create a Scans object
       return self._create_or_update(method="CREATE",name=name,scans=scans,
                   business_unit_guid=business_unit_guid,email=email,owner=owner)
 
-   def update(self,guid: UUID,name,scans,business_unit_guid: UUID=None,email=None,owner=None):
+   def update(self,guid: UUID,name: str,scans,business_unit_guid: UUID=None,email=None,owner: str=None):
       return self._create_or_update(method="UPDATE",name=name,scans=scans,
                   business_unit_guid=business_unit_guid,email=email,owner=owner,guid=guid)
 
@@ -59,7 +59,7 @@ class Analyses():
       uri = self.base_url + "/{}/scanner_variables".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET", 'scanner_variables', {'page': 0})
 
-   def update_scanner_variable(self,analysis_guid: UUID,scanner_variable_guid: UUID,reference_key,value,description):
+   def update_scanner_variable(self,analysis_guid: UUID,scanner_variable_guid: UUID,reference_key: str,value: str,description: str):
       uri = self.base_url + '/{}/scanner_variables/{}'.format(analysis_guid,scanner_variable_guid)
       body = { 'reference_key': reference_key, 'value': value, 'description': description }
       return APIHelper()._rest_request(uri,"PUT",body)
@@ -77,7 +77,7 @@ class Analyses():
    def _get_analyses(self,params):
       return APIHelper()._rest_paged_request(self.base_url,"GET","analyses",params=params)
 
-   def _create_or_update(self,method,name,scans,business_unit_guid: UUID=None,email=None,owner=None,guid: UUID=None):
+   def _create_or_update(self,method,name: str,scans,business_unit_guid: UUID=None,email=None,owner: str=None,guid: UUID=None):
       if method == 'CREATE':
          uri = self.base_url
          httpmethod = 'POST'
@@ -128,7 +128,7 @@ class Scans():
       uri = self.base_url + "/{}/scanner_variables".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET",'scanner_variables',{'page': 0})
 
-   def update_scanner_variable(self,scan_guid: UUID,scanner_variable_guid: UUID,reference_key,value,description):
+   def update_scanner_variable(self,scan_guid: UUID,scanner_variable_guid: UUID,reference_key: str,value: str,description: str):
       uri = self.base_url + '/{}/scanner_variables/{}'.format(scan_guid,scanner_variable_guid)
       body = { 'reference_key': reference_key, 'value': value, 'description': description }
       return APIHelper()._rest_request(uri,"PUT",body)
@@ -192,7 +192,7 @@ class CodeGroups():
    def get_all(self):
       return APIHelper()._rest_request(self.base_url,'GET')
 
-   def get(self,name):
+   def get(self,name: str):
       uri = self.base_url + '/{}'.format(name)
       return APIHelper()._rest_request(uri,'GET')
 
@@ -208,7 +208,7 @@ class ScannerVariables():
    def get_all(self):
       return APIHelper()._rest_paged_request(self.base_url,"GET",'scanner_variables',{'page': 0})
 
-   def create(self,reference_key,value,description):
+   def create(self,reference_key: str,value: str,description: str):
       payload = {'reference_key':reference_key, 'value': value, 'description': description}
       return APIHelper()._rest_request(self.base_url,'POST',json.dumps(payload))
 
@@ -216,7 +216,7 @@ class ScannerVariables():
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
-   def update(self,guid: UUID,reference_key,value,description):
+   def update(self,guid: UUID,reference_key: str,value: str,description: str):
       uri = self.base_url + '/{}'.format(guid)
       body = { 'reference_key': reference_key, 'value': value, 'description': description }
       return APIHelper()._rest_request(uri,"PUT",body)
@@ -232,7 +232,7 @@ class ScanCapacitySummary():
 
 class DynUtils():
 
-   def setup_user_agent(self,custom_header,type):
+   def setup_user_agent(self,custom_header: str,type):
       return { "custom_header": custom_header, "type": type}
 
    def setup_custom_host(self,host_name,ip_address):
@@ -245,7 +245,7 @@ class DynUtils():
       # use to format any URL being made
       return { 'url': url, 'directory_restriction_type': directory_restriction_type, 'http_and_https': http_and_https}
 
-   def setup_scan_setting(self,blocklist_configs:list,custom_hosts:List, user_agent:None):
+   def setup_scan_setting(self,blocklist_configs:list,custom_hosts:List, user_agent: str=None):
       payload = {}
       
       if len(blocklist_configs) > 0:
@@ -259,19 +259,19 @@ class DynUtils():
 
       return { 'scan_setting': payload }
 
-   def setup_scan_contact_info(self,email,first_and_last_name,telephone):
+   def setup_scan_contact_info(self,email,first_and_last_name: str,telephone):
       return {'scan_contact_info': {'email': email, 'first_and_last_name': first_and_last_name, 'telephone': telephone}}
 
-   def setup_crawl_script(self,script_body,script_type='SELENIUM'):
+   def setup_crawl_script(self,script_body: str,script_type='SELENIUM'):
       return { 'crawl_script_data': { 'script_body': script_body, 'script_type': script_type}}
 
    def setup_crawl_configuration(self,scripts:List,disabled=False):
       return { 'crawl_configuration': { 'disabled': disabled, 'scripts': scripts}}
 
-   def setup_login_logout_script(self,script_body,script_type='SELENIUM'):
+   def setup_login_logout_script(self,script_body: str,script_type='SELENIUM'):
       return { 'script_body': script_body, 'script_type': script_type}
 
-   def setup_auth(self,authtype,username,password,domain=None,base64_pkcs12=None,cert_name=None, login_script_data=None, logout_script_data=None):
+   def setup_auth(self,authtype,username: str,password: str,domain=None,base64_pkcs12=None,cert_name: str=None, login_script_data: str=None, logout_script_data: str=None):
       payload = {}
       if authtype == 'AUTO':
          payload.update({'AUTO': {'authtype': authtype, 'username': username, 'password': password}})
