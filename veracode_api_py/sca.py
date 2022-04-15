@@ -15,13 +15,13 @@ class Workspaces():
           request_params = {}
           return APIHelper()._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
 
-     def get_by_name(self,name):
+     def get_by_name(self,name: str):
           #Does a name filter on the workspaces list. Note that this is a partial match. Only returns the first match
           name = parse.quote(name) #urlencode any spaces or special characters
           request_params = {'filter[workspace]': name}
           return APIHelper()._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
 
-     def create(self,name):
+     def create(self,name: str):
           #pass payload with name, return guid to workspace
           payload = json.dumps({"name": name})
           r = APIHelper()._rest_request(self.sca_base_url,"POST",body=payload,fullresponse=True)
@@ -59,7 +59,7 @@ class Workspaces():
           uri = self.sca_base_url + '/{}/agents/{}'.format(workspace_guid,agent_guid)
           return APIHelper()._rest_request(uri,"GET")
 
-     def create_agent(self,workspace_guid: UUID,name,agent_type='CLI'):
+     def create_agent(self,workspace_guid: UUID,name: str,agent_type='CLI'):
           if agent_type not in Constants().AGENT_TYPE:
                raise ValueError("{} is not in the list of valid agent types ({})".format(agent_type,Constants().AGENT_TYPE))
           uri = self.sca_base_url + '/{}/agents'.format(workspace_guid)
@@ -94,22 +94,22 @@ class Workspaces():
           uri = self.sca_base_url + '/issues/{}'.format(issue_id)
           return APIHelper()._rest_request(uri,"GET")
 
-     def get_libraries(self,workspace_guid: UUID,unmatched):
+     def get_libraries(self,workspace_guid: UUID,unmatched: bool):
           if unmatched:
                uri = self.sca_base_url + '/{}/libraries/unmatched'.format(workspace_guid)
           else:
                uri = self.sca_base_url + '/{}/libraries'.format(workspace_guid)
           return APIHelper()._rest_paged_request(uri,"GET",'libraries',{})
 
-     def get_library(self,library_id):
+     def get_library(self,library_id: str):
           uri = "srcclr/v3/libraries/{}".format(library_id)
           return APIHelper()._rest_request(uri,"GET")
 
-     def get_vulnerability(self,vulnerability_id):
+     def get_vulnerability(self,vulnerability_id: int):
           uri = "srcclr/v3/vulnerabilities/{}".format(vulnerability_id)
           return APIHelper()._rest_request(uri,"GET")
 
-     def get_license(self,license_id):
+     def get_license(self,license_id: str):
           uri = "srcclr/v3/licenses/{}".format(license_id)
           return APIHelper()._rest_request(uri,"GET")
 
@@ -135,7 +135,7 @@ class Workspaces():
 class ComponentActivity():
      component_base_uri = "srcclr/v3/component-activity"
 
-     def get(self,component_id):
+     def get(self,component_id: str):
           return APIHelper()._rest_request(self.component_base_uri+"/{}".format(component_id),"GET")
 
 class SBOM():

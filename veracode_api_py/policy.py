@@ -1,6 +1,7 @@
 #policy.py - API class for Policy API calls
 
 import json
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -9,20 +10,20 @@ class Policies():
     def get_all (self):
         return APIHelper()._rest_paged_request("appsec/v1/policies","GET","policy_versions",{"page": 0})
     
-    def get (self,guid):
+    def get (self,guid: UUID):
         uri = "appsec/v1/policies/{}".format(guid)
         return APIHelper()._rest_request(uri,"GET")
 
-    def delete (self,guid):
+    def delete (self,guid: UUID):
         uri = "appsec/v1/policies/{}".format(guid)
         return APIHelper()._rest_request(uri,"DELETE")
 
-    def create (self, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
+    def create (self, name: str, description: str, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
         if grace_periods == None:
             grace_periods = {}
         return self._create_or_update("CREATE",name,description,vendor_policy,finding_rules,scan_frequency_rules,grace_periods)
 
-    def update(self,guid, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
+    def update(self,guid: UUID, name: str, description: str, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None):
         if grace_periods == None:
             grace_periods = {}
         return self._create_or_update("UPDATE",name,description,vendor_policy,finding_rules,scan_frequency_rules,grace_periods,guid)
@@ -40,7 +41,7 @@ class Policies():
         scan_frequency_rule['frequency'] = frequency
         return scan_frequency_rule
 
-    def format_grace_periods(self, sev5, sev4, sev3, sev2, sev1, sev0, score, sca_blocklist):
+    def format_grace_periods(self, sev5: int, sev4: int, sev3: int, sev2: int, sev1: int, sev0: int, score: int, sca_blocklist: int):
         grace_periods = {}
         grace_periods["sev5_grace_period"] = sev5
         grace_periods["sev4_grace_period"] = sev4
@@ -52,7 +53,7 @@ class Policies():
         grace_periods["sca_blacklist_grace_period"] = sca_blocklist
         return grace_periods
 
-    def _create_or_update(self, method, name, description, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None, guid=None):
+    def _create_or_update(self, method, name: str, description: str, vendor_policy=False, finding_rules=[], scan_frequency_rules=[], grace_periods=None, guid: UUID=None):
         if grace_periods == None:
             grace_periods = {}
         if method == 'CREATE':

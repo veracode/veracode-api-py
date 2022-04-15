@@ -2,6 +2,7 @@
 
 import json
 from urllib import parse
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -22,34 +23,34 @@ class Collections():
       request_params = {}
       return self._get_collections(request_params)
 
-   def get_by_name(self,collection_name):
+   def get_by_name(self,collection_name: str):
       params = {"name": parse.quote(collection_name)}
       return self._get_collections(params)
 
-   def get_by_business_unit(self,business_unit_name):
+   def get_by_business_unit(self,business_unit_name: str):
       params = {"business_unit": parse.quote(business_unit_name)}
       return self._get_collections(params)
 
    def get_statistics(self):
       return APIHelper()._rest_request("appsec/v1/collections/statistics","GET")
 
-   def get(self,guid):
+   def get(self,guid: UUID):
       uri = "appsec/v1/collections/{}".format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
-   def get_assets(self,guid):
+   def get_assets(self,guid: UUID):
       uri = "appsec/v1/collections/{}/assets".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET","assets",params={})
 
-   def create(self,name,description="",tags='',business_unit_guid=None,custom_fields=[],assets=[]):
+   def create(self,name: str,description: str="",tags='',business_unit_guid: UUID=None,custom_fields=[],assets=[]):
       return self._create_or_update(method="CREATE",name=name,description=description,
-                  tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=None)
+                  tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets)
 
-   def update(self,guid,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[]):
+   def update(self,guid: UUID,name: str,description: str="",tags: str="",business_unit_guid: UUID=None,custom_fields=[],assets=[]):
       return self._create_or_update(method="UPDATE",name=name,description=description,
                   tags=tags,business_unit_guid=business_unit_guid,custom_fields=custom_fields,assets=assets,guid=guid)
 
-   def delete(self,guid):
+   def delete(self,guid: UUID):
       uri = "appsec/v1/collections/{}".format(guid)
       return APIHelper()._rest_request(uri,"DELETE")
 
@@ -58,7 +59,7 @@ class Collections():
    def _get_collections(self,params):
       return APIHelper()._rest_paged_request("appsec/v1/collections","GET","collections",params=params)
 
-   def _create_or_update(self,method,name,description="",tags="",business_unit_guid=None,custom_fields=[],assets=[],guid=None):
+   def _create_or_update(self,method,name: str,description: str="",tags: str="",business_unit_guid: UUID=None,custom_fields=[],assets=[],guid: UUID=None):
       if method == 'CREATE':
          uri = 'appsec/v1/collections'
          httpmethod = 'POST'

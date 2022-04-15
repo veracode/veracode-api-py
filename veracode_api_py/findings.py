@@ -1,6 +1,7 @@
 #findings.py - API class for Findings API and related calls
 
 import json
+from uuid import UUID
 
 from .apihelper import APIHelper
 
@@ -8,7 +9,7 @@ LINE_NUMBER_SLOP = 3 #adjust to allow for line number movement
 
 class Findings():
     
-    def get_findings(self,app,scantype='STATIC',annot='TRUE',request_params=None,sandbox=None):
+    def get_findings(self,app: UUID,scantype='STATIC',annot='TRUE',request_params=None,sandbox: UUID=None):
         #Gets a list of  findings for app using the Veracode Findings API
         if request_params == None:
             request_params = {}
@@ -25,7 +26,7 @@ class Findings():
         uri = "appsec/v2/applications/{}/findings".format(app)
         return APIHelper()._rest_paged_request(uri,"GET","findings",request_params)
 
-    def get_static_flaw_info(self,app,issueid,sandbox=None):
+    def get_static_flaw_info(self,app: UUID,issueid: int,sandbox: UUID=None):
         if sandbox != None:
             uri = "appsec/v2/applications/{}/findings/{}/static_flaw_info?context={}".format(app,issueid,sandbox)
         else:
@@ -33,11 +34,11 @@ class Findings():
 
         return APIHelper()._rest_request(uri,"GET")
 
-    def get_dynamic_flaw_info(self,app,issueid):
+    def get_dynamic_flaw_info(self,app: UUID,issueid: int):
         uri = "appsec/v2/applications/{}/findings/{}/dynamic_flaw_info".format(app,issueid)
         return APIHelper()._rest_request(uri,"GET")
 
-    def add_annotation(self,app,issue_list,comment,action,sandbox=None):
+    def add_annotation(self,app: UUID,issue_list,comment: str,action,sandbox: UUID=None):
         #pass issue_list as a list of issue ids
         uri = "appsec/v2/applications/{}/annotations".format(app)
 
@@ -160,7 +161,7 @@ class Findings():
         return findings
 
 class SummaryReport():
-    def get_summary_report(self,app,sandbox=None):
+    def get_summary_report(self,app: UUID,sandbox: UUID=None):
         if sandbox != None:
             uri = "appsec/v2/applications/{}/summary_report?context={}".format(app,sandbox)
         else:
