@@ -335,6 +335,9 @@ class VeracodeAPI:
     def get_sbom(self,app_guid: UUID):
         return SBOM().get(app_guid)
 
+    def get_sbom_project(self,project_guid: UUID):
+        return SBOM().get_for_project(project_guid)
+
     #dynamic APIs
 
     def get_analyses(self):

@@ -142,4 +142,10 @@ class SBOM():
      entity_base_uri = "srcclr/sbom/v1/targets"
 
      def get(self,app_guid: UUID):
-          return APIHelper()._rest_request(self.entity_base_uri+"/{}/cyclonedx".format(app_guid),"GET",params={"type":"application"})
+          return self._get_sbom(guid=app_guid,sbom_type='application')
+
+     def get_for_project(self,project_guid: UUID):
+          return self._get_sbom(guid=project_guid,sbom_type='agent')
+
+     def _get_sbom(self,guid: UUID,sbom_type):
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/cyclonedx".format(guid),"GET",params={"type":sbom_type})
