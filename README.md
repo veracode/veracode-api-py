@@ -302,4 +302,4 @@ _Note_: You can also access these methods from the `DynUtils` object.
 1. Different API calls require different roles. Consult the [Veracode Help Center](https://help.veracode.com/go/c_role_permissions).
 2. SCA APIs must be called with a human user.
 3. This library does not include a complete set of Veracode API methods. In particular, it only provides a handful of XML API methods.
-4. Contributions are welcome.
+4. Contributions are welcome. See the [Contributions guidelines](https://github.com/tjarrettveracode/veracode-api-py/blob/main/CONTRIBUTING.md).
