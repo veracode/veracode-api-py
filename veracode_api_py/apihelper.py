@@ -143,7 +143,7 @@ class APIHelper():
                 if r.status_code == 204:
                     # retry after wait
                     time.sleep(self.retry_seconds)
-                    return self._request(url, method, params)
+                    return self._xml_request(url,method,params)
                 elif r.content is None:
                     logger.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
                                  .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers,
