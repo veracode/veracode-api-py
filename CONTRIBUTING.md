@@ -19,3 +19,6 @@ Please follow the instructions below to make a contribution.
 - [Mastermargie](https://github.com/mastermargie)
 - [Billy Tinnes](https://github.com/DaYuM)
 - [Dennis Medeiros](https://github.com/dennismedeiros)
+- [Nazareno Furchì](https://github.com/nazafur)
+- [aszaryk](https://github.com/aszaryk)
+- [Gabriel Marquet](https://github.com/Gby56)
