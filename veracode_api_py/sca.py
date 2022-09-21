@@ -44,9 +44,9 @@ class Workspaces():
           uri = self.sca_base_url + '/{}/projects/{}'.format(workspace_guid,project_guid)
           return APIHelper()._rest_request(uri,"GET")
 
-     def get_project_issues(self,workspace_guid: UUID,project_guid: UUID):
+     def get_project_issues(self,workspace_guid: UUID,project_guid: UUID, params={}):
           uri = self.sca_base_url + '/{}/projects/{}/issues'.format(workspace_guid,project_guid)
-          return APIHelper()._rest_paged_request(uri,"GET","issues",{})
+          return APIHelper()._rest_paged_request(uri,"GET","issues", params)
 
      def get_project_libraries(self,workspace_guid: UUID,project_guid: UUID):
           uri = self.sca_base_url + '/{}/projects/{}/libraries'.format(workspace_guid,project_guid)
