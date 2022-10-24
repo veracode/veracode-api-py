@@ -317,8 +317,8 @@ class VeracodeAPI:
     def revoke_agent_token(self, workspace_guid: UUID, agent_guid: UUID, token_id: UUID):
         return Workspaces().revoke_agent_token(workspace_guid, agent_guid, token_id)
 
-    def get_issues(self, workspace_guid: UUID):
-        return Workspaces().get_issues(workspace_guid)
+    def get_issues(self, workspace_guid: UUID, params={}):
+        return Workspaces().get_issues(workspace_guid, params)
 
     def get_issue(self, issue_id: UUID):
         return Workspaces().get_issues(issue_id)
