@@ -86,9 +86,9 @@ class Workspaces():
           uri = self.sca_base_url + '/{}/agents/{}/tokens/{}'.format(workspace_guid,agent_guid,token_id)
           return APIHelper()._rest_request(uri,"DELETE")
 
-     def get_issues(self,workspace_guid: UUID):
+     def get_issues(self,workspace_guid: UUID, params={}):
           uri = self.sca_base_url + '/{}/issues'.format(workspace_guid)
-          return APIHelper()._rest_paged_request(uri,"GET","issues",{})
+          return APIHelper()._rest_paged_request(uri,"GET","issues", params)
 
      def get_issue(self,issue_id: UUID):
           uri = self.sca_base_url + '/issues/{}'.format(issue_id)
