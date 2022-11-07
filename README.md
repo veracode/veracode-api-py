@@ -199,7 +199,7 @@ _Note_: You can also access this method from the `APICredentials` object.
 - `get_agent_token(workspace_guid, agent_guid, token_id)`: get the token ID identified by `token_id`.
 - `regenerate_agent_token(workspace_guid, agent_guid)`: regenerate the token for the agent identified by `agent_id`.
 - `revoke_agent_token(workspace_guid, agent_guid, token_id)`: revoke the token identified by `token_id`.
-- `get_issues(workspace_guid)`: get the list of issues for the workspace identified by `workspace_guid`.
+- `get_issues(workspace_guid, branch(opt), direct(opt), created_after(opt), ignored(opt), vuln_method(opt), project_id (opt array))`: get the list of issues for the workspace identified by `workspace_guid`.
 - `get_issue(issue_id)`: get the issue identified by `issue_id`.
 - `get_scan(scan_id)`: get the scan identified by `scan_id` (returned in `get_issue`).
 - `get_libraries(workspace_guid,unmatched(bool,opt))`: get the libraries associated with the workspace identified by `workspace_guid`.
