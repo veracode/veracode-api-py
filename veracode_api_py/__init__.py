@@ -8,3 +8,4 @@ from veracode_api_py.healthcheck import Healthcheck
 from veracode_api_py.identity import Users, Teams, BusinessUnits, APICredentials, Roles
 from veracode_api_py.sca import Workspaces, ComponentActivity, SBOM
 from veracode_api_py.exceptions import VeracodeError, VeracodeAPIError
+from veracode_api_py.xmlapi import XMLAPI

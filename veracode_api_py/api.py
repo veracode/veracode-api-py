@@ -72,6 +72,21 @@ class VeracodeAPI:
     def upload_file(self, app_id, file, sandbox_id=None, save_as=None):
         return XMLAPI().upload_file(app_id, file, sandbox_id, save_as)
 
+    def get_file_list(self,app_id: int, build_id=None, sandbox_id=None):
+        return XMLAPI().get_file_list(app_id, build_id=build_id, sandbox_id=sandbox_id)
+
+    def remove_file(self, app_id: int, file_id: int, sandbox_id=None):
+        return XMLAPI().remove_file(app_id, file_id=file_id,sandbox_id=sandbox_id)
+
+    def begin_prescan(self, app_id: int, sandbox_id=None, auto_scan=None,scan_all_nonfatal_top_level_modules=None):
+        return XMLAPI().begin_prescan(app_id=app_id,sandbox_id=sandbox_id, auto_scan=auto_scan,scan_all_nonfatal_top_level_modules=scan_all_nonfatal_top_level_modules)
+
+    def get_prescan_results(self,app_id: int, build_id=None, sandbox_id=None):
+        return XMLAPI().get_prescan_results(app_id=app_id,build_id=build_id,sandbox_id=sandbox_id)
+
+    def begin_scan(self, app_id: int, modules=None, scan_all_top_level_modules=None,scan_selected_modules=None,scan_previously_selected_modules=None,sandbox_id=None):
+        return XMLAPI().begin_scan(app_id=app_id, modules=modules,scan_all_top_level_modules=scan_all_top_level_modules,scan_selected_modules=scan_selected_modules,scan_previously_selected_modules=scan_previously_selected_modules,sandbox_id=sandbox_id)
+
     # rest apis
 
     ## Healthcheck APIs
