@@ -1,0 +1,35 @@
+# This workflow retrieves the SBOM for the application being scanned and saves it as an artifact in the pipeline.
+# Required secrets (also used by the pipelinescan-*.yml workflows):
+# VERACODE_API_ID, VERACODE_API_KEY: API credentials for a Veracode user
+# VERACODE_APP_ID: Numeric application ID for the application profile for this project
+
+---
+name: SBOM
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sbom:
+    name: setup
+    runs-on: ubuntu-latest
+    container: 
+      image: veracode/api-signing:latest
+    env:
+      VERACODE_API_KEY_ID: ${{ secrets.VERACODE_API_ID }}
+      VERACODE_API_KEY_SECRET : ${{ secrets.VERACODE_API_KEY }}
+
+    steps:
+      - name: generate-sbom
+        run: | 
+          cd /tmp
+          export LEGACYID=${{ secrets.VERACODE_APP_ID }}
+          appguid=$(http --auth-type=veracode_hmac GET "https://api.veracode.com/appsec/v1/applications?legacy_id=${LEGACYID}" | jq -r '._embedded.applications[0].guid')
+          echo GUID: ${appguid}
+          http --auth-type=veracode_hmac GET "https://api.veracode.com/srcclr/sbom/v1/targets/${appguid}/cyclonedx?type=application" > sbom.json
+          ls -l
+      - name: save sbom file
+        uses: actions/upload-artifact@v3
+        with:
+          name: sbom
+          path: /tmp/sbom.json
