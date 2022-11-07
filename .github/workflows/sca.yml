@@ -23,7 +23,7 @@ jobs:
   opensource-scan:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: SCA Agent scan
       env: # Set the secret as an input
         SRCCLR_API_TOKEN: ${{ secrets.SRCCLR_API_TOKEN }}
