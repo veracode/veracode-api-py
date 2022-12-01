@@ -34,8 +34,11 @@ class Workspaces():
      def delete(self,workspace_guid: UUID):
           return APIHelper()._rest_request(self.sca_base_url + "/{}".format(workspace_guid),"DELETE") 
 
-     def get_teams(self):
-          return APIHelper()._rest_paged_request("srcclr/v3/teams","GET","teams",{})
+     def get_teams(self, workspace_guid: UUID=None):
+          if workspace_guid:
+               return APIHelper()._rest_request(self.sca_base_url + "/{}/teams".format(workspace_guid),"GET")
+          else:
+               return APIHelper()._rest_paged_request("srcclr/v3/teams","GET","teams",{})
 
      def get_projects(self,workspace_guid: UUID):
           return APIHelper()._rest_paged_request(self.sca_base_url + '/{}/projects'.format(workspace_guid),"GET","projects",{})

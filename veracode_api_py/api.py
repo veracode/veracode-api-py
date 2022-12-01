@@ -296,6 +296,9 @@ class VeracodeAPI:
     def add_workspace_team(self, workspace_guid: UUID, team_id: UUID):
         return Workspaces().add_team(workspace_guid, team_id)
 
+    def get_workspace_teams(self, workspace_guid: UUID=None):
+        return Workspaces().get_teams(workspace_guid=workspace_guid)
+
     def delete_workspace(self, workspace_guid: UUID):
         return Workspaces().delete(workspace_guid)
 

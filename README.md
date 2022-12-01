@@ -189,6 +189,7 @@ _Note_: You can also access this method from the `APICredentials` object.
 - `get_workspace_by_name(name)`: get a list of SCA Agent workspaces whose name partially matches `name`.
 - `create_workspace(name)`: create an SCA Agent workspace named `name`. Returns the GUID for the workspace.
 - `add_workspace_team(workspace_guid,team_id)`: add the team identified by `team_id` (int) to the workspace identified by `workspace_guid`.
+- `get_workspace_teams(workspace_guid(opt))`: get a list of teams. If no `workspace_guid` is provided, return all available teams.
 - `delete_workspace(workspace_guid)`: delete the workspace identified by `workspace_guid`.
 - `get_projects(workspace_guid)`: get a list of projects for the workspace identified by `workspace_guid`.
 - `get_agents(workspace_guid)`: get a list of agents for the workspace identified by `workspace_guid`.
