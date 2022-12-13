@@ -31,6 +31,9 @@ class Workspaces():
      def add_team(self,workspace_guid: UUID,team_id: UUID):
           return APIHelper()._rest_request(self.sca_base_url + "/{}/teams/{}".format(workspace_guid,team_id),"PUT")
 
+     def remove_team(self,workspace_guid: UUID,team_id: UUID):
+          return APIHelper()._rest_request(self.sca_base_url + "/{}/teams/{}".format(workspace_guid,team_id),"DELETE")
+
      def delete(self,workspace_guid: UUID):
           return APIHelper()._rest_request(self.sca_base_url + "/{}".format(workspace_guid),"DELETE") 
 
