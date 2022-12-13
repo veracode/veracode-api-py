@@ -25,10 +25,9 @@ class APIHelper():
     api_key_secret = None
     region = None
 
-    def __init__(self, proxies=None, debug=False):
+    def __init__(self, debug=False):
         self.baseurl = self._get_baseurl()
         requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
-        self.proxies = proxies
         self.base_rest_url = self._get_baseresturl()
         self.retry_seconds = 120
         self.connect_error_msg = "Connection Error"
@@ -74,7 +73,7 @@ class APIHelper():
                 request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),
                                            headers=myheaders)
                 prepared_request = request.prepare()
-                r = session.send(prepared_request, proxies=self.proxies)
+                r = session.send(prepared_request)
             elif method == "POST":
                 r = requests.post(url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,
                                   data=body)
@@ -138,7 +137,7 @@ class APIHelper():
             request = requests.Request(method, url, params=params, files=files,
                                        auth=RequestsAuthPluginVeracodeHMAC(), headers={"User-Agent": "api.py"})
             prepared_request = request.prepare()
-            r = session.send(prepared_request, proxies=self.proxies)
+            r = session.send(prepared_request)
             if 200 <= r.status_code <= 299:
                 if r.status_code == 204:
                     # retry after wait

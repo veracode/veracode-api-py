@@ -33,10 +33,9 @@ from .xmlapi import XMLAPI
 
 class VeracodeAPI:
 
-    def __init__(self, proxies=None):
+    def __init__(self):
         self.baseurl = 'https://analysiscenter.veracode.com/api'
         requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
-        self.proxies = proxies
         self.retry_seconds = 120
         self.connect_error_msg = "Connection Error"
 
