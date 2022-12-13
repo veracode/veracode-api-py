@@ -241,6 +241,9 @@ class VeracodeAPI:
 
     def get_teams(self, all_for_org=False):
         return Teams().get_all(all_for_org)
+    
+    def get_team_by_id(self, team_id):
+        return Teams().get_by_id(team_id)
 
     def create_team(self, team_name, business_unit: UUID = None, members=[]):
         return Teams().create(team_name, business_unit, members)
