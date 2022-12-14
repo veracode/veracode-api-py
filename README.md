@@ -159,7 +159,7 @@ _Note_: You can also access this method from the `Teams` object.
 
 - `get_teams(all_for_org)`: get the list of teams for the user, or (if `all_for_org` is `True`) all teams in the organization.
 - `create_team(team_name,business_unit,members)`: create a team named `team_name`. Optionally pass the business unit guid and/or a list of user names to add to the team.
-- `update_team(team_guid,team_name(opt),business_unit(opt),members(opt))`: update the team identified by `team_guid` with the provided information.
+- `update_team(team_guid,team_name(opt),business_unit(opt),members(opt), incremental=True, partial=True)`: update the team identified by `team_guid` with the provided information. Incremental and partial can be set, to remove someone from a team, you should set incremental to False and send the whole member list again, to remove the user.
 - `delete_team(team_guid)`: delete the team identified by `team_guid`.
 
 #### Business Units
