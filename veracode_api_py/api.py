@@ -245,8 +245,8 @@ class VeracodeAPI:
     def create_team(self, team_name, business_unit: UUID = None, members=[]):
         return Teams().create(team_name, business_unit, members)
 
-    def update_team(self, team_guid: UUID, team_name="", business_unit: UUID = None, members=[]):
-        return Teams().update(team_guid, team_name, business_unit, members)
+    def update_team(self, team_guid: UUID, team_name="", business_unit: UUID = None, members=[], incremental=True, partial=True):
+        return Teams().update(team_guid, team_name, business_unit, members, incremental, partial)
 
     def delete_team(self, team_guid: UUID):
         return Teams().delete(team_guid)
