@@ -147,7 +147,7 @@ class Teams():
          request_params = {'page': 0} #initialize the page request
       return APIHelper()._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
 
-   def get_by_id(self, team_id):
+   def get(self, team_id):
       uri = "api/authn/v2/teams/{}".format(team_id)
       return APIHelper()._rest_request(uri,"GET")
    
