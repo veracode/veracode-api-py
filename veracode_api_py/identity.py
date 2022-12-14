@@ -147,6 +147,10 @@ class Teams():
          request_params = {'page': 0} #initialize the page request
       return APIHelper()._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
 
+   def get(self, team_id):
+      uri = "api/authn/v2/teams/{}".format(team_id)
+      return APIHelper()._rest_request(uri,"GET")
+   
    def create(self, team_name: str, business_unit=None, members=[]):        
       team_def = {'team_name': team_name}
       
