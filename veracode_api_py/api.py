@@ -367,8 +367,8 @@ class VeracodeAPI:
     def get_component_activity(self, component_id):
         return ComponentActivity().get(component_id)
 
-    def get_sbom(self, app_guid: UUID):
-        return SBOM().get(app_guid)
+    def get_sbom(self, app_guid: UUID,format='cyclonedx',linked=False):
+        return SBOM().get(app_guid=app_guid,format=format,linked=linked)
 
     def get_sbom_project(self, project_guid: UUID):
         return SBOM().get_for_project(project_guid)

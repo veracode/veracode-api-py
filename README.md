@@ -216,7 +216,7 @@ _Note_: You can also access this method from the `APICredentials` object.
 
 ''Note'': You can also access these methods from the `SBOM` object.
 
-- `get_sbom(app_guid)`: generate an SBOM in CycloneDX format for the application represented by `app_guid`. Get the `app_guid` from the Applications API.
+- `get_sbom(app_guid,format(opt),linked(opt))`: generate an SBOM in either CycloneDX (default) or SPDX format for the application represented by `app_guid`. If `linked` is `True`, returns an SBOM based on the linked SCA Agent project. Get the `app_guid` from the Applications API.
 - `get_sbom_project(project_guid)`: generate an SBOM in CycloneDX format for the SCA Agent project represented by `project_guid`. Get the `project_guid` from the SCA Agent API (e.g. `get_projects(workspace_guid)`).
 
 #### Dynamic Analysis
