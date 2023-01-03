@@ -341,7 +341,7 @@ class VeracodeAPI:
         return Workspaces().revoke_agent_token(workspace_guid, agent_guid, token_id)
 
     def get_issues(self, workspace_guid: UUID, branch=None, created_after=None, direct=None, ignored=None, vuln_methods=None, project_id=None):
-        return Workspaces().get_issues(workspace_guid, branch=branch,created_after=created_after,direct=direct,ignored=ignored,vuln_methods=vuln_methods,project_id=None)
+        return Workspaces().get_issues(workspace_guid, branch=branch,created_after=created_after,direct=direct,ignored=ignored,vuln_methods=vuln_methods,project_id=project_id)
 
     def get_issue(self, issue_id: UUID):
         return Workspaces().get_issues(issue_id)
