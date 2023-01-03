@@ -159,12 +159,19 @@ class ComponentActivity():
 
 class SBOM():
      entity_base_uri = "srcclr/sbom/v1/targets"
+     valid_formats = ['cyclonedx','spdx']
 
-     def get(self,app_guid: UUID):
-          return self._get_sbom(guid=app_guid,sbom_type='application')
+     def get(self,app_guid: UUID, format='cyclonedx',linked=False):
+          return self._get_sbom(guid=app_guid,format=format,sbom_type='application',linked=linked)
 
      def get_for_project(self,project_guid: UUID):
-          return self._get_sbom(guid=project_guid,sbom_type='agent')
+          #currently projects only support cyclonedx format and linked is not relevant
+          return self._get_sbom(guid=project_guid,format='cyclonedx',sbom_type='agent',linked=False)
 
-     def _get_sbom(self,guid: UUID,sbom_type):
-          return APIHelper()._rest_request(self.entity_base_uri+"/{}/cyclonedx".format(guid),"GET",params={"type":sbom_type})
+     def _get_sbom(self,guid: UUID,format,sbom_type,linked):
+          if format not in self.valid_formats:
+               return  
+          params={"type":sbom_type}
+          if linked:
+               params["linked"] = linked
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/{}".format(guid,format),"GET",params=params)
