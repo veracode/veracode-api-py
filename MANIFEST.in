@@ -1,0 +1,6 @@
+# MANIFEST.in
+graft veracode_api_py
+graft samples
+
+include README.md
+include requirements.txt
