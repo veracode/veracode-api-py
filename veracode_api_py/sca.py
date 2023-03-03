@@ -8,7 +8,8 @@ from .apihelper import APIHelper
 from .constants import Constants
 
 class Workspaces():
-     sca_base_url = "srcclr/v3/workspaces"   
+     sca_base_url = "srcclr/v3/workspaces"
+     sca_issues_url = "srcclr/v3/issues"   
 
      def get_all(self):
           #Gets existing workspaces
@@ -110,7 +111,7 @@ class Workspaces():
           return APIHelper()._rest_paged_request(uri,"GET","issues",params)
 
      def get_issue(self,issue_id: UUID):
-          uri = self.sca_base_url + '/issues/{}'.format(issue_id)
+          uri = self.sca_issues_url + '/{}'.format(issue_id)
           return APIHelper()._rest_request(uri,"GET")
 
      def get_libraries(self,workspace_guid: UUID,unmatched: bool):
