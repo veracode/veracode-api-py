@@ -344,7 +344,7 @@ class VeracodeAPI:
         return Workspaces().get_issues(workspace_guid, branch=branch,created_after=created_after,direct=direct,ignored=ignored,vuln_methods=vuln_methods,project_id=project_id)
 
     def get_issue(self, issue_id: UUID):
-        return Workspaces().get_issues(issue_id)
+        return Workspaces().get_issue(issue_id)
 
     def get_libraries(self, workspace_guid: UUID, unmatched=False):
         return Workspaces().get_libraries(workspace_guid, unmatched)
