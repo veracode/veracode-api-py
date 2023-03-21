@@ -162,17 +162,18 @@ class SBOM():
      entity_base_uri = "srcclr/sbom/v1/targets"
      valid_formats = ['cyclonedx','spdx']
 
-     def get(self,app_guid: UUID, format='cyclonedx',linked=False):
-          return self._get_sbom(guid=app_guid,format=format,sbom_type='application',linked=linked)
+     def get(self,app_guid: UUID, format='cyclonedx',linked=False,vulnerability=True,dependency=True):
+          return self._get_sbom(guid=app_guid,format=format,sbom_type='application',linked=linked,vulnerability=vulnerability,dependency=dependency)
 
-     def get_for_project(self,project_guid: UUID):
-          #currently projects only support cyclonedx format and linked is not relevant
-          return self._get_sbom(guid=project_guid,format='cyclonedx',sbom_type='agent',linked=False)
+     def get_for_project(self,project_guid: UUID, format='cyclonedx', vulnerability=True,dependency=True):
+          return self._get_sbom(guid=project_guid,format=format,sbom_type='agent',linked=False,vulnerability=vulnerability,dependency=dependency)
 
-     def _get_sbom(self,guid: UUID,format,sbom_type,linked):
+     def _get_sbom(self,guid: UUID,format,sbom_type,linked,vulnerability,dependency):
           if format not in self.valid_formats:
                return  
-          params={"type":sbom_type}
+          params={"type":sbom_type,"vulnerability": vulnerability}
           if linked:
                params["linked"] = linked
+          if format=='spdx': #currently only supported for SPDX SBOMs
+               params["dependency"] = dependency
           return APIHelper()._rest_request(self.entity_base_uri+"/{}/{}".format(guid,format),"GET",params=params)

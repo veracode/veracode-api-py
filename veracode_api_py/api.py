@@ -367,11 +367,11 @@ class VeracodeAPI:
     def get_component_activity(self, component_id):
         return ComponentActivity().get(component_id)
 
-    def get_sbom(self, app_guid: UUID,format='cyclonedx',linked=False):
-        return SBOM().get(app_guid=app_guid,format=format,linked=linked)
+    def get_sbom(self, app_guid: UUID,format='cyclonedx',linked=False,vulnerability=True):
+        return SBOM().get(app_guid=app_guid,format=format,linked=linked,vulnerability=vulnerability)
 
-    def get_sbom_project(self, project_guid: UUID):
-        return SBOM().get_for_project(project_guid)
+    def get_sbom_project(self, project_guid: UUID, format='cyclonedx', vulnerability=True):
+        return SBOM().get_for_project(project_guid,format=format,vulnerability=vulnerability)
 
     # dynamic APIs
 

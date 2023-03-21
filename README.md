@@ -216,8 +216,13 @@ _Note_: You can also access this method from the `APICredentials` object.
 
 ''Note'': You can also access these methods from the `SBOM` object.
 
-- `get_sbom(app_guid,format(opt),linked(opt))`: generate an SBOM in either CycloneDX (default) or SPDX format for the application represented by `app_guid`. If `linked` is `True`, returns an SBOM based on the linked SCA Agent project. Get the `app_guid` from the Applications API.
-- `get_sbom_project(project_guid)`: generate an SBOM in CycloneDX format for the SCA Agent project represented by `project_guid`. Get the `project_guid` from the SCA Agent API (e.g. `get_projects(workspace_guid)`).
+- `get_sbom(app_guid,format(opt),linked(opt),vulnerability(opt),dependency(opt))`: generate an SBOM in either CycloneDX (default) or SPDX format for the application represented by `app_guid`. Get the `app_guid` from the Applications API. The following options are available:
+  - `linked` (CycloneDX only): if `True`, returns an SBOM based on the linked SCA Agent project. Defaults to `False`.
+  - `vulnerability`: if `True`, returns an SBOM containing vulnerability information. Defaults to `True`.
+  - `dependency` (SPDX only): if `True`, returns an SBOM that includes dependency information. Defaults to `True`.
+- `get_sbom_project(project_guid,format(opt),vulnerability(opt))`: generate an SBOM in CycloneDX (default) or SPDX format for the SCA Agent project represented by `project_guid`. Get the `project_guid` from the SCA Agent API (e.g. `get_projects(workspace_guid)`). The following options are available:
+  - `vulnerability`: if `True`, returns an SBOM containing vulnerability information. Defaults to `True`.
+  - `dependency` (SPDX only): if `True`, returns an SBOM that includes dependency information. Defaults to `True`.
 
 #### Dynamic Analysis
 
