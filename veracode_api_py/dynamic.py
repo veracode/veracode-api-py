@@ -302,8 +302,8 @@ class DynUtils():
    def setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid: UUID=None):
       payload = {}
       payload.update( scan_config_request )
-      if scan_contact_info != None:
-         payload.update(scan_contact_info)
+      if scan_contact_info is None:
+         scan_contact_info = self.setup_scan_contact_info("", "", "")
       if linked_app_guid != None:
          payload.update({'linked_platform_app_uuid': linked_app_guid})
       return payload
