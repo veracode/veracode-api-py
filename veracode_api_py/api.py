@@ -28,6 +28,7 @@ from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
 from .healthcheck import Healthcheck
 from .dynamic import Analyses, Scans, Occurrences, Configuration, CodeGroups, ScanCapacitySummary, ScanOccurrences, \
     ScannerVariables, DynUtils
+from .analytics import Analytics
 from .xmlapi import XMLAPI
 
 
@@ -539,3 +540,17 @@ class VeracodeAPI:
 
     def dyn_setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid: UUID = None):
         return DynUtils().setup_scan(scan_config_request, scan_contact_info, linked_app_guid)
+
+    # analytics apis
+    def create_analytics_report(self,report_type,last_updated_start_date,last_updated_end_date=None,
+                     scan_type:list = [], finding_status=None,passed_policy=None,
+                     policy_sandbox=None,application_id=None,rawjson=False):
+        return Analytics().create_report(report_type=report_type,last_updated_start_date=last_updated_start_date,
+                                         last_updated_end_date=last_updated_end_date,scan_type=scan_type,
+                                         finding_status=finding_status,passed_policy=passed_policy,
+                                         policy_sandbox=policy_sandbox,application_id=application_id,
+                                         rawjson=rawjson)
+    
+    def get_analytics_report(self,guid: UUID):
+        status, findings = Analytics().get(guid=guid)
+        return status, findings

@@ -310,6 +310,21 @@ _Note_: You can also access these methods from the `DynUtils` object.
 - `dyn_setup_scan_config_request( url, allowed_hosts:List, auth_config(opt), crawl_config(opt), scan_setting(opt))`: set up the payload to specify the scan config request for a dynamic scan. `url` and `allowed_hosts` are set up using `dyn_setup_url()`. `crawl_config` is setup using `dyn_setup_crawl_configuration()`. `scan_setting` is setup using `dyn_setup_scan_setting()`.
 - `dyn_setup_scan( scan_config_request, scan_contact_info(opt), linked_app_guid(opt))`: set up the payload to specify the scan for a Dynamic Analysis. `scan_config_request` is setup using `dyn_setup_scan_config_request()` and `scan_contact_info` is set up using `dyn_setup_scan_contact_info()`. Specify `linked_app_guid` (using `get_apps()` or `get_app()`) to link the scan results to an application profile.
 
+#### Analytics
+
+- `create_analytics_report(report_type ('findings'),last_updated_start_date, last_updated_end_date (opt), scan_type (opt), finding_status(opt), passed_policy(opt), policy_sandbox(opt), application_id(opt), rawjson(opt))`: set up a request for a report. By default this command returns the GUID of the report request; specify `rawjson=True` to get the full response. Dates should be specified as `YYYY-MM-DD HH:MM:SS` with the timestamp optional. Options include:
+  - `report_type`: required, currently only supports `findings`
+  - `last_updated_start_date`: required, beginning of date range for new or changed findings
+  - `last_updated_end_date`: optional, end of date range for new or changed findings
+  - `scan_type`: optional, one or more of 'Static Analysis', 'Dynamic Analysis', 'Manual', 'Software Composition Analysis', 'SCA'
+  - `finding_status`: optional, 'Open' or 'Closed'
+  - `passed_policy`: optional, boolean
+  - `policy_sandbox`: optional, 'Policy' or 'Sandbox'
+  - `application_id`: optional, application ID for which to return results
+  - `rawjson`: optional, defaults to False. Returns full response if True, the GUID of the request if false
+
+- `get_analytics_report(guid)`: check the status of the report request and return the report contents when ready. Note that this method returns a tuple of `status` (string) and `results` (list); when `status` is `COMPLETED`, the `results` list will populate with results.
+
 ## Notes
 
 1. Different API calls require different roles. Consult the [Veracode Help Center](https://help.veracode.com/go/c_role_permissions).
