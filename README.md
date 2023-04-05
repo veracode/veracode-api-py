@@ -24,7 +24,7 @@ You can find sample scripts for some APIs in the [Samples folder](https://github
 
 ## Docs
 
-For detailed documentation on the available methods, please see the [veracode-api-py docs](docs/docs.md).
+For detailed documentation on the available methods, please see the [veracode-api-py docs](https://github.com/veracode/veracode-api-py/blob/main/docs/docs.md).
 
 ## Notes
 
