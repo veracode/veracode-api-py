@@ -122,7 +122,7 @@ class APIHelper():
         else:
             return ""
 
-    def _rest_paged_request(self, uri, method, element, params=None):
+    def _rest_paged_request(self, uri, method, element, params=None,fullresponse=False):
         all_data = []
         page = 0
         more_pages = True
@@ -136,7 +136,10 @@ class APIHelper():
 
             page += 1
             more_pages = page < total_pages
-        return all_data
+        if page==1 and fullresponse:
+            return page_data    
+        else:
+            return all_data
 
     def _xml_request(self, url, method, params=None, files=None):
         # base request method for XML APIs, handles what little error handling there is around these APIs

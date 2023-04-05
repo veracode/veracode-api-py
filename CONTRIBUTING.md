@@ -22,3 +22,4 @@ Please follow the instructions below to make a contribution.
 - [Nazareno Furchì](https://github.com/nazafur)
 - [aszaryk](https://github.com/aszaryk)
 - [Gabriel Marquet](https://github.com/Gby56)
+- [Aaron Butler](https://github.com/AaronButler-Veracode)
