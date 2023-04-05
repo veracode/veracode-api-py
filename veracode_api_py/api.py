@@ -275,6 +275,9 @@ class VeracodeAPI:
             return APICredentials().get(api_id)
         else:
             return APICredentials().get_self()
+        
+    def create_creds(self, user_guid: UUID):
+        return APICredentials().create(user_guid=user_guid)
 
     def renew_creds(self):
         return APICredentials().renew()

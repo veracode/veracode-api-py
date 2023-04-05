@@ -240,6 +240,9 @@ class APICredentials():
 
    def get (self, api_id):
       return APIHelper()._rest_request(self.base_uri + '/{}'.format(api_id),"GET")
+   
+   def create (self, user_guid: UUID):
+      return APIHelper()._rest_request("{}/user_id/{}".format(self.base_uri,user_guid),"POST",body=json.dumps({}))
 
    def renew (self):
       return APIHelper()._rest_request(self.base_uri,"POST",body=json.dumps({}))
