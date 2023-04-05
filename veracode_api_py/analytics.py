@@ -56,10 +56,6 @@ class Analytics():
       uri = "{}/{}".format(self.base_url,guid)
       theresponse = APIHelper()._rest_paged_request(uri,"GET","findings",{},fullresponse=True)
       thestatus = theresponse.get('_embedded',{}).get('status','')
-      # if thestatus == 'COMPLETED':
-      #    return theresponse.get('_embedded',{}).get('findings',{})
-      # else:
-      #    return thestatus
       thefindings = theresponse.get('_embedded',{}).get('findings',{})
       return thestatus, thefindings
 
