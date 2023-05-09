@@ -65,6 +65,14 @@ jobs:
   process-results:
     needs: pipeline-scan
     runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write
+      actions: read
+      contents: read
+      pull-requests: read
+      security-events: write
+    
     steps:
 
     - name: Retrieve results
