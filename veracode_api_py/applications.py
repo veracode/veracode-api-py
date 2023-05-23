@@ -32,17 +32,17 @@ class Applications():
         params = {"name": parse.quote(appname)}
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
-    def create(self,app_name:str ,business_criticality, business_unit: UUID=None, teams=[]):
-        return self._create_or_update("CREATE",app_name,business_criticality,business_unit,teams)
+    def create(self,app_name:str ,business_criticality, business_unit: UUID=None, teams=[], policy_guid:UUID=None):
+        return self._create_or_update("CREATE",app_name,business_criticality,business_unit,teams, policy_guid)
 
-    def update(self,guid: UUID,app_name:str ,business_criticality, business_unit: UUID=None, teams=[]):
-        return self._create_or_update("UPDATE",app_name,business_criticality,business_unit,teams,guid)
+    def update(self,guid: UUID,app_name:str ,business_criticality, business_unit: UUID=None, teams=[], policy_guid:UUID=None):
+        return self._create_or_update("UPDATE",app_name,business_criticality,business_unit,teams,guid, policy_guid)
 
     def delete(self,guid: UUID):
         uri = 'appsec/v1/applications/{}'.format(guid)
         return APIHelper()._rest_request(uri,'DELETE')
 
-    def _create_or_update(self,method,app_name: str,business_criticality, business_unit: UUID=None, teams=[],guid=None):
+    def _create_or_update(self,method,app_name: str,business_criticality, business_unit: UUID=None, teams=[],guid=None,policy_guid:UUID=None):
         if method == 'CREATE':
             uri = 'appsec/v1/applications'
             httpmethod = 'POST'
@@ -53,6 +53,9 @@ class Applications():
             return
 
         app_def = {'name':app_name, 'business_criticality':business_criticality}
+
+        if policy_guid:
+            app_def.update({"policies": [{'guid': policy_guid}]})
 
         if len(teams) > 0:
             # optionally pass a list of teams to add to the application profile
