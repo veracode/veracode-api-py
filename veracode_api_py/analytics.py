@@ -1,7 +1,6 @@
 #analytics.py - API class for Analytics Reporting API calls
 
 import json
-from urllib import parse
 from uuid import UUID
 
 from .apihelper import APIHelper

@@ -1,6 +1,5 @@
 # apihelper.py - API class for making network calls
 
-from urllib import parse
 import requests
 import logging
 import json
