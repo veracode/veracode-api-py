@@ -6,7 +6,6 @@ import logging
 import json
 import time
 from requests.adapters import HTTPAdapter
-from requests.packages.urllib3.util.retry import Retry
 
 from veracode_api_signing.exceptions import VeracodeAPISigningException
 from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
@@ -27,7 +26,6 @@ class APIHelper():
 
     def __init__(self, debug=False):
         self.baseurl = self._get_baseurl()
-        requests.Session().mount(self.baseurl, HTTPAdapter(max_retries=3))
         self.base_rest_url = self._get_baseresturl()
         self.retry_seconds = 120
         self.connect_error_msg = "Connection Error"
@@ -52,18 +50,30 @@ class APIHelper():
         elif type == 'rest':
             return Constants().REGIONS[self.region]['base_rest_url']
 
+    def _check_for_errors(self,theresponse, *args, **kwargs):
+        if theresponse.status_code in (429, 502, 503, 504):
+            # retry by populating new prepared request from the request in the response object
+            # and recalculating auth
+            logger.debug("Retrying request, error code {} received".format(theresponse.status_code))
+            session = requests.Session()
+            oldreq = theresponse.request
+            oldheaders = oldreq.headers
+            del oldheaders['authorization']
+            newreq = requests.Request(oldreq.method,oldreq.url,auth=RequestsAuthPluginVeracodeHMAC(),
+                                      headers=oldheaders)
+            return session.send(newreq.prepare())
+        
+    def _prepare_headers(self,method,apifamily):
+        headers = {"User-Agent": "api.py"}
+        if method in ["POST", "PUT"] and apifamily=='json':
+            headers.update({'Content-type': 'application/json'})
+        return headers
+                
     def _rest_request(self, url, method, params=None, body=None, fullresponse=False, use_base_url=True):
         # base request method for a REST request
-        myheaders = {"User-Agent": "api.py"}
-        if method in ["POST", "PUT"]:
-            myheaders.update({'Content-type': 'application/json'})
+        myheaders = self._prepare_headers(method,'json')
 
-        retry_strategy = Retry(total=3,
-                               status_forcelist=[429, 500, 502, 503, 504],
-                               method_whitelist=["HEAD", "GET", "OPTIONS"]
-                               )
         session = requests.Session()
-        session.mount(self.base_rest_url, HTTPAdapter(max_retries=retry_strategy))
 
         if use_base_url:
             url = self.base_rest_url + url
@@ -71,7 +81,8 @@ class APIHelper():
         try:
             if method == "GET":
                 request = requests.Request(method, url, params=params, auth=RequestsAuthPluginVeracodeHMAC(),
-                                           headers=myheaders)
+                                           headers=myheaders,
+                                           hooks={'response': self._check_for_errors})
                 prepared_request = request.prepare()
                 r = session.send(prepared_request)
             elif method == "POST":
@@ -85,14 +96,15 @@ class APIHelper():
             else:
                 raise VeracodeAPIError("Unsupported HTTP method")
         except requests.exceptions.RequestException as e:
-            logger.exception(self.connect_error_msg)
+            logger.exception("Error: {}".format(self.connect_error_msg))
             raise VeracodeAPIError(e)
 
-        if not (r.status_code == requests.codes.ok):
+        if r.status_code != requests.codes.ok:
             logger.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
 
         if not (r.ok):
-            logger.debug("Error retrieving data. HTTP status code: {}".format(r.status_code))
+            conv_id = r.headers['x-conversation-id']
+            logger.debug("Error retrieving data. HTTP status code: {}, conversation id {}".format(r.status_code,conv_id))
             if r.status_code == 401:
                 logger.exception(
                     "Error [{}]: {} for request {}. Check that your Veracode API account credentials are correct.".format(
@@ -110,7 +122,7 @@ class APIHelper():
         else:
             return ""
 
-    def _rest_paged_request(self, uri, method, element, params=None):
+    def _rest_paged_request(self, uri, method, element, params=None,fullresponse=False):
         all_data = []
         page = 0
         more_pages = True
@@ -124,7 +136,10 @@ class APIHelper():
 
             page += 1
             more_pages = page < total_pages
-        return all_data
+        if page==1 and fullresponse:
+            return page_data    
+        else:
+            return all_data
 
     def _xml_request(self, url, method, params=None, files=None):
         # base request method for XML APIs, handles what little error handling there is around these APIs
@@ -135,7 +150,7 @@ class APIHelper():
             session = requests.Session()
             session.mount(self.baseurl, HTTPAdapter(max_retries=3))
             request = requests.Request(method, url, params=params, files=files,
-                                       auth=RequestsAuthPluginVeracodeHMAC(), headers={"User-Agent": "api.py"})
+                                       auth=RequestsAuthPluginVeracodeHMAC(), headers=self._prepare_headers(method,'xml'))
             prepared_request = request.prepare()
             r = session.send(prepared_request)
             if 200 <= r.status_code <= 299:

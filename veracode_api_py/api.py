@@ -28,6 +28,7 @@ from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
 from .healthcheck import Healthcheck
 from .dynamic import Analyses, Scans, Occurrences, Configuration, CodeGroups, ScanCapacitySummary, ScanOccurrences, \
     ScannerVariables, DynUtils
+from .analytics import Analytics
 from .xmlapi import XMLAPI
 
 
@@ -241,6 +242,9 @@ class VeracodeAPI:
 
     def get_teams(self, all_for_org=False):
         return Teams().get_all(all_for_org)
+    
+    def get_team_by_id(self, team_id):
+        return Teams().get(team_id)
 
     def create_team(self, team_name, business_unit: UUID = None, members=[]):
         return Teams().create(team_name, business_unit, members)
@@ -271,6 +275,9 @@ class VeracodeAPI:
             return APICredentials().get(api_id)
         else:
             return APICredentials().get_self()
+        
+    def create_creds(self, user_guid: UUID):
+        return APICredentials().create(user_guid=user_guid)
 
     def renew_creds(self):
         return APICredentials().renew()
@@ -338,10 +345,10 @@ class VeracodeAPI:
         return Workspaces().revoke_agent_token(workspace_guid, agent_guid, token_id)
 
     def get_issues(self, workspace_guid: UUID, branch=None, created_after=None, direct=None, ignored=None, vuln_methods=None, project_id=None):
-        return Workspaces().get_issues(workspace_guid, branch=branch,created_after=created_after,direct=direct,ignored=ignored,vuln_methods=vuln_methods,project_id=None)
+        return Workspaces().get_issues(workspace_guid, branch=branch,created_after=created_after,direct=direct,ignored=ignored,vuln_methods=vuln_methods,project_id=project_id)
 
     def get_issue(self, issue_id: UUID):
-        return Workspaces().get_issues(issue_id)
+        return Workspaces().get_issue(issue_id)
 
     def get_libraries(self, workspace_guid: UUID, unmatched=False):
         return Workspaces().get_libraries(workspace_guid, unmatched)
@@ -364,11 +371,11 @@ class VeracodeAPI:
     def get_component_activity(self, component_id):
         return ComponentActivity().get(component_id)
 
-    def get_sbom(self, app_guid: UUID):
-        return SBOM().get(app_guid)
+    def get_sbom(self, app_guid: UUID,format='cyclonedx',linked=False,vulnerability=True):
+        return SBOM().get(app_guid=app_guid,format=format,linked=linked,vulnerability=vulnerability)
 
-    def get_sbom_project(self, project_guid: UUID):
-        return SBOM().get_for_project(project_guid)
+    def get_sbom_project(self, project_guid: UUID, format='cyclonedx', vulnerability=True):
+        return SBOM().get_for_project(project_guid,format=format,vulnerability=vulnerability)
 
     # dynamic APIs
 
@@ -536,3 +543,17 @@ class VeracodeAPI:
 
     def dyn_setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid: UUID = None):
         return DynUtils().setup_scan(scan_config_request, scan_contact_info, linked_app_guid)
+
+    # analytics apis
+    def create_analytics_report(self,report_type,last_updated_start_date,last_updated_end_date=None,
+                     scan_type:list = [], finding_status=None,passed_policy=None,
+                     policy_sandbox=None,application_id=None,rawjson=False):
+        return Analytics().create_report(report_type=report_type,last_updated_start_date=last_updated_start_date,
+                                         last_updated_end_date=last_updated_end_date,scan_type=scan_type,
+                                         finding_status=finding_status,passed_policy=passed_policy,
+                                         policy_sandbox=policy_sandbox,application_id=application_id,
+                                         rawjson=rawjson)
+    
+    def get_analytics_report(self,guid: UUID):
+        status, findings = Analytics().get(guid=guid)
+        return status, findings

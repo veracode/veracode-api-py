@@ -147,6 +147,10 @@ class Teams():
          request_params = {'page': 0} #initialize the page request
       return APIHelper()._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
 
+   def get(self, team_id):
+      uri = "api/authn/v2/teams/{}".format(team_id)
+      return APIHelper()._rest_request(uri,"GET")
+   
    def create(self, team_name: str, business_unit=None, members=[]):        
       team_def = {'team_name': team_name}
       
@@ -236,6 +240,9 @@ class APICredentials():
 
    def get (self, api_id):
       return APIHelper()._rest_request(self.base_uri + '/{}'.format(api_id),"GET")
+   
+   def create (self, user_guid: UUID):
+      return APIHelper()._rest_request("{}/user_id/{}".format(self.base_uri,user_guid),"POST",body=json.dumps({}))
 
    def renew (self):
       return APIHelper()._rest_request(self.base_uri,"POST",body=json.dumps({}))

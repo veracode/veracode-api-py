@@ -8,7 +8,8 @@ from .apihelper import APIHelper
 from .constants import Constants
 
 class Workspaces():
-     sca_base_url = "srcclr/v3/workspaces"   
+     sca_base_url = "srcclr/v3/workspaces"
+     sca_issues_url = "srcclr/v3/issues"   
 
      def get_all(self):
           #Gets existing workspaces
@@ -110,7 +111,7 @@ class Workspaces():
           return APIHelper()._rest_paged_request(uri,"GET","issues",params)
 
      def get_issue(self,issue_id: UUID):
-          uri = self.sca_base_url + '/issues/{}'.format(issue_id)
+          uri = self.sca_issues_url + '/{}'.format(issue_id)
           return APIHelper()._rest_request(uri,"GET")
 
      def get_libraries(self,workspace_guid: UUID,unmatched: bool):
@@ -159,12 +160,20 @@ class ComponentActivity():
 
 class SBOM():
      entity_base_uri = "srcclr/sbom/v1/targets"
+     valid_formats = ['cyclonedx','spdx']
 
-     def get(self,app_guid: UUID):
-          return self._get_sbom(guid=app_guid,sbom_type='application')
+     def get(self,app_guid: UUID, format='cyclonedx',linked=False,vulnerability=True,dependency=True):
+          return self._get_sbom(guid=app_guid,format=format,sbom_type='application',linked=linked,vulnerability=vulnerability,dependency=dependency)
 
-     def get_for_project(self,project_guid: UUID):
-          return self._get_sbom(guid=project_guid,sbom_type='agent')
+     def get_for_project(self,project_guid: UUID, format='cyclonedx', vulnerability=True,dependency=True):
+          return self._get_sbom(guid=project_guid,format=format,sbom_type='agent',linked=False,vulnerability=vulnerability,dependency=dependency)
 
-     def _get_sbom(self,guid: UUID,sbom_type):
-          return APIHelper()._rest_request(self.entity_base_uri+"/{}/cyclonedx".format(guid),"GET",params={"type":sbom_type})
+     def _get_sbom(self,guid: UUID,format,sbom_type,linked,vulnerability,dependency):
+          if format not in self.valid_formats:
+               return  
+          params={"type":sbom_type,"vulnerability": vulnerability}
+          if linked:
+               params["linked"] = linked
+          if format=='spdx': #currently only supported for SPDX SBOMs
+               params["dependency"] = dependency
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/{}".format(guid,format),"GET",params=params)
