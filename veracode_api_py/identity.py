@@ -168,7 +168,7 @@ class Teams():
       payload = json.dumps(team_def)
       return APIHelper()._rest_request('api/authn/v2/teams','POST',body=payload)
 
-   def update(self, team_guid: UUID, team_name: str="", business_unit: UUID=None, members=[]):
+   def update(self, team_guid: UUID, team_name: str="", business_unit: UUID=None, members=[], incremental=True, partial=True):
       requestbody = {}
       
       if team_name != "":
@@ -187,7 +187,7 @@ class Teams():
          logging.error("No update specified for team {}".format(team_guid))
 
       payload = json.dumps(requestbody)
-      params = {"partial":True, "incremental":True}
+      params = {"partial": partial, "incremental": incremental}
       uri = 'api/authn/v2/teams/{}'.format(team_guid)
       return APIHelper()._rest_request(uri,'PUT',body=payload,params=params)
 
