@@ -18,8 +18,10 @@ scan_contact_info = DynUtils().setup_scan_contact_info('tjarrett@example.com','A
 
 scan = DynUtils().setup_scan(scan_config_request,scan_contact_info)
 
+start_scan = DynUtils().start_scan(12, "HOUR")
+
 print(scan)
 
-analysis = Analyses().create('My API Analysis 4',scans=[scan],owner='Tim Jarrett',email='tjarrett@example.com')
+analysis = Analyses().create('My API Analysis 4',scans=[scan],owner='Tim Jarrett',email='tjarrett@example.com', start_scan=start_scan)
 
 print(analysis)
