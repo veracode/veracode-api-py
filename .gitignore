@@ -1,10 +1,12 @@
 /.git
 /.vscode
+/.idea
 
 play.py
 *.xml
 *.log
 veracode-plugin.conf
+*.json
 
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 
