@@ -14,8 +14,8 @@ _Note_: You can also access these methods from the `Analyses` class.
 - `get_analysis_audits(analysis_id)`: get the audits for the analysis identified by `analysis_id` (guid).
 - `get_analysis_scans(analysis_id)`: get the scans for the analysis identified by `analysis_id` (guid).
 - `get_analysis_scanner_variables(analysis_id)`: get the scanner variables for the analysis identified by `analysis_id` (guid).
-- `create_analysis(name,scans,schedule_frequency='ONCE',business_unit_guid (opt),email (opt),owner (opt))`: create an analysis with the provided settings. Use `setup_scan` and related functions to construct the list of scans.
-- `update_analysis(guid,name,scans,schedule_frequency='ONCE',business_unit_guid (opt),email (opt),owner (opt))`: update the analysis identified by `guid` with the provided settings.
+- `create_analysis(name,scans,schedule_frequency='ONCE',start_scan (opt),business_unit_guid (opt),email (opt),owner (opt))`: create an analysis with the provided settings. Use `setup_scan` and related functions to construct the list of scans.
+- `update_analysis(guid,name,scans,schedule_frequency='ONCE',start_scan (opt),business_unit_guid (opt),email (opt),owner (opt))`: update the analysis identified by `guid` with the provided settings.
 - `update_analysis_scanner_variable(analysis_guid,scanner_variable_guid,reference_key,value,description)`: update the scanner variable identified by the `scanner_variable_guid` for the analysis identified by `analysis_guid`.
 - `delete_analysis_scanner_variable(analysis_guid,scanner_variable_guid)`: delete the scanner variable identified by the `scanner_variable_guid` for the analysis identified by `analysis_guid`.
 - `delete_analysis(analysis_guid)`: delete the analysis identified by `analysis_guid`.
@@ -93,5 +93,6 @@ _Note_: You can also access these methods from the `DynUtils` class.
 - `dyn_setup_auth_config(authentication_node:dict)`: set up the payload to specify authentication information for a dynamic scan. Set up `authentication_node` with `dyn_setup_auth`.
 - `dyn_setup_scan_config_request( url, allowed_hosts:List, auth_config(opt), crawl_config(opt), scan_setting(opt))`: set up the payload to specify the scan config request for a dynamic scan. `url` and `allowed_hosts` are set up using `dyn_setup_url()`. `crawl_config` is setup using `dyn_setup_crawl_configuration()`. `scan_setting` is setup using `dyn_setup_scan_setting()`.
 - `dyn_setup_scan( scan_config_request, scan_contact_info(opt), linked_app_guid(opt))`: set up the payload to specify the scan for a Dynamic Analysis. `scan_config_request` is setup using `dyn_setup_scan_config_request()` and `scan_contact_info` is set up using `dyn_setup_scan_contact_info()`. Specify `linked_app_guid` (using `get_apps()` or `get_app()`) to link the scan results to an application profile.
+- `dyn_start_scan(length,unit)`: start a dynamic analysis and set duration. 
 
 [All docs](docs.md)

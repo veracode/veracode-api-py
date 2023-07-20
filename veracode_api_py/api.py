@@ -544,6 +544,9 @@ class VeracodeAPI:
     def dyn_setup_scan(self, scan_config_request, scan_contact_info=None, linked_app_guid: UUID = None):
         return DynUtils().setup_scan(scan_config_request, scan_contact_info, linked_app_guid)
 
+    def dyn_start_scan(self, length, unit):
+        return DynUtils().start_scan(length,unit)
+
     # analytics apis
     def create_analytics_report(self,report_type,last_updated_start_date,last_updated_end_date=None,
                      scan_type:list = [], finding_status=None,passed_policy=None,

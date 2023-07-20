@@ -46,14 +46,14 @@ class Analyses():
       uri = self.base_url + "/{}/scans".format(guid)
       return APIHelper()._rest_paged_request(uri,"GET",'scans',{'page': 0})
 
-   def create(self,name: str,scans,business_unit_guid: UUID=None,email=None,owner: str=None):
+   def create(self,name: str,scans,start_scan=None,business_unit_guid: UUID=None,email=None,owner: str=None):
       # basic create that adds only metadata. Use Scans().setup() to create a Scans object
       return self._create_or_update(method="CREATE",name=name,scans=scans,
-                  business_unit_guid=business_unit_guid,email=email,owner=owner)
+                  business_unit_guid=business_unit_guid,email=email,owner=owner,start_scan=start_scan)
 
-   def update(self,guid: UUID,name: str,scans,business_unit_guid: UUID=None,email=None,owner: str=None):
+   def update(self,guid: UUID,name: str,scans,start_scan=None,business_unit_guid: UUID=None,email=None,owner: str=None):
       return self._create_or_update(method="UPDATE",name=name,scans=scans,
-                  business_unit_guid=business_unit_guid,email=email,owner=owner,guid=guid)
+                  business_unit_guid=business_unit_guid,email=email,owner=owner,guid=guid,start_scan=start_scan)
 
    def get_scanner_variables(self,guid: UUID):
       uri = self.base_url + "/{}/scanner_variables".format(guid)
@@ -77,7 +77,7 @@ class Analyses():
    def _get_analyses(self,params):
       return APIHelper()._rest_paged_request(self.base_url,"GET","analyses",params=params)
 
-   def _create_or_update(self,method,name: str,scans,business_unit_guid: UUID=None,email=None,owner: str=None,guid: UUID=None):
+   def _create_or_update(self,method,name: str,scans,start_scan=None,business_unit_guid: UUID=None,email=None,owner: str=None,guid: UUID=None):
       if method == 'CREATE':
          uri = self.base_url
          httpmethod = 'POST'
@@ -97,6 +97,8 @@ class Analyses():
       if owner != None:
          org_info.update({'owner': owner})
       payload.update({'org_info': org_info})
+      if start_scan != None:
+         payload.update(start_scan)
       payload.update({"visibility": {"setup_type": "SEC_LEADS_ONLY", "team_identifiers": []}})
       return APIHelper()._rest_request(uri,httpmethod,params={},body=json.dumps(payload))
 
@@ -307,3 +309,5 @@ class DynUtils():
       if linked_app_guid != None:
          payload.update({'linked_platform_app_uuid': linked_app_guid})
       return payload
+   def start_scan(self, length, unit):
+      return { 'schedule': {'now': True, 'duration':{'length': length,'unit': unit }} }
