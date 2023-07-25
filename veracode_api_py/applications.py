@@ -32,17 +32,17 @@ class Applications():
         params = {"name": parse.quote(appname)}
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
-    def create(self,app_name:str ,business_criticality, business_unit: UUID=None, teams=[], policy_guid:UUID=None):
-        return self._create_or_update("CREATE",app_name,business_criticality,business_unit,teams, policy_guid)
+    def create(self,app_name:str ,business_criticality, business_unit: UUID=None, teams=[], policy_guid:UUID=None, custom_fields=[]):
+        return self._create_or_update("CREATE",app_name,business_criticality,business_unit,teams, policy_guid, custom_fields)
 
-    def update(self,guid: UUID,app_name:str ,business_criticality, business_unit: UUID=None, teams=[], policy_guid:UUID=None):
-        return self._create_or_update("UPDATE",app_name,business_criticality,business_unit,teams,guid, policy_guid)
+    def update(self,guid: UUID,app_name:str ,business_criticality, business_unit: UUID=None, teams=[], policy_guid:UUID=None, custom_fields=[]):
+        return self._create_or_update("UPDATE",app_name,business_criticality,business_unit,teams,guid, policy_guid, custom_fields)
 
     def delete(self,guid: UUID):
         uri = 'appsec/v1/applications/{}'.format(guid)
         return APIHelper()._rest_request(uri,'DELETE')
 
-    def _create_or_update(self,method,app_name: str,business_criticality, business_unit: UUID=None, teams=[],guid=None,policy_guid:UUID=None):
+    def _create_or_update(self,method,app_name: str,business_criticality, business_unit: UUID=None, teams=[],guid=None,policy_guid:UUID=None, custom_fields=[]):
         if method == 'CREATE':
             uri = 'appsec/v1/applications'
             httpmethod = 'POST'
@@ -67,6 +67,9 @@ class Applications():
         if business_unit != None:
             bu = {'business_unit': {'guid': business_unit}}
             app_def.update(bu)
+
+        if len(custom_fields) > 0:
+            app_def.update({"custom_fields": custom_fields})
 
         payload = json.dumps({"profile": app_def})
         return APIHelper()._rest_request(uri,httpmethod,body=payload)
