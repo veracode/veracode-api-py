@@ -31,7 +31,7 @@ _Note_: You can also access these methods from the `Workspaces` class.
 - `get_vulnerability(vulnerability_id)`: get the vulnerability identified by `vulnerability_id` (an integer value, visible in the output of `get_issues`).
 - `get_license(license_id)`: get the license identified by `license_id` (a string, e.g. "GPL30").
 - `get_sca_events(date_gte,event_group,event_type)`: get the audit events for the arguments passed. Be careful with the arguments for this and try to limit by date as it will fetch all pages of data, which might be a lot.
-- `get_application_projects(app_guid)`: get the list of linked SCA projects for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_projects()`).
+- `get_app_projects(app_guid)`: get the list of linked SCA projects for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_projects()`).
 
 ## Component Activity
 
