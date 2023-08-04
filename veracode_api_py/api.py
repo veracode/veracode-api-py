@@ -22,7 +22,7 @@ from .exceptions import VeracodeAPIError
 from .applications import Applications, Sandboxes, CustomFields
 from .findings import Findings, SummaryReport
 from .policy import Policies
-from .sca import ComponentActivity, Workspaces, SBOM
+from .sca import ComponentActivity, Workspaces, SBOM, SCAApplications
 from .collections import Collections
 from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
 from .healthcheck import Healthcheck
@@ -383,6 +383,9 @@ class VeracodeAPI:
 
     def get_sbom_project(self, project_guid: UUID, format='cyclonedx', vulnerability=True):
         return SBOM().get_for_project(project_guid,format=format,vulnerability=vulnerability)
+    
+    def get_app_projects(self, app_guid: UUID):
+        return SCAApplications().get_projects(app_guid=app_guid)
 
     # dynamic APIs
 

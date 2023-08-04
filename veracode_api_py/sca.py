@@ -177,3 +177,9 @@ class SBOM():
           if format=='spdx': #currently only supported for SPDX SBOMs
                params["dependency"] = dependency
           return APIHelper()._rest_request(self.entity_base_uri+"/{}/{}".format(guid,format),"GET",params=params)
+
+class SCAApplications():
+     entity_base_uri = "srcclr/v3/applications"
+
+     def get_projects(self, app_guid: UUID):
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/projects".format(app_guid),"GET")
