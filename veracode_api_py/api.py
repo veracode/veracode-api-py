@@ -87,6 +87,9 @@ class VeracodeAPI:
     def begin_scan(self, app_id: int, modules=None, scan_all_top_level_modules=None,scan_selected_modules=None,scan_previously_selected_modules=None,sandbox_id=None):
         return XMLAPI().begin_scan(app_id=app_id, modules=modules,scan_all_top_level_modules=scan_all_top_level_modules,scan_selected_modules=scan_selected_modules,scan_previously_selected_modules=scan_previously_selected_modules,sandbox_id=sandbox_id)
 
+    def delete_build(self, app_id: int, sandbox_id=None):
+        return XMLAPI().delete_build(app_id=app_id, sandbox_id=sandbox_id)
+
     # rest apis
 
     ## Healthcheck APIs
