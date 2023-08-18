@@ -44,7 +44,7 @@ class XMLAPI():
             params = {"app_id": app_id}
         else:
             params = {"app_id": app_id, "sandbox_id": sandbox_id}
-        return APIHelper()._xml_request(self.baseurl + "/5.0/deleteapp.do", "GET", params=params)
+        return APIHelper()._xml_request(self.baseurl + "/5.0/deletebuild.do", "GET", params=params)
 
 
     def upload_file(self, app_id: int, file: str, sandbox_id=None, save_as=None):
