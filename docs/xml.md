@@ -20,4 +20,5 @@ _Note_: You can also access these methods from the `XMLAPI` class.
 - `get_file_list(app_id, build_id(opt), sandbox_id(opt))`: get the list of files uploaded for the application, sandbox, and/or scan specified.
 - `remove_file(app_id, file_id, sandbox_id(opt))`: delete a file previously uploaded for the application and/or sandbox specified.
 - `delete_build(app_id, sandbox_id(opt))`: delete the last build uploaded for the application and/or sandbox specified.
+  
 [All docs](docs.md)
