@@ -111,15 +111,16 @@ class VeracodeAPI:
     def get_app_by_name(self, appname):
         return Applications().get_by_name(appname)
 
-    def create_app(self, app_name, business_criticality, business_unit: UUID = None, teams=[], policy_guid = None, custom_fields=[]):
+    def create_app(self, app_name, business_criticality, business_unit: UUID = None, teams=[], 
+                   policy_guid = None, custom_fields=[],bus_owner_name = None, bus_owner_email = None):
         return Applications().create(app_name=app_name, business_criticality=business_criticality, 
                                      business_unit=business_unit, teams=teams, policy_guid=policy_guid,
-                                     custom_fields=custom_fields)
+                                     custom_fields=custom_fields, bus_owner_name=bus_owner_name, bus_owner_email=bus_owner_email)
     
-    def update_app(self, guid: UUID, app_name, business_criticality, business_unit: UUID = None, teams=[], policy_guid = None, custom_fields=[]):
+    def update_app(self, guid: UUID, app_name, business_criticality, business_unit: UUID = None, teams=[], policy_guid = None, custom_fields=[], bus_owner_name=None, bus_owner_email=None):
         return Applications().update(guid=guid, app_name=app_name, business_criticality=business_criticality, 
                                      business_unit=business_unit, teams=teams, policy_guid=policy_guid,
-                                     custom_fields=custom_fields)    
+                                     custom_fields=custom_fields, bus_owner_name=bus_owner_name, bus_owner_email=bus_owner_email)    
 
     def delete_app(self, guid: UUID):
         return Applications().delete(guid)
