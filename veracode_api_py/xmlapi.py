@@ -37,6 +37,16 @@ class XMLAPI():
             params["build_id"] = build_id
         return APIHelper()._xml_request(self.baseurl + "/5.0/getbuildinfo.do", "GET", params=params)
 
+
+    def delete_build(self, app_id: int, sandbox_id: int = None):
+        """Deletes the last build in an application profile or sandbox."""
+        if sandbox_id is None:
+            params = {"app_id": app_id}
+        else:
+            params = {"app_id": app_id, "sandbox_id": sandbox_id}
+        return APIHelper()._xml_request(self.baseurl + "/5.0/deletebuild.do", "GET", params=params)
+
+
     def upload_file(self, app_id: int, file: str, sandbox_id=None, save_as=None):
         """Uploads a file to an existing build or creates a build."""
         params = {'app_id': app_id}
