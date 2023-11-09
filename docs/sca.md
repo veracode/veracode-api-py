@@ -31,7 +31,6 @@ _Note_: You can also access these methods from the `Workspaces` class.
 - `get_vulnerability(vulnerability_id)`: get the vulnerability identified by `vulnerability_id` (an integer value, visible in the output of `get_issues`).
 - `get_license(license_id)`: get the license identified by `license_id` (a string, e.g. "GPL30").
 - `get_sca_events(date_gte,event_group,event_type)`: get the audit events for the arguments passed. Be careful with the arguments for this and try to limit by date as it will fetch all pages of data, which might be a lot.
-- `get_app_projects(app_guid)`: get the list of linked SCA projects for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_projects()`).
 
 ## Component Activity
 
@@ -50,5 +49,13 @@ _Note_: You can also access these methods from the `SBOM` class.
 - `get_sbom_project(project_guid,format(opt),vulnerability(opt))`: generate an SBOM in CycloneDX (default) or SPDX format for the SCA Agent project represented by `project_guid`. Get the `project_guid` from the SCA Agent API (e.g. `get_projects(workspace_guid)`). The following options are available:
   - `vulnerability`: if `True`, returns an SBOM containing vulnerability information. Defaults to `True`.
   - `dependency` (SPDX only): if `True`, returns an SBOM that includes dependency information. Defaults to `True`.
+
+## Application Info
+
+_Note_: You can also access these methods from the `SCAApplications` class.
+
+- `get_app_projects(app_guid)`: get the list of linked SCA projects for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_projects()`).
+- `get_sca_annotations(app_guid, annotation_type, annotation_reason(opt), annotation_status(opt),cve_name(opt), cwe_id(opt), severities(opt array), license_name(opt), license_risk(opt))`: get the list of annotations (mitigations and comments) for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_annotations()`.)
+- `add_sca_annotation(app_guid, action, comment, annotation_type, component_id, cve_name (required for VULNERABILITY type), license_id (required for LICENSE type))`: add an annotation (mitigation or comment) to an SCA vulnerability or license finding. Note that ability to APPROVE or REJECT requires the mitigation approver role. (This API call is also available on the SCAApplications object as `SCAApplications().add_annotation()`.)
 
 [All docs](docs.md)

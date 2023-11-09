@@ -183,3 +183,64 @@ class SCAApplications():
 
      def get_projects(self, app_guid: UUID):
           return APIHelper()._rest_request(self.entity_base_uri+"/{}/projects".format(app_guid),"GET")
+     
+     def get_annotations(self, app_guid: UUID, annotation_type: str, annotation_reason: str=None,
+                         annotation_status: str=None, cve_name: str=None, cwe_id: str=None, severities=None,
+                         license_name: str=None, license_risk: str=None):
+          if annotation_type not in Constants().SCA_ANNOTATION_TYPE:
+               raise ValueError("{} is not in the list of valid annotation types ({})".format(annotation_type,Constants().SCA_ANNOTATION_TYPE))
+          params={"annotation_type":annotation_type}
+     
+          if annotation_reason: 
+               if annotation_reason not in Constants().SCA_ANNOT_ACTION:
+                    raise ValueError("{} is not in the list of valid annotation reasons ({})".format(annotation_reason,Constants().SCA_ANNOT_ACTION))
+               params["annotation_reason"] = annotation_reason
+
+          if annotation_status:
+               if annotation_status not in Constants().SCA_ANNOT_STATUS:
+                    raise ValueError("{} is not in the list of valid annotation statuses ({})".format(annotation_status,Constants().SCA_ANNOT_STATUS))
+               params["annotation_status"] = annotation_status
+
+          if cve_name:
+               params["cve_name"] = cve_name
+
+          if cwe_id:
+               params["cwe_id"] = cwe_id
+
+          if severities:
+               params["severities"] = severities #check against Constants().SEVERITIES
+               
+          if license_name:
+               params["license_name"] = license_name
+
+          if license_risk:
+               if license_risk not in Constants().SCA_LICENSE_RISK:
+                    raise ValueError("{} is not in the list of valid license risks ({})".format(license_risk,Constants().SCA_LICENSE_RISK))
+               params["license_risk"] = license_risk
+
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/sca_annotations".format(app_guid),"GET",params=params)
+     
+     def add_annotation(self, app_guid: UUID, action: str, comment: str, annotation_type: str, 
+                        component_id: UUID, cve_name: str=None, license_id: str=None):
+          
+          if action not in Constants().SCA_ANNOT_ACTION:
+               raise ValueError("{} is not in the list of valid actions ({})".format(action,Constants().SCA_ANNOT_ACTION))
+
+          if annotation_type == "VULNERABILITY":
+               if not cve_name:
+                    raise ValueError("You must provide a cve_name for a VULNERABILITY annotation.")
+               annotation = {"component_id": component_id, "cve_name": cve_name}
+          elif annotation_type == "LICENSE": 
+               if not license_id:
+                    raise ValueError("You must provide a license_id for a LICENSE annotation.")
+               annotation = {"component_id": component_id, "license_id": license_id}
+          else:
+               raise ValueError("{} is not in the list of valid annotation types ({})".format(annotation_type,Constants().SCA_ANNOTATION_TYPE))
+
+          payload = { "action": action, "comment": comment, "annotation_type": annotation_type, "annotations": [ annotation ]}
+
+          payload_json = json.dumps(payload)
+
+          print(payload_json)
+          
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/sca_annotations".format(app_guid),"POST",body=payload_json)

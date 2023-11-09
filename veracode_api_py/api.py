@@ -390,6 +390,19 @@ class VeracodeAPI:
     
     def get_app_projects(self, app_guid: UUID):
         return SCAApplications().get_projects(app_guid=app_guid)
+    
+    def get_sca_annotations(self, app_guid: UUID, annotation_type: str, annotation_reason: str=None,
+                         annotation_status: str=None, cve_name: str=None, cwe_id: str=None, severities=None,
+                         license_name: str=None, license_risk: str=None):
+        return SCAApplications().get_annotations(app_guid=app_guid, annotation_type=annotation_type,
+                                                 annotation_reason=annotation_reason,annotation_status=annotation_status,
+                                                 cve_name=cve_name,cwe_id=cwe_id,severities=severities,
+                                                 license_name=license_name,license_risk=license_risk)
+    
+    def add_sca_annotation(self, app_guid: UUID, action: str, comment: str, annotation_type: str, 
+                        component_id: UUID, cve_name: str=None, license_id: str=None):
+        return SCAApplications().add_annotation(app_guid=app_guid, action=action, comment=comment, annotation_type=annotation_type,
+                                                component_id=component_id,cve_name=cve_name,license_id=license_id)
 
     # dynamic APIs
 
