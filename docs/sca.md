@@ -14,7 +14,7 @@ _Note_: You can also access these methods from the `Workspaces` class.
 - `add_workspace_team(workspace_guid,team_id)`: add the team identified by `team_id` (int) to the workspace identified by `workspace_guid`.
 - `get_workspace_teams(workspace_guid(opt))`: get a list of teams. If no `workspace_guid` is provided, return all available teams.
 - `delete_workspace(workspace_guid)`: delete the workspace identified by `workspace_guid`.
-- `get_projects(workspace_guid)`: get a list of projects for the workspace identified by `workspace_guid`.
+- `get_projects(workspace_guid,project_name(opt))`: get a list of projects for the workspace identified by `workspace_guid`.
 - `get_agents(workspace_guid)`: get a list of agents for the workspace identified by `workspace_guid`.
 - `get_agent(workspace_guid,agent_guid)`: get the agent identified by `agent_guid` in the workspace identified by `workspace_guid`.
 - `create_agent(workspace_guid,name,agent_type(opt))`: create an agent in the workspace identified by `workspace_guid`. Default for `agent_type` is `CLI`.
@@ -54,7 +54,9 @@ _Note_: You can also access these methods from the `SBOM` class.
 
 _Note_: You can also access these methods from the `SCAApplications` class.
 
-- `get_app_projects(app_guid)`: get the list of linked SCA projects for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_projects()`).
+- `get_app_projects(app_guid)`: get the list of linked SCA projects for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_projects()`.)
+- `link_app_projects(app_guid, project_guid)`: link the application to the project. (This API call is also available on the SCAApplications object as `SCAApplications().link_project()`.)
+- `unlink_app_projects(app_guid, project_guid)`: unlink the application from the project. (This API call is also available on the SCAApplications object as `SCAApplications().unlink_project()`.)
 - `get_sca_annotations(app_guid, annotation_type, annotation_reason(opt), annotation_status(opt),cve_name(opt), cwe_id(opt), severities(opt array), license_name(opt), license_risk(opt))`: get the list of annotations (mitigations and comments) for an application. (This API call is also available on the SCAApplications object as `SCAApplications().get_annotations()`.)
 - `add_sca_annotation(app_guid, action, comment, annotation_type, component_id, cve_name (required for VULNERABILITY type), license_id (required for LICENSE type))`: add an annotation (mitigation or comment) to an SCA vulnerability or license finding. Note that ability to APPROVE or REJECT requires the mitigation approver role. (This API call is also available on the SCAApplications object as `SCAApplications().add_annotation()`.)
 

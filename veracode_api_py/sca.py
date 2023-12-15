@@ -44,8 +44,12 @@ class Workspaces():
           else:
                return APIHelper()._rest_paged_request("srcclr/v3/teams","GET","teams",{})
 
-     def get_projects(self,workspace_guid: UUID):
-          return APIHelper()._rest_paged_request(self.sca_base_url + '/{}/projects'.format(workspace_guid),"GET","projects",{})
+     def get_projects(self,workspace_guid: UUID,project_name=""):
+          if project_name != "":
+               params = { 'search': project_name }
+          else:
+               params = {}
+          return APIHelper()._rest_paged_request(self.sca_base_url + '/{}/projects'.format(workspace_guid),"GET","projects",params)
 
      def get_project(self,workspace_guid: UUID,project_guid:UUID ):
           uri = self.sca_base_url + '/{}/projects/{}'.format(workspace_guid,project_guid)
@@ -184,6 +188,12 @@ class SCAApplications():
      def get_projects(self, app_guid: UUID):
           return APIHelper()._rest_request(self.entity_base_uri+"/{}/projects".format(app_guid),"GET")
      
+     def link_project(self, app_guid: UUID, project_guid: UUID):
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/projects/{}".format(app_guid,project_guid),"PUT")
+
+     def unlink_project(self, app_guid: UUID, project_guid: UUID):
+          return APIHelper()._rest_request(self.entity_base_uri+"/{}/projects/{}".format(app_guid,project_guid),"DELETE")
+
      def get_annotations(self, app_guid: UUID, annotation_type: str, annotation_reason: str=None,
                          annotation_status: str=None, cve_name: str=None, cwe_id: str=None, severities=None,
                          license_name: str=None, license_risk: str=None):

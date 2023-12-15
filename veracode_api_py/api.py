@@ -391,6 +391,12 @@ class VeracodeAPI:
     def get_app_projects(self, app_guid: UUID):
         return SCAApplications().get_projects(app_guid=app_guid)
     
+    def link_project(self, app_guid: UUID, project_guid: UUID):
+        return SCAApplications().link_project(app_guid=app_guid, project_guid=project_guid)
+
+    def unlink_project(self, app_guid: UUID, project_guid: UUID):
+        return SCAApplications().unlink_project(app_guid=app_guid, project_guid=project_guid)
+    
     def get_sca_annotations(self, app_guid: UUID, annotation_type: str, annotation_reason: str=None,
                          annotation_status: str=None, cve_name: str=None, cwe_id: str=None, severities=None,
                          license_name: str=None, license_risk: str=None):
