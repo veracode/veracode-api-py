@@ -8,7 +8,7 @@ _Note_: SCA APIs must be called with a human user, since the SCA Agent APIs do n
 
 _Note_: You can also access these methods from the `Workspaces` class.
 
-- `get_workspaces()`: get a list of SCA Agent workspaces for the organization.
+- `get_workspaces(include_metrics(opt))`: get a list of SCA Agent workspaces for the organization. The `include_metrics` parameter can add counts of issues and other attributes in the response, at some cost to performance, and defaults to `False`.
 - `get_workspace_by_name(name)`: get a list of SCA Agent workspaces whose name partially matches `name`.
 - `create_workspace(name)`: create an SCA Agent workspace named `name`. Returns the GUID for the workspace.
 - `add_workspace_team(workspace_guid,team_id)`: add the team identified by `team_id` (int) to the workspace identified by `workspace_guid`.

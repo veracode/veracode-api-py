@@ -301,8 +301,8 @@ class VeracodeAPI:
 
     ## SCA APIs - note must be human user to use these, not API user
 
-    def get_workspaces(self):
-        return Workspaces().get_all()
+    def get_workspaces(self, include_metrics=False):
+        return Workspaces().get_all(include_metrics=include_metrics)
 
     def get_workspace_by_name(self, name):
         return Workspaces().get_by_name(name)

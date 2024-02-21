@@ -11,9 +11,9 @@ class Workspaces():
      sca_base_url = "srcclr/v3/workspaces"
      sca_issues_url = "srcclr/v3/issues"   
 
-     def get_all(self):
+     def get_all(self, include_metrics=False):
           #Gets existing workspaces
-          request_params = {}
+          request_params = {'include_metrics': include_metrics}
           return APIHelper()._rest_paged_request(self.sca_base_url,"GET",params=request_params,element="workspaces")
 
      def get_by_name(self,name: str):
