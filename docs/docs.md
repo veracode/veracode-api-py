@@ -2,6 +2,8 @@
 
 See the topics below for more information on how to use this library.
 
+`veracode-api-py` provides two ways to access each method in the library. The library provides individual objects for key resource types (e.g. Applications, Users, Workspaces) on which indvidual methods can be called. Alternately, there is a single "API object" that lists all the methods in the library.
+
 ## Scans, Findings, Applications and Policy
 
 * [XML APIs](xml.md) - work with Veracode legacy XML APIs to access report data for individual scans and to perform static scans.
@@ -20,3 +22,9 @@ See the topics below for more information on how to use this library.
 * [Teams](teams.md) - create, update, access, and delete teams.
 * [Business Units](businessunits.md) - create, update, access, and delete business units.
 * [API Credentials](apicreds.md) - create, access, renew, and revoke API credentials.
+
+## API Object
+
+You can use the library without importing individual methods by using the `API()` object.
+
+* [API](api.md) - use this object to access all methods in the `veracode-api-py` library.
