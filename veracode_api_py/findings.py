@@ -120,6 +120,10 @@ class Findings():
     def _get_matched_static_finding_nondebug(self,origin_finding, potential_findings):
         match = None
 
+        #don't try to do fuzzy match if we don't have procedure data
+        if(origin_finding['procedure'] is None):
+           return match
+
         match = next((pf for pf in potential_findings if ((origin_finding['cwe'] == int(pf['cwe'])) & 
                     (origin_finding['procedure'].find(pf['procedure']) > -1 ) & 
                     (origin_finding['relative_location'] == pf['relative_location'] ))), None)
@@ -148,6 +152,7 @@ class Findings():
                     'relative_location': pf['finding_details'].get('relative_location'),
                     'source_file': self.format_file_path(pf['finding_details'].get('file_path')),
                     'line': pf['finding_details'].get('file_line_number'),
+                    'description': pf['description'],
                     'finding': pf} for pf in policy_findings]
             findings.extend(thesefindings)
         elif finding_type == 'DYNAMIC':
