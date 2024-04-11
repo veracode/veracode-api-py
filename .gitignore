@@ -7,6 +7,7 @@ play.py
 *.log
 veracode-plugin.conf
 *.json
+/.verascan
 
 # https://github.com/github/gitignore/blob/master/Python.gitignore
 
