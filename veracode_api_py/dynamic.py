@@ -212,16 +212,16 @@ class ScannerVariables():
 
    def create(self,reference_key: str,value: str,description: str):
       payload = {'reference_key':reference_key, 'value': value, 'description': description}
-      return APIHelper()._rest_request(self.base_url,'POST',json.dumps(payload))
+      return APIHelper()._rest_request(self.base_url,'POST',body=json.dumps(payload))
 
    def get(self,guid: UUID):
       uri = self.base_url + '/{}'.format(guid)
       return APIHelper()._rest_request(uri,"GET")
 
    def update(self,guid: UUID,reference_key: str,value: str,description: str):
-      uri = self.base_url + '/{}'.format(guid)
+      uri = self.base_url + '/{}'.format(guid) + "?method=PATCH"
       body = { 'reference_key': reference_key, 'value': value, 'description': description }
-      return APIHelper()._rest_request(uri,"PUT",body)
+      return APIHelper()._rest_request(uri,"PUT",body=json.dumps(body))
 
    def delete(self,guid: UUID):
       uri = self.base_url + '/{}'.format(guid)
