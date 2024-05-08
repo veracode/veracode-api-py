@@ -163,7 +163,7 @@ class ComponentActivity():
           return APIHelper()._rest_request(self.component_base_uri+"/{}".format(component_id),"GET")
 
 class SBOM():
-     entity_base_uri = "srcclr/sbom/v1/targets"
+     entity_base_uri = "srcclr/sbom/v1"
      valid_formats = ['cyclonedx','spdx']
 
      def get(self,app_guid: UUID, format='cyclonedx',linked=False,vulnerability=True,dependency=True):
@@ -171,6 +171,15 @@ class SBOM():
 
      def get_for_project(self,project_guid: UUID, format='cyclonedx', vulnerability=True,dependency=True):
           return self._get_sbom(guid=project_guid,format=format,sbom_type='agent',linked=False,vulnerability=vulnerability,dependency=dependency)
+
+     def scan(self,sbom: str):
+          try:
+               files = { 'sbom-file': open(sbom)}
+          except IOError:
+               print("Could not read file {}".format(sbom))
+               return
+
+          return APIHelper()._rest_request(self.entity_base_uri+"/manage/scan","POST",params=None,files=files)
 
      def _get_sbom(self,guid: UUID,format,sbom_type,linked,vulnerability,dependency):
           if format not in self.valid_formats:
@@ -180,7 +189,7 @@ class SBOM():
                params["linked"] = linked
           if format=='spdx': #currently only supported for SPDX SBOMs
                params["dependency"] = dependency
-          return APIHelper()._rest_request(self.entity_base_uri+"/{}/{}".format(guid,format),"GET",params=params)
+          return APIHelper()._rest_request(self.entity_base_uri+"/targets/{}/{}".format(guid,format),"GET",params=params)
 
 class SCAApplications():
      entity_base_uri = "srcclr/v3/applications"
@@ -250,7 +259,5 @@ class SCAApplications():
           payload = { "action": action, "comment": comment, "annotation_type": annotation_type, "annotations": [ annotation ]}
 
           payload_json = json.dumps(payload)
-
-          print(payload_json)
           
           return APIHelper()._rest_request(self.entity_base_uri+"/{}/sca_annotations".format(app_guid),"POST",body=payload_json)

@@ -388,6 +388,9 @@ class VeracodeAPI:
     def get_sbom_project(self, project_guid: UUID, format='cyclonedx', vulnerability=True):
         return SBOM().get_for_project(project_guid,format=format,vulnerability=vulnerability)
     
+    def scan_sbom(self, sbom: str):
+        return SBOM().scan(sbom=sbom)
+    
     def get_app_projects(self, app_guid: UUID):
         return SCAApplications().get_projects(app_guid=app_guid)
     

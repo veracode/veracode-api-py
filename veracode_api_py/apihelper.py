@@ -62,15 +62,18 @@ class APIHelper():
                                       headers=oldheaders)
             return session.send(newreq.prepare())
         
-    def _prepare_headers(self,method,apifamily):
+    def _prepare_headers(self,method,apifamily,files=False):
         headers = {"User-Agent": "api.py"}
-        if method in ["POST", "PUT"] and apifamily=='json':
+        if method in ["POST", "PUT"] and apifamily=='json' and not(files):
             headers.update({'Content-type': 'application/json'})
         return headers
                 
-    def _rest_request(self, url, method, params=None, body=None, fullresponse=False, use_base_url=True):
+    def _rest_request(self, url, method, params=None, body=None, fullresponse=False, use_base_url=True, files=None):
         # base request method for a REST request
-        myheaders = self._prepare_headers(method,'json')
+        if files is None:
+            myheaders = self._prepare_headers(method,'json')
+        else:
+            myheaders = self._prepare_headers(method,'json',files=True)
 
         session = requests.Session()
 
@@ -85,8 +88,12 @@ class APIHelper():
                 prepared_request = request.prepare()
                 r = session.send(prepared_request)
             elif method == "POST":
-                r = requests.post(url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,
+                if files is None:
+                    r = requests.post(url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,
                                   data=body)
+                else:
+                    r = requests.post(url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,
+                                  data=body, files=files)
             elif method == "PUT":
                 r = requests.put(url, params=params, auth=RequestsAuthPluginVeracodeHMAC(), headers=myheaders,
                                  data=body)
@@ -96,7 +103,7 @@ class APIHelper():
                 raise VeracodeAPIError("Unsupported HTTP method")
         except requests.exceptions.RequestException as e:
             logger.exception("Error: {}".format(self.connect_error_msg))
-            raise VeracodeAPIError(e)
+            raise VeracodeAPIError(e.text)
 
         if r.status_code != requests.codes.ok:
             logger.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
