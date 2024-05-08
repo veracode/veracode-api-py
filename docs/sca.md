@@ -44,7 +44,7 @@ _Note_: SCA APIs must be called with a human user, since the SCA Agent APIs do n
 - `SBOM().get_for_project(project_guid,format(opt),vulnerability(opt))`: generate an SBOM in CycloneDX (default) or SPDX format for the SCA Agent project represented by `project_guid`. Get the `project_guid` from the SCA Agent API (e.g. `get_projects(workspace_guid)`). The following options are available:
   - `vulnerability`: if `True`, returns an SBOM containing vulnerability information. Defaults to `True`.
   - `dependency` (SPDX only): if `True`, returns an SBOM that includes dependency information. Defaults to `True`.
-- `SBOM().scan(sbom)`: Scan an SBOM (pass the filename, including absolute path, as the `sbom` parameter) and return an updated SBOM with additional vulnerability and/or licensing information from the Veracode SCA Database.
+- `SBOM().scan(sbom)`: (EXPERIMENTAL) Scan an SBOM (pass the filename, including absolute path, as the `sbom` parameter) and return an updated SBOM with additional vulnerability and/or licensing information from the Veracode SCA Database.
 
 ## Application Info
 
