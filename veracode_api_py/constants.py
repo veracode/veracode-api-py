@@ -39,3 +39,5 @@ class Constants():
                'base_rest_url': 'https://api.veracode.us/'
           }
      }
+
+     DEV_STAGE = [ 'DEVELOPMENT', 'TESTING', 'RELEASE']

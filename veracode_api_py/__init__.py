@@ -10,3 +10,4 @@ from veracode_api_py.sca import Workspaces, ComponentActivity, SBOM, SCAApplicat
 from veracode_api_py.exceptions import VeracodeError, VeracodeAPIError
 from veracode_api_py.xmlapi import XMLAPI
 from veracode_api_py.analytics import Analytics
+from veracode_api_py.static import StaticCLI

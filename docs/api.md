@@ -353,4 +353,15 @@ _Note_: You can also access these methods from the `ScannerVariables` class.
 - `update_team(team_guid,team_name(opt),business_unit(opt),members(opt))`: update the team identified by `team_guid` with the provided information.
 - `delete_team(team_guid)`: delete the team identified by `team_guid`.
 
+## Static 
+
+*See also*: You can also access these methods from the [Static class](static.md).
+
+- `create_static_scan(binary_name, binary_size, binary_hash, app_id(opt), project_name(opt), project_uri(opt), project_ref(opt), commit_hash(opt), dev_stage(opt), scan_timeout (opt))` - Set up a scan
+- `get_static_scan(scan_id)` - Get scan details for the scan represented by `scan_id`.
+- `add_static_scan_segment(scan_id,segment_id,file)` - Upload a segment of the scanned file.
+- `start_static_scan(scan_id)` - Start the scan represented by `scan_id`.
+- `cancel_static_scan(scan_id)` - Cancel the scan represented by `scan_id`.
+- `get_static_scan_findings(scan_id)` - Get the findings for the scan represented by `scan_id`.
+
 [All docs](docs.md)

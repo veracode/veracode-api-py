@@ -5,7 +5,7 @@ import json
 # provide a file name that is either in the same directory, or a fully qualified path
 # to generate a small sample, try:
 # veracode sbom --type image --source alpine:latest --format cyclonedx-json
-file = '/Users/tjarrett/Desktop/api-signing-sbom.json'
+file = 'api-signing-sbom.json'
 
 try:
     f = open (file)
