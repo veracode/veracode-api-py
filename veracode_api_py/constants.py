@@ -41,3 +41,5 @@ class Constants():
      }
 
      DEV_STAGE = [ 'DEVELOPMENT', 'TESTING', 'RELEASE']
+
+     BUSINESS_CRITICALITY = [ 'VERY HIGH', 'HIGH', 'MEDIUM', 'LOW', 'VERY LOW']

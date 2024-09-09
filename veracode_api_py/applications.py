@@ -5,6 +5,7 @@ from urllib import parse
 from uuid import UUID
 
 from .apihelper import APIHelper
+from .constants import Constants
 
 class Applications():    
     def get_all(self,policy_check_after=None):
@@ -33,19 +34,20 @@ class Applications():
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
     def create(self,app_name:str ,business_criticality, business_unit: UUID=None, teams=[], policy_guid:UUID=None,
-                custom_fields=[], bus_owner_name=None, bus_owner_email=None):
+                custom_fields=[], bus_owner_name=None, bus_owner_email=None, git_repo_url=None):
         return self._create_or_update("CREATE",app_name=app_name,business_criticality=business_criticality,
                                       business_unit=business_unit,teams=teams, policy_guid=policy_guid, 
                                       custom_fields=custom_fields, bus_owner_name=bus_owner_name, 
-                                      bus_owner_email=bus_owner_email)
+                                      bus_owner_email=bus_owner_email, git_repo_url=git_repo_url)
 
     def update(self,guid: UUID,app_name:str ,business_criticality, business_unit: UUID=None, 
                teams=[], policy_guid:UUID=None, custom_fields=[],
-               bus_owner_name=None,bus_owner_email=None):
+               bus_owner_name=None,bus_owner_email=None, git_repo_url=None):
         return self._create_or_update("UPDATE",app_name=app_name,business_criticality=business_criticality,
                                       business_unit=business_unit,teams=teams,guid=guid, 
                                       policy_guid=policy_guid, custom_fields=custom_fields, 
-                                      bus_owner_name=bus_owner_name,bus_owner_email=bus_owner_email)
+                                      bus_owner_name=bus_owner_name,bus_owner_email=bus_owner_email,
+                                      git_repo_url=git_repo_url)
 
     def delete(self,guid: UUID):
         uri = 'appsec/v1/applications/{}'.format(guid)
@@ -53,7 +55,7 @@ class Applications():
 
     def _create_or_update(self,method,app_name: str,business_criticality, business_unit: UUID=None, 
                           teams=[],guid=None,policy_guid:UUID=None, custom_fields=[], 
-                          bus_owner_name=None,bus_owner_email=None):
+                          bus_owner_name=None,bus_owner_email=None,git_repo_url=None):
         if method == 'CREATE':
             uri = 'appsec/v1/applications'
             httpmethod = 'POST'
@@ -62,6 +64,9 @@ class Applications():
             httpmethod = 'PUT'
         else:   
             return
+        
+        if business_criticality not in Constants().BUSINESS_CRITICALITY:
+            raise ValueError("{} is not in the list of valid buinsess criticalities ({})".format(business_criticality,Constants().BUSINESS_CRITICALITY))
 
         app_def = {'name':app_name, 'business_criticality':business_criticality}
 
@@ -85,6 +90,10 @@ class Applications():
         if (bus_owner_email != None) & (bus_owner_name != None):
             bus_owner = {'business_owners':[ {'email': bus_owner_email, 'name': bus_owner_name } ] }
             app_def.update(bus_owner)
+
+        if (git_repo_url != None):
+            gru = { 'git_repo_url': git_repo_url}
+            app_def.update(gru)
 
         payload = json.dumps({"profile": app_def})
         return APIHelper()._rest_request(uri,httpmethod,body=payload)
