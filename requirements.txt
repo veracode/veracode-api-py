@@ -1,4 +1,4 @@
 requests>=2.31.0
 veracode-api-signing>=22.3.0
-urllib3>= 1.26.6
+urllib3>= 2.2.2
 Pygments>= 2.9.0
