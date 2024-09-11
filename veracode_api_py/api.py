@@ -20,7 +20,7 @@ from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from .constants import Constants
 from .exceptions import VeracodeAPIError
 from .applications import Applications, Sandboxes, CustomFields
-from .findings import Findings, SummaryReport
+from .findings import Findings, SummaryReport, ManualScans
 from .policy import Policies
 from .sca import ComponentActivity, Workspaces, SBOM, SCAApplications
 from .collections import Collections
@@ -184,6 +184,17 @@ class VeracodeAPI:
 
     def match_findings(self, origin_finding, potential_matches, approved_findings_only=True):
         return Findings().match(origin_finding, potential_matches, approved_findings_only)
+    
+    ## MPT scans and findings
+
+    def get_mpt_scans(self, appid: UUID):
+        return ManualScans().get_for_app(appid=appid)
+    
+    def get_mpt_scan(self, scanid: int):
+        return ManualScans().get(scanid=scanid)
+    
+    def get_mpt_findings(self, scanid: int, include_artifacts=False):
+        return ManualScans().get_findings(scanid=scanid, include_artifacts=include_artifacts)
 
     ## Collections APIs
 

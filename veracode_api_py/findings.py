@@ -168,3 +168,21 @@ class SummaryReport():
             uri = "appsec/v2/applications/{}/summary_report".format(app)
 
         return APIHelper()._rest_request(uri,"GET")
+    
+class ManualScans():
+    def get_for_app(self,appid: UUID):
+        params = {}
+        params['application'] = appid
+        uri = 'mpt/v1/scans'
+        return APIHelper()._rest_paged_request(uri,"GET","scans",params=params)
+    
+    def get(self,scanid: int):
+        uri = "mpt/v1/scans/{}".format(scanid)
+        return APIHelper()._rest_request(uri,"GET")
+    
+    def get_findings(self,scanid: int, include_artifacts=False):
+        uri = "mpt/v1/scans/{}/findings".format(scanid)
+        params = {}
+        params['include_artifacts'] = include_artifacts
+        return APIHelper()._rest_paged_request(uri,"GET","findings",params=params)
+    

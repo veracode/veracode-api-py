@@ -22,4 +22,11 @@ The following methods call Veracode REST APIs and return JSON.
 
 - `SummaryReport().get_summary_report(app,sandbox(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid).
 
+## Manual Testing
+
+- `ManualScans().get_for_app(appid)`: get the manual scans for `appid` (guid).
+- `ManualScans().get(scanid)`: get the manual scan information for `scanid` (int), returned by `get_for_app()`.
+- `ManualScans().get_findings(scanid,include_artifacts(opt))`: get the manual findings detail for `scanid` (int). 
+  - `include_artifacts`: if `True`, includes screenshots and code samples associated with the findings. 
+
 [All docs](docs.md)

@@ -61,6 +61,15 @@ As an alternative to importing individual objects into your library, you can acc
   - `approved_findings_only`: limits matches to findings with approved mitigations.
   - `allow_fuzzy_match`: look for matches within a range of source lines around the origin finding. This allows for code movement but can result in flaws being mismatched; use sparingly.
 
+### MPT Scans and Findings
+
+*See also*: You can also access these methods from the [ManualScans class](findings.md#manual-testing).
+
+- `get_manual_scans_for_app(appid)`: get the manual scans for `appid` (guid).
+- `get_manual_scan(scanid)`: get the manual scan information for `scanid` (int), returned by `get_manual_scans_for_app()`.
+- `get_manual_findings(scanid,include_artifacts(opt))`: get the manual findings detail for `scanid` (int). 
+  - `include_artifacts`: if `True`, includes screenshots and code samples associated with the findings. 
+
 ### Summary Report
 
 *See also*: You can also access this method from the [SummaryReport class](findings.md#summary-report).
