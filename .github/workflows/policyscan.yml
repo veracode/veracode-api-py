@@ -21,7 +21,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v2 # Make java accessible on path so the uploadandscan action can run.
         with: 
-          java-version: '8'
+          java-version: '11'
+          distribution: 'corretto'
           
       # zip the project and move it to a staging directory
       - name: Zip Project
