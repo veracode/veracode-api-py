@@ -22,6 +22,7 @@ See the topics below for more information on how to use this library.
 * [Teams](teams.md) - create, update, access, and delete teams.
 * [Business Units](businessunits.md) - create, update, access, and delete business units.
 * [API Credentials](apicreds.md) - create, access, renew, and revoke API credentials.
+* [Roles](roles.md) - access system roles and permissions; create, update, access, and delete custom roles.
 
 ## API Object
 
