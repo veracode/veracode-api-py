@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-java@v2 # Make java accessible on path so the uploadandscan action can run.
         with: 
           java-version: '11'
-          distribution: 'corretto'
+          distribution: 'zulu'
           
       # zip the project and move it to a staging directory
       - name: Zip Project

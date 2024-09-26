@@ -13,7 +13,8 @@ See the topics below for more information on how to use this library.
 * [Findings and Annotations](findings.md) - retrieve findings and propose, accept, and reject mitigations.
 * [Collections](collections.md) - (EARLY ACCESS) create, update, access, and delete collections.
 * [SCA Agent](sca.md) - access information about SCA workspaces, projects, issues, vulnerabilities, libraries, and licenses.
-* [Dynamic Analysis](dynamic.md) - configure, schedule and start dynamic analyses.
+* [Dynamic Analysis](dynamic.md) - configure, schedule and start dynamic analyses (use with the Veracode Dynamic Analysis product).
+* [DAST](dast.md) - configure, schedule, and run DAST Essentials scans (use with the Veracode DAST Essentials product).
 * [Analytics](analytics.md) - request and retrieve reports across your Veracode organization.
 
 ## Administration
