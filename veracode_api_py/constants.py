@@ -43,3 +43,15 @@ class Constants():
      DEV_STAGE = [ 'DEVELOPMENT', 'TESTING', 'RELEASE']
 
      BUSINESS_CRITICALITY = [ 'VERY HIGH', 'HIGH', 'MEDIUM', 'LOW', 'VERY LOW']
+
+     DAST_TARGET_TYPE = [ 'WEB_APP', 'API']
+
+     DAST_CRAWLER_MODE = [ 'SMART', 'EXHAUSTIVE' ]
+
+     DAST_PROTOCOL = [ 'HTTP', 'HTTPS']
+
+     DAST_SCAN_TYPE = [ 'QUICK', 'FULL']
+
+     DAST_SCANNERS = [ 'fingerprinting', 'ssl', 'http_header', 'portscan', 'fuzzer', 'sql_injection',
+                      'xss', 'file_inclusion', 'deserialization', 'xxe', 'command_injection', 
+                      'csrf', 'ldap_injection']
