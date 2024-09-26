@@ -66,7 +66,7 @@ class Applications():
             return
         
         if business_criticality not in Constants().BUSINESS_CRITICALITY:
-            raise ValueError("{} is not in the list of valid buinsess criticalities ({})".format(business_criticality,Constants().BUSINESS_CRITICALITY))
+            raise ValueError("{} is not in the list of valid business criticalities ({})".format(business_criticality,Constants().BUSINESS_CRITICALITY))
 
         app_def = {'name':app_name, 'business_criticality':business_criticality}
 
