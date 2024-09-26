@@ -103,7 +103,7 @@ class APIHelper():
                 raise VeracodeAPIError("Unsupported HTTP method")
         except requests.exceptions.RequestException as e:
             logger.exception("Error: {}".format(self.connect_error_msg))
-            raise VeracodeAPIError(e.text)
+            raise VeracodeAPIError(e.text) from e
 
         if r.status_code != requests.codes.ok:
             logger.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
@@ -119,7 +119,11 @@ class APIHelper():
             else:
                 logger.exception("Error [{}]: {} for request {}".
                                  format(r.status_code, r.text, r.request.url))
-            raise requests.exceptions.RequestException()
+                re = requests.exceptions.RequestException()
+                re.response = r
+                re.errno = r.status_code
+                re.request = r.request
+            raise re
 
         if fullresponse:
             return r
