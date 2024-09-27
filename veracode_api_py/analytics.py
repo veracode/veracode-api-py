@@ -55,13 +55,21 @@ class Analytics():
       else:
          return response['_embedded']['id'] #we will usually just need the guid so we can come back and fetch the report
 
-   def get(self,guid: UUID):
+   def get_findings(self, guid: UUID):
+      thestatus, thefindings = self.get(guid=guid,report_type='findings')
+      return thestatus, thefindings
+
+   def get_scans(self, guid: UUID):
+      thestatus, thescans = self.get(guid=guid,report_type='scans')
+      return thestatus, thescans
+   
+   def get(self,guid: UUID,report_type='findings'):
       # handle multiple scan types
       uri = "{}/{}".format(self.base_url,guid)
-      theresponse = APIHelper()._rest_paged_request(uri,"GET","findings",{},fullresponse=True)
+      theresponse = APIHelper()._rest_paged_request(uri,"GET",report_type,{},fullresponse=True)
       thestatus = theresponse.get('_embedded',{}).get('status','')
-      thefindings = theresponse.get('_embedded',{}).get('findings',{})
-      return thestatus, thefindings
+      thebody = theresponse.get('_embedded',{}).get(report_type,{})
+      return thestatus, thebody
 
    #helper methods
    def _case_insensitive_list_compare(self,input_list:list, target_list:list):

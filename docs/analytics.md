@@ -17,6 +17,10 @@ The following methods call Veracode REST APIs and return JSON.
   - `application_id`: optional, application ID for which to return results
   - `rawjson`: optional, defaults to False. Returns full response if True, the GUID of the request if false
 
-- `Analytics().get(guid)`: check the status of the report request and return the report contents when ready. Note that this method returns a tuple of `status` (string) and `results` (list); when `status` is `COMPLETED`, the `results` list will populate with results.
+- `Analytics().get(guid, report_type(findings))`: check the status of the report request and return the report contents when ready. Note that this method returns a tuple of `status` (string) and `results` (list); when `status` is `COMPLETED`, the `results` list will populate with results. Also, you need to specify the type of data expected by the GUID with `report_type`; this defaults to `findings`.
+
+- `Analytics().get_findings(guid)`: check the status of a findings report request specified by `guid` and return the report contents when ready. Note that this method returns a tuple of `status` (string) and `results` (list); when `status` is `COMPLETED`, the `results` list will populate with results. 
+
+- `Analytics().get_scans(guid)`: check the status of a scans report request specified by `guid` and return the report contents when ready. Note that this method returns a tuple of `status` (string) and `results` (list); when `status` is `COMPLETED`, the `results` list will populate with results. 
 
 [All docs](docs.md)
