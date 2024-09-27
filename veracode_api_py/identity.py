@@ -308,3 +308,54 @@ class Permissions():
    
    def get(self, permission_guid: UUID):
       return APIHelper()._rest_request("{}/{}".format(self.base_uri,permission_guid),"GET")
+   
+class JITDefaultSettings():
+   base_uri = "api/authn/v2/jit_default_settings"
+
+   def get(self):
+      return APIHelper()._rest_request( self.base_uri, "GET")
+   
+   def create(self, ip_restricted=False,prefer_veracode_data=True, allowed_ip_addresses=[],
+              use_csv_for_roles_claim=False, use_csv_for_teams_claim=False, use_csv_for_teams_managed_claim=False,
+              use_csv_for_ip_address_claim=True,teams=[],roles=[]):
+      return self._create_or_update("CREATE", ip_restricted=ip_restricted, prefer_veracode_data=prefer_veracode_data,
+                                    allowed_ip_addresses=allowed_ip_addresses, use_csv_for_roles_claim=use_csv_for_roles_claim,
+                                    use_csv_for_teams_claim=use_csv_for_teams_claim, 
+                                    use_csv_for_teams_managed_claim=use_csv_for_teams_managed_claim, 
+                                    use_csv_for_ip_address_claim=use_csv_for_ip_address_claim, teams=teams, roles=roles)
+   
+   def update(self, jit_default_id: UUID, ip_restricted=False,prefer_veracode_data=True, allowed_ip_addresses=[],
+              use_csv_for_roles_claim=False, use_csv_for_teams_claim=False, use_csv_for_teams_managed_claim=False,
+              use_csv_for_ip_address_claim=True,teams=[],roles=[]):
+      return self._create_or_update("UPDATE", jit_default_id = jit_default_id, ip_restricted=ip_restricted, 
+                                    prefer_veracode_data=prefer_veracode_data,allowed_ip_addresses=allowed_ip_addresses, 
+                                    use_csv_for_roles_claim=use_csv_for_roles_claim,
+                                    use_csv_for_teams_claim=use_csv_for_teams_claim, 
+                                    use_csv_for_teams_managed_claim=use_csv_for_teams_managed_claim, 
+                                    use_csv_for_ip_address_claim=use_csv_for_ip_address_claim, teams=teams, roles=roles)
+   
+   def _create_or_update(self, method, jit_default_id: UUID=None, ip_restricted=False,prefer_veracode_data=True, allowed_ip_addresses=[],
+              use_csv_for_roles_claim=False, use_csv_for_teams_claim=False, use_csv_for_teams_managed_claim=False,
+              use_csv_for_ip_address_claim=True,teams=[],roles=[]):
+      
+      if method == "CREATE":
+         uri = self.base_uri
+         httpmethod = "POST"
+      elif method == "UPDATE":
+         uri = '{}/{}'.format(self.base_uri, jit_default_id)
+         httpmethod = "PUT"
+      else:
+         return 
+      
+      params = { 'ip_restricted': ip_restricted, 'prefer_veracode_data': prefer_veracode_data, 'allowed_ip_addresses': allowed_ip_addresses,
+                'use_csv_for_roles_claim': use_csv_for_roles_claim, 'use_csv_for_teams_claim': use_csv_for_teams_claim, 
+                'use_csv_for_teams_managed_claim': use_csv_for_teams_managed_claim, 'use_csv_for_ip_address_claim': use_csv_for_ip_address_claim,
+                'teams': teams, 'roles': roles}
+      
+      body = json.dumps(params)
+
+      return APIHelper()._rest_request(url=uri, method=httpmethod, params=body)
+
+   def delete(self, jit_default_id: UUID):
+      uri = '{}/{}'.format(self.base_uri, jit_default_id)
+      return APIHelper()._rest_request( uri, "DELETE")
