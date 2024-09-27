@@ -198,16 +198,16 @@ class DASTAnalysisProfiles():
       self.schedules = self.Schedules(analysis_profile_id=analysis_profile_id, base_url=self.base_url)
       return self.schedules.get(schedule_id=schedule_id)
    
-   def create_schedule(self,frequency,day=1,weekday=1,timezone='America/New York',time="00:00"):
+   def create_schedule(self,analysis_profile_id: UUID, frequency,day=1,weekday=1,timezone='America/New York',time="00:00"):
       self.schedules = self.Schedules(analysis_profile_id=analysis_profile_id, base_url=self.base_url)
       return self.schedules.create(frequency=frequency, day=day, weekday=weekday, timezone=timezone, time=time)
    
-   def update_schedule(self, schedule_id: UUID, frequency,day=1,weekday=1,timezone='America/New York',time="00:00"):
+   def update_schedule(self, schedule_id: UUID, analysis_profile_id: UUID, frequency,day=1,weekday=1,timezone='America/New York',time="00:00"):
       self.schedules = self.Schedules(analysis_profile_id=analysis_profile_id, base_url=self.base_url)
       return self.schedules.update(schedule_id=schedule_id, frequency=frequency, day=day, 
                                    weekday=weekday, timezone=timezone, time=time)
    
-   def delete_schedule(self, schedule_id: UUID):
+   def delete_schedule(self, analysis_profile_id: UUID, schedule_id: UUID):
       self.schedules = self.Schedules(analysis_profile_id=analysis_profile_id, base_url=self.base_url)
       return self.schedules.delete(schedule_id=schedule_id)
    
