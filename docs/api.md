@@ -74,7 +74,7 @@ As an alternative to importing individual objects into your library, you can acc
 
 *See also*: You can also access this method from the [SummaryReport class](findings.md#summary-report).
 
-- `get_summary_report(app,sandbox(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid).
+- `get_summary_report(app,sandbox(opt), build_id(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid). Optionally specify a `build_id` to get a summary report for an older scan.
 
 ## Applications and Policy
 

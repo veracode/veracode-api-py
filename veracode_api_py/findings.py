@@ -161,13 +161,17 @@ class Findings():
         return findings
 
 class SummaryReport():
-    def get_summary_report(self,app: UUID,sandbox: UUID=None):
+    def get_summary_report(self,app: UUID,sandbox: UUID=None, build_id: int=None):
+        uri = "appsec/v2/applications/{}/summary_report".format(app)
+        
+        params = {}
         if sandbox != None:
-            uri = "appsec/v2/applications/{}/summary_report?context={}".format(app,sandbox)
-        else:
-            uri = "appsec/v2/applications/{}/summary_report".format(app)
+            params['context'] = sandbox
 
-        return APIHelper()._rest_request(uri,"GET")
+        if build_id != None:
+            params['build_id'] = build_id            
+
+        return APIHelper()._rest_request(uri,"GET", params=params)
     
 class ManualScans():
     def get_for_app(self,appid: UUID):
