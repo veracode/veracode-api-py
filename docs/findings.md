@@ -20,7 +20,7 @@ The following methods call Veracode REST APIs and return JSON.
 
 ## Summary Report
 
-- `SummaryReport().get_summary_report(app,sandbox(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid).
+- `SummaryReport().get_summary_report(app,sandbox(opt), build_id(opt))`: get the summary report for `app` (guid) or its `sandbox` (guid). Optionally specify a `build_id` to get a summary report for an older scan. 
 
 ## Manual Testing
 

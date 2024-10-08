@@ -176,8 +176,8 @@ class VeracodeAPI:
     def get_dynamic_flaw_info(self, app: UUID, issueid):
         return Findings().get_dynamic_flaw_info(app, issueid)
 
-    def get_summary_report(self, app: UUID, sandbox=None):
-        return SummaryReport().get_summary_report(app, sandbox)
+    def get_summary_report(self, app: UUID, sandbox=None, build_id=None):
+        return SummaryReport().get_summary_report(app=app, sandbox=sandbox, build_id=build_id)
 
     def add_annotation(self, app: UUID, issue_list, comment, action, sandbox: UUID = None):
         return Findings().add_annotation(app, issue_list, comment, action, sandbox)
