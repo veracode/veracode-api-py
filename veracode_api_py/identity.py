@@ -251,5 +251,111 @@ class APICredentials():
       return APIHelper()._rest_request(self.base_uri + '/{}'.format(api_id), "DELETE")
 
 class Roles():
+   base_uri = "api/authn/v2/roles"
    def get_all(self):
-      return APIHelper()._rest_paged_request("api/authn/v2/roles","GET","roles",{'page':0})
+      return APIHelper()._rest_paged_request(self.base_uri,"GET","roles",{'page':0})
+   
+   def get(self, role_guid: UUID):
+      return APIHelper()._rest_request("{}/{}".format(self.base_uri,role_guid),"GET")
+   
+   def create(self, role_name, role_description, is_api=False, jit_assignable=True, 
+              jit_assignable_default=True, permissions=[], child_roles=[]):
+      return self._create_or_update("CREATE", role_name=role_name, role_description=role_description,
+                                    is_api=is_api, jit_assignable=jit_assignable, 
+                                    jit_assignable_default=jit_assignable_default, 
+                                    permissions=permissions, child_roles=child_roles)
+   
+   def update(self, role_name, role_description, role_guid: UUID, is_api=False, 
+              jit_assignable=True, jit_assignable_default=True, 
+              permissions=[], child_roles=[]): 
+      # TODO handle partial and incremental
+      return self._create_or_update("UPDATE", role_name=role_name, role_description=role_description,
+                                    role_guid=role_guid, is_api=is_api, jit_assignable=jit_assignable,
+                                    jit_assignable_default=jit_assignable_default,
+                                    permissions=permissions, child_roles=child_roles)
+   
+   def delete(self, role_guid: UUID):
+      return APIHelper()._rest_request("{}/{}".format(self.base_uri,role_guid),"DELETE")
+
+   def _create_or_update(self, method, role_name, role_description, role_guid: UUID=None, is_api=False,
+                         jit_assignable=True,jit_assignable_default=True,
+                         permissions=[], child_roles=[]):
+      uri = self.base_uri
+      if method == 'CREATE':
+         httpmethod = 'POST'
+      elif method == 'UPDATE':
+         uri = uri + '/{}'.format(role_guid)
+         httpmethod = 'PUT'
+      else:
+         return
+      
+      role_def = { 'role_name': role_name, 'role_description': role_description, 'is_api': is_api,
+                  'jit_assignable': jit_assignable, 'jit_assignable_default': jit_assignable_default}
+      
+      if len(permissions) > 0:
+         role_def['permissions'] = permissions
+
+      if len(child_roles) > 0:
+         role_def['child_roles'] = child_roles
+
+      payload = json.dumps({"profile": role_def})
+      return APIHelper()._rest_request(uri,httpmethod,body=payload)
+
+class Permissions():
+   base_uri = "api/authn/v2/permissions"
+   def get_all(self):
+      return APIHelper()._rest_paged_request( self.base_uri,"GET","permissions",{'page':0})
+   
+   def get(self, permission_guid: UUID):
+      return APIHelper()._rest_request("{}/{}".format(self.base_uri,permission_guid),"GET")
+   
+class JITDefaultSettings():
+   base_uri = "api/authn/v2/jit_default_settings"
+
+   def get(self):
+      return APIHelper()._rest_request( self.base_uri, "GET")
+   
+   def create(self, ip_restricted=False,prefer_veracode_data=True, allowed_ip_addresses=[],
+              use_csv_for_roles_claim=False, use_csv_for_teams_claim=False, use_csv_for_teams_managed_claim=False,
+              use_csv_for_ip_address_claim=True,teams=[],roles=[]):
+      return self._create_or_update("CREATE", ip_restricted=ip_restricted, prefer_veracode_data=prefer_veracode_data,
+                                    allowed_ip_addresses=allowed_ip_addresses, use_csv_for_roles_claim=use_csv_for_roles_claim,
+                                    use_csv_for_teams_claim=use_csv_for_teams_claim, 
+                                    use_csv_for_teams_managed_claim=use_csv_for_teams_managed_claim, 
+                                    use_csv_for_ip_address_claim=use_csv_for_ip_address_claim, teams=teams, roles=roles)
+   
+   def update(self, jit_default_id: UUID, ip_restricted=False,prefer_veracode_data=True, allowed_ip_addresses=[],
+              use_csv_for_roles_claim=False, use_csv_for_teams_claim=False, use_csv_for_teams_managed_claim=False,
+              use_csv_for_ip_address_claim=True,teams=[],roles=[]):
+      return self._create_or_update("UPDATE", jit_default_id = jit_default_id, ip_restricted=ip_restricted, 
+                                    prefer_veracode_data=prefer_veracode_data,allowed_ip_addresses=allowed_ip_addresses, 
+                                    use_csv_for_roles_claim=use_csv_for_roles_claim,
+                                    use_csv_for_teams_claim=use_csv_for_teams_claim, 
+                                    use_csv_for_teams_managed_claim=use_csv_for_teams_managed_claim, 
+                                    use_csv_for_ip_address_claim=use_csv_for_ip_address_claim, teams=teams, roles=roles)
+   
+   def _create_or_update(self, method, jit_default_id: UUID=None, ip_restricted=False,prefer_veracode_data=True, allowed_ip_addresses=[],
+              use_csv_for_roles_claim=False, use_csv_for_teams_claim=False, use_csv_for_teams_managed_claim=False,
+              use_csv_for_ip_address_claim=True,teams=[],roles=[]):
+      
+      if method == "CREATE":
+         uri = self.base_uri
+         httpmethod = "POST"
+      elif method == "UPDATE":
+         uri = '{}/{}'.format(self.base_uri, jit_default_id)
+         httpmethod = "PUT"
+      else:
+         return 
+      
+      params = { 'ip_restricted': ip_restricted, 'prefer_veracode_data': prefer_veracode_data, 'allowed_ip_addresses': allowed_ip_addresses,
+                'use_csv_for_roles_claim': use_csv_for_roles_claim, 'use_csv_for_teams_claim': use_csv_for_teams_claim, 
+                'use_csv_for_teams_managed_claim': use_csv_for_teams_managed_claim, 'use_csv_for_ip_address_claim': use_csv_for_ip_address_claim,
+                'teams': teams, 'roles': roles}
+      
+      body = json.dumps(params)
+
+      return APIHelper()._rest_request(url=uri, method=httpmethod, params=body)
+
+   def delete(self, jit_default_id: UUID):
+      uri = '{}/{}'.format(self.base_uri, jit_default_id)
+      return APIHelper()._rest_request( uri, "DELETE")

@@ -24,7 +24,7 @@ from .findings import Findings, SummaryReport, ManualScans
 from .policy import Policies
 from .sca import ComponentActivity, Workspaces, SBOM, SCAApplications
 from .collections import Collections
-from .identity import Users, Teams, BusinessUnits, APICredentials, Roles
+from .identity import Users, Teams, BusinessUnits, APICredentials, Roles, Permissions
 from .healthcheck import Healthcheck
 from .dynamic import Analyses, Scans, Occurrences, Configuration, CodeGroups, ScanCapacitySummary, ScanOccurrences, \
     ScannerVariables, DynUtils
@@ -314,6 +314,33 @@ class VeracodeAPI:
 
     def get_roles(self):
         return Roles().get_all()
+    
+    def get_role(self, role_guid: GUID):
+        return Roles().get(role_guid=role_guid)
+    
+    def create_role(self, role_name, role_description, is_api=False, jit_assignable=True, 
+              jit_assignable_default=True, permissions=[], child_roles=[]):
+        return Roles().create(role_name=role_name, role_description=role_description,
+                                    is_api=is_api, jit_assignable=jit_assignable, 
+                                    jit_assignable_default=jit_assignable_default, 
+                                    permissions=permissions, child_roles=child_roles)
+    
+    def update_role(self, role_name, role_description, role_guid: UUID, is_api=False, 
+              jit_assignable=True, jit_assignable_default=True, 
+              permissions=[], child_roles=[]):
+        return Roles().update(role_name=role_name, role_description=role_description,
+                                    role_guid=role_guid, is_api=is_api, jit_assignable=jit_assignable,
+                                    jit_assignable_default=jit_assignable_default,
+                                    permissions=permissions, child_roles=child_roles)
+    
+    def delete_role(self, role_guid: UUID):
+        return Roles().delete(role_guid=role_guid)
+    
+    def get_permissions(self):
+        return Permissions().get_all()
+    
+    def get_permission(self, permission_guid: UUID):
+        return Permissions().get(permission_guid=permission_guid)
 
     ## SCA APIs - note must be human user to use these, not API user
 
