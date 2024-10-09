@@ -315,7 +315,7 @@ class VeracodeAPI:
     def get_roles(self):
         return Roles().get_all()
     
-    def get_role(self, role_guid: GUID):
+    def get_role(self, role_guid: UUID):
         return Roles().get(role_guid=role_guid)
     
     def create_role(self, role_name, role_description, is_api=False, jit_assignable=True, 
