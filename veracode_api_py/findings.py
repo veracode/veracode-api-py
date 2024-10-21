@@ -166,6 +166,11 @@ class Findings():
                     'finding': pf} for pf in policy_findings]
             findings.extend(thesefindings)
         return findings
+    
+    def get_cwe(self,cweid: int):
+        uri = "appsec/v1/cwes/{}".format(cweid)
+
+        return APIHelper()._rest_request(uri,"GET")
 
 class SummaryReport():
     def get_summary_report(self,app: UUID,sandbox: UUID=None, build_id: int=None):
