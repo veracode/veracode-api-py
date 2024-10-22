@@ -10,7 +10,7 @@ See the topics below for more information on how to use this library.
 * [Healthcheck and Status](healthcheck.md) - access information about the status of Veracode services.
 * [Applications and Sandboxes](applications.md) - create, update, access, and delete application profiles and sandboxes.
 * [Policy](policy.md) - create, update, access, and delete policy definitions.
-* [Findings and Annotations](findings.md) - retrieve findings and propose, accept, and reject mitigations.
+* [Findings, Annotations, Summary Reports, and CWE and Category Metadata](findings.md) - retrieve findings and propose, accept, and reject mitigations. Get summary reports for applications. Get CWE and category metadata.
 * [Collections](collections.md) - (EARLY ACCESS) create, update, access, and delete collections.
 * [SCA Agent](sca.md) - access information about SCA workspaces, projects, issues, vulnerabilities, libraries, and licenses.
 * [Dynamic Analysis](dynamic.md) - configure, schedule and start dynamic analyses (use with the Veracode Dynamic Analysis product).

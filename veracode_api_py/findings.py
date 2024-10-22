@@ -190,3 +190,22 @@ class ManualScans():
         params['include_artifacts'] = include_artifacts
         return APIHelper()._rest_paged_request(uri,"GET","findings",params=params)
     
+class CWEs():
+    base_uri = 'appsec/v1/cwes'
+    def get_all(self):
+        params = {}
+        return APIHelper()._rest_paged_request(self.base_uri,"GET","cwes", params=params)
+    
+    def get(self,cwe_id: int):
+        uri = '{}/{}'.format(self.base_uri, cwe_id)
+        return APIHelper()._rest_request(uri,"GET")
+    
+class CWECategories():
+    base_uri = 'appsec/v1/categories'
+    def get_all(self):
+        params = {}
+        return APIHelper()._rest_paged_request(self.base_uri,"GET", "categories", params=params)
+    
+    def get(self,category_id: int):
+        uri = '{}/{}'.format(self.base_uri, category_id)
+        return APIHelper()._rest_request(uri,"GET")

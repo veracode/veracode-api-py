@@ -20,7 +20,7 @@ from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from .constants import Constants
 from .exceptions import VeracodeAPIError
 from .applications import Applications, Sandboxes, CustomFields
-from .findings import Findings, SummaryReport, ManualScans
+from .findings import Findings, SummaryReport, ManualScans, CWEs, CWECategories
 from .policy import Policies
 from .sca import ComponentActivity, Workspaces, SBOM, SCAApplications
 from .collections import Collections
@@ -195,6 +195,20 @@ class VeracodeAPI:
     
     def get_mpt_findings(self, scanid: int, include_artifacts=False):
         return ManualScans().get_findings(scanid=scanid, include_artifacts=include_artifacts)
+    
+    ## CWEs and category metadata
+
+    def get_cwes(self):
+        return CWEs().get_all()
+    
+    def get_cwe(self,cwe_id:int):
+        return CWEs().get(cwe_id=cwe_id)
+    
+    def get_cwecategories(self):
+        return CWECategories().get_all()
+    
+    def get_cwecategory(self,category_id:int):
+        return CWECategories().get(category_id=category_id)
 
     ## Collections APIs
 
