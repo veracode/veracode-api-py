@@ -14,8 +14,15 @@ class Findings():
         if request_params == None:
             request_params = {}
         
-        if scantype in ['STATIC', 'DYNAMIC', 'MANUAL','SCA']:
-            request_params['scan_type'] = scantype
+        scantypes = ""
+        scantype = scantype.split(',')
+        for st in scantype:
+            if st in ['STATIC', 'DYNAMIC', 'MANUAL','SCA']:
+                if len(scantypes) > 0:
+                    scantypes += ","
+                scantypes += st
+        if len(scantypes) > 0:
+            request_params['scan_type'] = scantypes
         #note that scantype='ALL' will result in no scan_type parameter as in API
             
         request_params['include_annot'] = annot
@@ -159,6 +166,11 @@ class Findings():
                     'finding': pf} for pf in policy_findings]
             findings.extend(thesefindings)
         return findings
+    
+    def get_cwe(self,cweid: int):
+        uri = "appsec/v1/cwes/{}".format(cweid)
+
+        return APIHelper()._rest_request(uri,"GET")
 
 class SummaryReport():
     def get_summary_report(self,app: UUID,sandbox: UUID=None, build_id: int=None):
