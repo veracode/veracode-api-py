@@ -1,6 +1,6 @@
 [project]
 name = 'veracode_api_py'
-version = '0.9.53'
+version = '0.9.54'
 authors = [ {name = "Tim Jarrett", email="tjarrett@veracode.com"} ]
 description = 'Python helper library for working with the Veracode APIs. Handles retries, pagination, and other features of the modern Veracode REST APIs.'
 readme = 'README.md'
@@ -22,4 +22,4 @@ dependencies = {file = ["requirements.txt"]}
 [project.urls]
 "Homepage" = "https://github.com/veracode/veracode-api-py"
 "Bug Tracker" = "https://github.com/veracode/veracode-api-py/issues"
-"Download" = "https://github.com/veracode/veracode-api-py/archive/v_0953.tar.gz"
+"Download" = "https://github.com/veracode/veracode-api-py/archive/v_0954.tar.gz"
