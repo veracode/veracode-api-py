@@ -1,4 +1,4 @@
-# Findings, Annotations, and Summary Reports
+# Findings, Annotations, Summary Reports, and CWE and Category Metadata
 
 The following methods call Veracode REST APIs and return JSON.
 
@@ -28,5 +28,12 @@ The following methods call Veracode REST APIs and return JSON.
 - `ManualScans().get(scanid)`: get the manual scan information for `scanid` (int), returned by `get_for_app()`.
 - `ManualScans().get_findings(scanid,include_artifacts(opt))`: get the manual findings detail for `scanid` (int). 
   - `include_artifacts`: if `True`, includes screenshots and code samples associated with the findings. 
+
+## CWEs and Category Metadata
+
+- `CWEs().get_all()`: get metadata for all CWEs.
+- `CWEs().get(cwe_id)`: get metadata for the CWE identified by `cwe_id` (int).
+- `CWECategories().get_all()`: get metadata for all CWE categories.
+- `CWECategories().get(category_id)`: get metadata for the CWE category identified by `category_id` (int).
 
 [All docs](docs.md)
