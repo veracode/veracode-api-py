@@ -15,7 +15,7 @@ setup(
   author = 'Tim Jarrett',                  
   author_email = 'tjarrett@veracode.com',      
   url = 'https://github.com/tjarrettveracode',   
-  download_url = 'https://github.com/veracode/veracode-api-py/archive/v_0954.tar.gz',    
+  download_url = 'https://github.com/veracode/veracode-api-py/archive/v_0955.tar.gz',    
   keywords = ['veracode', 'veracode-api'],   
   install_requires=[            
           'veracode-api-signing'
