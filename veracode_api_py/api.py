@@ -641,15 +641,29 @@ class VeracodeAPI:
         return DynUtils().start_scan(length,unit)
 
     # analytics apis
-    def create_analytics_report(self,report_type,last_updated_start_date,last_updated_end_date=None,
+    def create_analytics_report(self,report_type,last_updated_start_date=None,last_updated_end_date=None,
                      scan_type:list = [], finding_status=None,passed_policy=None,
-                     policy_sandbox=None,application_id=None,rawjson=False):
+                     policy_sandbox=None,application_id=None,rawjson=False,deletion_start_date=None,
+                     deletion_end_date=None):
         return Analytics().create_report(report_type=report_type,last_updated_start_date=last_updated_start_date,
                                          last_updated_end_date=last_updated_end_date,scan_type=scan_type,
                                          finding_status=finding_status,passed_policy=passed_policy,
                                          policy_sandbox=policy_sandbox,application_id=application_id,
-                                         rawjson=rawjson)
+                                         rawjson=rawjson, deletion_start_date=deletion_start_date, 
+                                         deletion_end_date=deletion_end_date)
     
     def get_analytics_report(self,guid: UUID):
         status, findings = Analytics().get(guid=guid)
+        return status, findings
+    
+    def get_analytics_findings_report(self,guid:UUID):
+        status, findings = Analytics().get_findings(guid=guid)
+        return status, findings
+    
+    def get_analytics_scans(self,guid:UUID):
+        status, findings = Analytics().get_scans(guid=guid)
+        return status, findings
+    
+    def get_analytics_deleted_scans(self,guid:UUID):
+        status, findings = Analytics().get_deleted_scans(guid=guid)
         return status, findings
