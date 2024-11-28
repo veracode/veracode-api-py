@@ -298,7 +298,7 @@ class Roles():
       if len(child_roles) > 0:
          role_def['child_roles'] = child_roles
 
-      payload = json.dumps({"profile": role_def})
+      payload = json.dumps(role_def)
       return APIHelper()._rest_request(uri,httpmethod,body=payload)
 
 class Permissions():
