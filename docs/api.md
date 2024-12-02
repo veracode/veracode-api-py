@@ -84,7 +84,7 @@ As an alternative to importing individual objects into your library, you can acc
 - `get_apps(policy_check_after(opt))` : get a list of Veracode applications (JSON format). If provided, returns only applications that have a policy check date on or after `policy_check_after` (format is `yyyy-mm-dd`).
 - `get_app(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
 - `get_app_by_name(name)`: get list of applications whose names contain the search string `name`.
-- `create_app(app_name, business_criticality, business_unit(opt), teams(opt), policy_guid(opt), custom_fields(opt array), bus_owner_name(opt), bus_owner_email(opt),git_repo_url(opt))`: create an application profile.
+- `create_app(app_name, business_criticality, business_unit(opt), teams(opt), policy_guid(opt), custom_fields(opt array), bus_owner_name(opt), bus_owner_email(opt),git_repo_url(opt),custom_kms_alias(opt))`: create an application profile.
   - `business_criticality`: one of "VERY HIGH", "HIGH", "MEDIUM", "LOW", "VERY LOW"
   - `business_unit`: the GUID of the business unit to which the application should be assigned
   - `teams`: a list of the GUIDs of the teams to which the application should be assigned
@@ -93,6 +93,7 @@ As an alternative to importing individual objects into your library, you can acc
   - `bus_owner_name`: the name of the business owner of the application
   - `bus_owner_email`: the email address of the business owner of the application
   - `git_repo_url`: the URL to the git repository containing the code for the application
+  - `custom_kms_alias`: the alias for the Customer Managed Encryption Key (CMK), which will be used to encrypt/decrypt customer provided data. Note: The Customer Managed Encrytion Key feature must be activated and configured for your organization before attempting to set this value.
 - `update_app(guid, app_name, business_criticality, business_unit(opt), teams(opt), policy_guid(opt), custom_fields(opt array), bus_owner_name(opt), bus_owner_email(opt),git_repo_url(opt))`: update an application profile. Note that partial updates are NOT supported, so you need to provide all values including those that aren't changing.
 - `delete_app(guid)`: delete the application identified by `guid`. This is not a reversible action.
 - `get_custom_fields()`: get a list of app profile custom fields available for your organization.

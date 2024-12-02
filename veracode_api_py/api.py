@@ -113,11 +113,12 @@ class VeracodeAPI:
 
     def create_app(self, app_name, business_criticality, business_unit: UUID = None, teams=[], 
                    policy_guid = None, custom_fields=[],bus_owner_name = None, bus_owner_email = None,
-                   git_repo_url = None):
+                   git_repo_url = None, custom_kms_alias = None):
         return Applications().create(app_name=app_name, business_criticality=business_criticality, 
                                      business_unit=business_unit, teams=teams, policy_guid=policy_guid,
                                      custom_fields=custom_fields, bus_owner_name=bus_owner_name, 
-                                     bus_owner_email=bus_owner_email, git_repo_url=git_repo_url)
+                                     bus_owner_email=bus_owner_email, git_repo_url=git_repo_url,
+                                     custom_kms_alias=custom_kms_alias)
     
     def update_app(self, guid: UUID, app_name, business_criticality, business_unit: UUID = None, teams=[], 
                    policy_guid = None, custom_fields=[], bus_owner_name=None, bus_owner_email=None,
