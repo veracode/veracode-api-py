@@ -6,7 +6,7 @@ from uuid import UUID
 from .apihelper import APIHelper
 
 class Analytics():
-   report_types = [ "findings", "scans" ]
+   report_types = [ "findings", "scans", "deletedscans" ]
 
    findings_scan_types = ["Static Analysis", "Dynamic Analysis", "Manual", "SCA", "Software Composition Analysis" ]
    scan_scan_types = ["Static Analysis", "Dynamic Analysis", "Manual" ]
@@ -14,22 +14,38 @@ class Analytics():
    base_url = 'appsec/v1/analytics/report'
 
    #public methods
-   def create_report(self,report_type,last_updated_start_date,last_updated_end_date=None,
+   def create_report(self,report_type,last_updated_start_date=None,last_updated_end_date=None,
                      scan_type:list = [], finding_status=None,passed_policy=None,
-                     policy_sandbox=None,application_id=None,rawjson=False):
+                     policy_sandbox=None,application_id=None,rawjson=False, deletion_start_date=None,
+                     deletion_end_date=None):
 
       if report_type not in self.report_types:
          raise ValueError("{} is not in the list of valid report types ({})".format(report_type,self.report_types))
 
-      report_def = { "report_type": report_type,"last_updated_start_date": last_updated_start_date }
+      report_def = { 'report_type': report_type }
+
+      if last_updated_start_date:
+         report_def['last_updated_start_date'] = last_updated_start_date
+      else:
+         if report_type in ['findings','scans']:
+            raise ValueError("{} report type requires a last updated start date.").format(report_type)
 
       if last_updated_end_date:
          report_def['last_updated_end_date'] = last_updated_end_date
          
+      if deletion_end_date:
+         report_def['deletion_end_date'] = deletion_end_date
+
+      if deletion_start_date:
+         report_def['deletion_start_date'] = deletion_start_date
+      else:
+         if report_type == 'deletedscans':
+            raise ValueError("{} report type requires a deleteion start date.").format(report_type)
+
       if len(scan_type) > 0:
          if report_type == 'findings':
             valid_scan_types = self.findings_scan_types
-         elif report_type == 'scans':
+         elif report_type in [ 'scans', 'deletedscans' ]:
             valid_scan_types = self.scan_scan_types
          if not(self._case_insensitive_list_compare(scan_type,valid_scan_types)):
             raise ValueError("{} is not in the list of valid scan types ({})".format(report_type,valid_scan_types))
@@ -62,6 +78,10 @@ class Analytics():
    def get_scans(self, guid: UUID):
       thestatus, thescans = self.get(guid=guid,report_type='scans')
       return thestatus, thescans
+
+   def get_deleted_scans(self, guid: UUID):
+      thestatus, thescans = self.get(guid=guid,report_type='deletedscans')
+      return thestatus, thescans   
    
    def get(self,guid: UUID,report_type='findings'):
       # handle multiple scan types
