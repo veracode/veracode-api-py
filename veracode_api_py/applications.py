@@ -33,14 +33,14 @@ class Applications():
         params = {"name": parse.quote(appname)}
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
-    def create(self,app_name:str ,business_criticality, description: str, business_unit: UUID=None, teams=[], policy_guid:UUID=None,
+    def create(self,app_name:str ,business_criticality, description: str=None, business_unit: UUID=None, teams=[], policy_guid:UUID=None,
                 custom_fields=[], bus_owner_name=None, bus_owner_email=None, git_repo_url=None, custom_kms_alias: str=None):
         return self._create_or_update("CREATE",app_name=app_name,business_criticality=business_criticality,
                                       description=description,business_unit=business_unit,teams=teams, policy_guid=policy_guid, 
                                       custom_fields=custom_fields, bus_owner_name=bus_owner_name, 
                                       bus_owner_email=bus_owner_email, git_repo_url=git_repo_url, custom_kms_alias=custom_kms_alias)
 
-    def update(self,guid: UUID,app_name:str, description: str, business_criticality, business_unit: UUID=None, 
+    def update(self,guid: UUID,app_name:str, description: str=None, business_criticality, business_unit: UUID=None, 
                teams=[], policy_guid:UUID=None, custom_fields=[],
                bus_owner_name=None,bus_owner_email=None, git_repo_url=None):
         return self._create_or_update("UPDATE",app_name=app_name,business_criticality=business_criticality,
@@ -53,7 +53,7 @@ class Applications():
         uri = 'appsec/v1/applications/{}'.format(guid)
         return APIHelper()._rest_request(uri,'DELETE')
 
-    def _create_or_update(self,method,app_name: str,description: str,business_criticality, business_unit: UUID=None, 
+    def _create_or_update(self,method,app_name: str,description: str=None,business_criticality, business_unit: UUID=None, 
                           teams=[],guid=None,policy_guid:UUID=None, custom_fields=[], 
                           bus_owner_name=None,bus_owner_email=None,git_repo_url=None,custom_kms_alias:str=None):
         if method == 'CREATE':
