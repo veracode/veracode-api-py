@@ -99,6 +99,10 @@ class Applications():
             gru = { 'git_repo_url': git_repo_url}
             app_def.update(gru)
 
+        if (custom_kms_alias != None) & (method=='CREATE'):
+            # custom_kms_alias currently only supported at creation
+            app_def.update({"custom_kms_alias": custom_kms_alias})
+
         payload = json.dumps({"profile": app_def})
         return APIHelper()._rest_request(uri,httpmethod,body=payload)
 
