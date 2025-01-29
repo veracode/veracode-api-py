@@ -18,6 +18,7 @@ The following methods call Veracode REST APIs and return JSON.
   - `rawjson`: optional, defaults to False. Returns full response if True, the GUID of the request if false
   - `deletion_start_date`: required for `deletedscans` report type, beginning of date range for deleted scans.
   - `deletion_end_date`: optional, end of date range for deleted scans.
+  - `sandbox_ids`: optional, array of sandbox IDs (integers) for which to return results
 
 - `Analytics().get(guid, report_type(findings))`: check the status of the report request and return the report contents when ready. Note that this method returns a tuple of `status` (string) and `results` (list); when `status` is `COMPLETED`, the `results` list will populate with results. Also, you need to specify the type of data expected by the GUID with `report_type`; this defaults to `findings`.
 

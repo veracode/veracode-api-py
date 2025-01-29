@@ -39,6 +39,9 @@ As an alternative to importing individual objects into your library, you can acc
   - `policy_sandbox`: optional, 'Policy' or 'Sandbox'
   - `application_id`: optional, application ID for which to return results
   - `rawjson`: optional, defaults to False. Returns full response if True, the GUID of the request if false
+  - `deletion_start_date`: required for `deletedscans` report type, beginning of date range for deleted scans.
+  - `deletion_end_date`: optional, end of date range for deleted scans.
+  - `sandbox_ids`: optional, array of sandbox IDs (integers) for which to return results
 
 - `get_analytics_report(guid)`: check the status of the report request and return the report contents when ready. Note that this method returns a tuple of `status` (string) and `results` (list); when `status` is `COMPLETED`, the `results` list will populate with results.
 

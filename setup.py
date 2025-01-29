@@ -7,7 +7,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
   name = 'veracode_api_py',         
   packages = ['veracode_api_py'],   
-  version = '0.9.58',      
+  version = '0.9.59',      
   license='MIT',        
   description = 'Python helper library for working with the Veracode APIs. Handles retries, pagination, and other features of the modern Veracode REST APIs.',   
   long_description = long_description,
@@ -15,7 +15,7 @@ setup(
   author = 'Tim Jarrett',                  
   author_email = 'tjarrett@veracode.com',      
   url = 'https://github.com/tjarrettveracode',  
-  download_url = 'https://github.com/veracode/veracode-api-py/archive/v_09578tar.gz',    
+  download_url = 'https://github.com/veracode/veracode-api-py/archive/v_0959tar.gz',    
   keywords = ['veracode', 'veracode-api'],   
   install_requires=[            
           'veracode-api-signing'

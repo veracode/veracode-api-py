@@ -17,7 +17,7 @@ class Analytics():
    def create_report(self,report_type,last_updated_start_date=None,last_updated_end_date=None,
                      scan_type:list = [], finding_status=None,passed_policy=None,
                      policy_sandbox=None,application_id=None,rawjson=False, deletion_start_date=None,
-                     deletion_end_date=None):
+                     deletion_end_date=None, sandbox_ids:list = []):
 
       if report_type not in self.report_types:
          raise ValueError("{} is not in the list of valid report types ({})".format(report_type,self.report_types))
@@ -48,7 +48,7 @@ class Analytics():
          elif report_type in [ 'scans', 'deletedscans' ]:
             valid_scan_types = self.scan_scan_types
          if not(self._case_insensitive_list_compare(scan_type,valid_scan_types)):
-            raise ValueError("{} is not in the list of valid scan types ({})".format(report_type,valid_scan_types))
+            raise ValueError("{} is not in the list of valid scan types ({})".format(scan_type,valid_scan_types))
          report_def['scan_type'] = scan_type
 
       if finding_status:
@@ -62,6 +62,9 @@ class Analytics():
 
       if application_id:
          report_def['application_id'] = application_id
+
+      if sandbox_ids:
+         report_def['sandbox_ids'] = sandbox_ids
       
       payload = json.dumps(report_def)
       response = APIHelper()._rest_request(url=self.base_url,method="POST",body=payload)
