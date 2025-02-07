@@ -25,3 +25,4 @@ Please follow the instructions below to make a contribution.
 - [Aaron Butler](https://github.com/AaronButler-Veracode)
 - [Henry Post](https://github.com/HenryFBP)
 - [Bnreplah](https://github.com/bnreplah)
+- [Ashton Syed](https://github.com/ashtonsyed)
