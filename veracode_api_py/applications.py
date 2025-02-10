@@ -42,12 +42,12 @@ class Applications():
 
     def update(self,guid: UUID,app_name:str, business_criticality, description: str=None, business_unit: UUID=None, 
                teams=[], policy_guid:UUID=None, custom_fields=[],
-               bus_owner_name=None,bus_owner_email=None, git_repo_url=None):
+               bus_owner_name=None,bus_owner_email=None, git_repo_url=None, custom_kms_alias: str=None):
         return self._create_or_update("UPDATE",app_name=app_name,business_criticality=business_criticality,
                                       description=description,business_unit=business_unit,teams=teams,guid=guid, 
                                       policy_guid=policy_guid, custom_fields=custom_fields, 
                                       bus_owner_name=bus_owner_name,bus_owner_email=bus_owner_email,
-                                      git_repo_url=git_repo_url)
+                                      git_repo_url=git_repo_url, custom_kms_alias=custom_kms_alias)
 
     def delete(self,guid: UUID):
         uri = 'appsec/v1/applications/{}'.format(guid)
@@ -100,8 +100,7 @@ class Applications():
             gru = { 'git_repo_url': git_repo_url}
             app_def.update(gru)
 
-        if (custom_kms_alias != None) & (method=='CREATE'):
-            # custom_kms_alias currently only supported at creation
+        if (custom_kms_alias != None):
             app_def.update({"custom_kms_alias": custom_kms_alias})
 
         payload = json.dumps({"profile": app_def})
