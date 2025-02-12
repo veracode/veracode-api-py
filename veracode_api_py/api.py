@@ -111,22 +111,25 @@ class VeracodeAPI:
     def get_app_by_name(self, appname):
         return Applications().get_by_name(appname)
 
-    def create_app(self, app_name, business_criticality, business_unit: UUID = None, teams=[], 
+    def create_app(self, app_name, business_criticality, description: str=None, business_unit: UUID = None, teams=[], 
                    policy_guid = None, custom_fields=[],bus_owner_name = None, bus_owner_email = None,
                    git_repo_url = None, custom_kms_alias = None):
-        return Applications().create(app_name=app_name, business_criticality=business_criticality, 
+        return Applications().create(app_name=app_name, description=description, 
+                                     business_criticality=business_criticality, 
                                      business_unit=business_unit, teams=teams, policy_guid=policy_guid,
                                      custom_fields=custom_fields, bus_owner_name=bus_owner_name, 
                                      bus_owner_email=bus_owner_email, git_repo_url=git_repo_url,
                                      custom_kms_alias=custom_kms_alias)
     
-    def update_app(self, guid: UUID, app_name, business_criticality, business_unit: UUID = None, teams=[], 
+    def update_app(self, guid: UUID, app_name, business_criticality, description: str=None, business_unit: UUID = None, teams=[], 
                    policy_guid = None, custom_fields=[], bus_owner_name=None, bus_owner_email=None,
-                   git_repo_url = None):
-        return Applications().update(guid=guid, app_name=app_name, business_criticality=business_criticality, 
+                   git_repo_url = None, custom_kms_alias=None):
+        return Applications().update(guid=guid, app_name=app_name, description=description, 
+                                     business_criticality=business_criticality, 
                                      business_unit=business_unit, teams=teams, policy_guid=policy_guid,
                                      custom_fields=custom_fields, bus_owner_name=bus_owner_name, 
-                                     bus_owner_email=bus_owner_email, git_repo_url=git_repo_url)    
+                                     bus_owner_email=bus_owner_email, git_repo_url=git_repo_url,
+                                     custom_kms_alias=custom_kms_alias)    
 
     def delete_app(self, guid: UUID):
         return Applications().delete(guid)
