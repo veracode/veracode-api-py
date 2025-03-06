@@ -98,7 +98,7 @@ As an alternative to importing individual objects into your library, you can acc
   - `bus_owner_email`: the email address of the business owner of the application
   - `git_repo_url`: the URL to the git repository containing the code for the application
   - `custom_kms_alias`: the alias for the Customer Managed Encryption Key (CMK), which will be used to encrypt/decrypt customer provided data. Note: The Customer Managed Encrytion Key feature must be activated and configured for your organization before attempting to set this value.
-- `update_app(guid, app_name, business_criticality, business_unit(opt), teams(opt), policy_guid(opt), custom_fields(opt array), bus_owner_name(opt), bus_owner_email(opt),git_repo_url(opt))`: update an application profile. Note that partial updates are NOT supported, so you need to provide all values including those that aren't changing.
+- `update_app(guid, app_name, business_criticality, business_unit(opt), teams(opt), policy_guid(opt), custom_fields(opt array), bus_owner_name(opt), bus_owner_email(opt),git_repo_url(opt),custom_kms_alias(opt))`: update an application profile. Note that partial updates are NOT supported, so you need to provide all values including those that aren't changing.
 - `delete_app(guid)`: delete the application identified by `guid`. This is not a reversible action.
 - `get_custom_fields()`: get a list of app profile custom fields available for your organization.
 
