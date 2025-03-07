@@ -112,8 +112,8 @@ class VeracodeAPI:
         return Applications().get_by_name(appname)
 
     def create_app(self, app_name, business_criticality, description: str=None, business_unit: UUID = None, teams=[], 
-                   policy_guid = None, custom_fields=[], tags=None, bus_owner_name = None, bus_owner_email = None,
-                   git_repo_url = None, custom_kms_alias = None):
+                   policy_guid = None, custom_fields=[], bus_owner_name = None, bus_owner_email = None,
+                   git_repo_url = None, custom_kms_alias = None, tags=None):
         return Applications().create(app_name=app_name, description=description, 
                                      business_criticality=business_criticality, 
                                      business_unit=business_unit, teams=teams, policy_guid=policy_guid,
@@ -122,8 +122,8 @@ class VeracodeAPI:
                                      custom_kms_alias=custom_kms_alias)
     
     def update_app(self, guid: UUID, app_name, business_criticality, description: str=None, business_unit: UUID = None, teams=[], 
-                   policy_guid = None, custom_fields=[], tags=None, bus_owner_name=None, bus_owner_email=None,
-                   git_repo_url = None, custom_kms_alias=None):
+                   policy_guid = None, custom_fields=[], bus_owner_name=None, bus_owner_email=None,
+                   git_repo_url = None, custom_kms_alias=None, tags=None):
         return Applications().update(guid=guid, app_name=app_name, description=description, 
                                      business_criticality=business_criticality, 
                                      business_unit=business_unit, teams=teams, policy_guid=policy_guid,
