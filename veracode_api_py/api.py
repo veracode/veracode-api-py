@@ -106,11 +106,14 @@ class VeracodeAPI:
         return Applications().get_all()
 
     def get_app(self, guid: UUID = None, legacy_id=None):
-        return Applications().get(guid, legacy_id)
+        return Applications().get(guid=guid, legacy_id=legacy_id)
 
     def get_app_by_name(self, appname):
-        return Applications().get_by_name(appname)
+        return Applications().get_by_name(appname=appname)
 
+    def get_app_by_repo(self, git_repo_url):
+        return Applications().get_by_repo(git_repo_url=git_repo_url)
+    
     def create_app(self, app_name, business_criticality, description: str=None, business_unit: UUID = None, teams=[], 
                    policy_guid = None, custom_fields=[],bus_owner_name = None, bus_owner_email = None,
                    git_repo_url = None, custom_kms_alias = None):

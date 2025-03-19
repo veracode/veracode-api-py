@@ -87,6 +87,7 @@ As an alternative to importing individual objects into your library, you can acc
 - `get_apps(policy_check_after(opt))` : get a list of Veracode applications (JSON format). If provided, returns only applications that have a policy check date on or after `policy_check_after` (format is `yyyy-mm-dd`).
 - `get_app(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
 - `get_app_by_name(name)`: get list of applications whose names contain the search string `name`.
+- `get_app_by_repo(git_repo_url)`: get list of applications associated with the `git_repo_url`.
 - `create_app(app_name, business_criticality, description(opt), business_unit(opt), teams(opt), policy_guid(opt), custom_fields(opt array), bus_owner_name(opt), bus_owner_email(opt),git_repo_url(opt),custom_kms_alias(opt))`: create an application profile.
   - `business_criticality`: one of "VERY HIGH", "HIGH", "MEDIUM", "LOW", "VERY LOW"
   - `description`: extended description of the application

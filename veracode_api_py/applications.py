@@ -33,6 +33,11 @@ class Applications():
         params = {"name": parse.quote(appname)}
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
 
+    def get_by_repo (self,git_repo_url: str):
+        """Gets a list of applications having a name that matches appname, using the Veracode Applications API."""
+        params = {"git_repo_url": parse.quote(git_repo_url)}
+        return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
+    
     def create(self,app_name:str ,business_criticality, description: str=None, business_unit: UUID=None, teams=[], policy_guid:UUID=None,
                 custom_fields=[], bus_owner_name=None, bus_owner_email=None, git_repo_url=None, custom_kms_alias: str=None):
         return self._create_or_update("CREATE",app_name=app_name,business_criticality=business_criticality,
