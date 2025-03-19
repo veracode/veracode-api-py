@@ -39,18 +39,18 @@ class Applications():
         return APIHelper()._rest_paged_request(uri="appsec/v1/applications",method="GET",element="applications",params=params)
     
     def create(self,app_name:str ,business_criticality, description: str=None, business_unit: UUID=None, teams=[], policy_guid:UUID=None,
-                custom_fields=[], bus_owner_name=None, bus_owner_email=None, git_repo_url=None, custom_kms_alias: str=None):
+                custom_fields=[], bus_owner_name=None, bus_owner_email=None, git_repo_url=None, custom_kms_alias: str=None, tags=None):
         return self._create_or_update("CREATE",app_name=app_name,business_criticality=business_criticality,
                                       description=description,business_unit=business_unit,teams=teams, policy_guid=policy_guid, 
-                                      custom_fields=custom_fields, bus_owner_name=bus_owner_name, 
+                                      custom_fields=custom_fields, tags=tags, bus_owner_name=bus_owner_name, 
                                       bus_owner_email=bus_owner_email, git_repo_url=git_repo_url, custom_kms_alias=custom_kms_alias)
 
     def update(self,guid: UUID,app_name:str, business_criticality, description: str=None, business_unit: UUID=None, 
                teams=[], policy_guid:UUID=None, custom_fields=[],
-               bus_owner_name=None,bus_owner_email=None, git_repo_url=None, custom_kms_alias: str=None):
+               bus_owner_name=None,bus_owner_email=None, git_repo_url=None, custom_kms_alias: str=None, tags=None):
         return self._create_or_update("UPDATE",app_name=app_name,business_criticality=business_criticality,
                                       description=description,business_unit=business_unit,teams=teams,guid=guid, 
-                                      policy_guid=policy_guid, custom_fields=custom_fields, 
+                                      policy_guid=policy_guid, custom_fields=custom_fields, tags=tags, 
                                       bus_owner_name=bus_owner_name,bus_owner_email=bus_owner_email,
                                       git_repo_url=git_repo_url, custom_kms_alias=custom_kms_alias)
 
@@ -59,8 +59,8 @@ class Applications():
         return APIHelper()._rest_request(uri,'DELETE')
 
     def _create_or_update(self,method,app_name: str, business_criticality, description: str=None, business_unit: UUID=None, 
-                          teams=[],guid=None,policy_guid:UUID=None, custom_fields=[], 
-                          bus_owner_name=None,bus_owner_email=None,git_repo_url=None,custom_kms_alias:str=None):
+                          teams=[],guid=None,policy_guid:UUID=None, custom_fields=[],
+                          bus_owner_name=None,bus_owner_email=None,git_repo_url=None,custom_kms_alias:str=None, tags=None):
         if method == 'CREATE':
             uri = 'appsec/v1/applications'
             httpmethod = 'POST'
@@ -79,6 +79,9 @@ class Applications():
         if (description != None):
             desc = { 'description': description}
             app_def.update(desc)
+
+        if (tags != None):
+            app_def.update({ 'tags': tags })
 
         if policy_guid:
             app_def.update({"policies": [{'guid': policy_guid}]})
