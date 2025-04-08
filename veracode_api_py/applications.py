@@ -84,7 +84,7 @@ class Applications():
             app_def.update({ 'tags': tags })
 
         if policy_guid:
-            app_def.update({"policies": [{'guid': policy_guid}]})
+            app_def.update({"policies": [{'guid': str(policy_guid)}]})
 
         if len(teams) > 0:
             # optionally pass a list of teams to add to the application profile
