@@ -94,7 +94,7 @@ class Applications():
             app_def.update({'teams': team_list})
 
         if business_unit != None:
-            bu = {'business_unit': {'guid': business_unit}}
+            bu = {'business_unit': {'guid': str(business_unit)}}
             app_def.update(bu)
 
         if (custom_fields != None):
