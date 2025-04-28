@@ -6,7 +6,7 @@ The following methods call Veracode REST APIs and return JSON.
 - `Users().get_self()`: get user information for the current user.
 - `Users().get(user_guid)`: get information for an individual user based on `user_guid`.
 - `Users().get_by_name(username)`: look up info for an individual user based on their user_name.
-- `Users().get_by_search(search_term, api_id, role_id, login_status, saml_user, team_id, detailed, user_type, request_params)`: search for users based on parameters below (all optional):
+- `Users().get_user_search(search_term, api_id, role_id, login_status, saml_user, team_id, detailed, user_type, request_params)`: search for users based on parameters below (all optional):
   - `search_term`: string
   - `api_id`: search by customer api id
   - `role_id`: search by role_id (see `get_roles`)
