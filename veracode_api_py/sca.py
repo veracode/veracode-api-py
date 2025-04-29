@@ -90,7 +90,7 @@ class Workspaces():
           return APIHelper()._rest_request(uri, "GET" )
 
      def regenerate_agent_token(self,workspace_guid: UUID, agent_guid: UUID):
-          uri = self.sca_base_url + '/{}/agents/{}/tokens:regenerate'.format(workspace_guid,agent_guid)
+          uri = self.sca_base_url + '/{}/agents/{}/token:regenerate'.format(workspace_guid,agent_guid)
           return APIHelper()._rest_request(uri,"POST")
 
      def revoke_agent_token(self,workspace_guid: UUID, agent_guid: UUID, token_id: UUID):
