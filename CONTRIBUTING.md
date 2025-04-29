@@ -26,3 +26,4 @@ Please follow the instructions below to make a contribution.
 - [Henry Post](https://github.com/HenryFBP)
 - [Bnreplah](https://github.com/bnreplah)
 - [Ashton Syed](https://github.com/ashtonsyed)
+- [Jbrule](https://github.com/jbrule)
