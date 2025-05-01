@@ -16,10 +16,12 @@ The following methods call Veracode REST APIs and return JSON.
   - `detailed`: returns additional attributes in summary list of users
   - `user_type`: search by user type (e.g. `user` or `api`)
   - `request_params`: optionally pass a dictionary of additional query parameters. See [Identity API specification](https://app.swaggerhub.com/apis/Veracode/veracode-identity_api/1.0#/user/getUsersBySearchUsingGET)
-- `Users().create(email,firstname,lastname,type(opt),username(opt),roles(opt),mfa(opt))`: create a user based on the provided information.
+- `Users().create(email,firstname,lastname,type(opt),username(opt),roles(opt),mfa(opt),ipRestricted(opt),allowedIpAddresses(opt),samlUser(opt),samlSubject(opt))`: create a user based on the provided information.
   - `type`: `HUMAN` or `API`. Defaults to `HUMAN`. If `API` specified, must also provide `username`.
   - `roles`: list of role names (specified in the Veracode Help Center, for both [human](https://help.veracode.com/go/c_identity_create_human) and [API service account](https://help.veracode.com/go/c_identity_create_api) users). Provide the role names from `get_roles()`.
   - `mfa`: set to `TRUE` to require the user to configure multifactor authentication on first sign in.
+  - `ipRestricted`: set to `TRUE` and provide an array of allowed IP addresses to restrict the IP addresses from which the user can log in. See [Veracode Docs](https://docs.veracode.com/r/admin_ip) for more info. 
+  - `samlUser`: set to `TRUE` and provide a `samlSubject` to require the user to log in via SAML Single Sign-On. See [Veracode Docs](https://docs.veracode.com/r/about_saml#configure-a-user-for-saml-access) for more info. 
 - `Users().update_roles(user_guid, roles)`: update the user identified by `user_guid` with the list of roles passed in `roles`. Because the Identity API does not support adding a single role, the list should be the entire list of existing roles for the user plus whatever new roles. See [veracode-user-bulk-role-assign](https://github.com/tjarrettveracode/veracode-user-bulk-role-assign) for an example.
 - `Users().update(user_guid,changes)`: update a user based upon the provided information.
   - `user_guid`: the unique identifier of the user to be updated.
