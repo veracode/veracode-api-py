@@ -123,7 +123,7 @@ class APIHelper():
                 re.response = r
                 re.errno = r.status_code
                 re.request = r.request
-            raise re
+                raise re
 
         if fullresponse:
             return r
