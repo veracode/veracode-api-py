@@ -58,7 +58,9 @@ class Users():
          
       return APIHelper()._rest_paged_request(self.USER_URI + "/search","GET","users",request_params)
 
-   def create(self,email,firstname: str,lastname: str,username: str=None,type="HUMAN",roles=[],teams=[],mfa=False):
+   def create(self,email,firstname: str,lastname: str,username: str=None,type="HUMAN",roles=[],teams=[],mfa=False, 
+              ipRestricted=False, allowedIpAddresses=[],
+              samlUser=False, samlSubject=""):
       user_def = { "email_address": email, "first_name": firstname, "last_name": lastname, "active": True }
 
       rolelist = []
@@ -92,6 +94,14 @@ class Users():
 
       if mfa:
          user_def.update({"pin_required":True})
+
+      if ipRestricted & len(allowedIpAddresses)>0:
+         user_def.update({"ipRestricted":True})
+         user_def.update({"allowedIpAddresses": allowedIpAddresses})
+
+      if samlUser & len(samlSubject)>0:
+         user_def.update({"samlUser":True})
+         user_def.update({"samlSubject": samlSubject})
 
       payload = json.dumps(user_def)
       return APIHelper()._rest_request(self.USER_URI,'POST',body=payload)
