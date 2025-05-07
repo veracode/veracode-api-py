@@ -6,27 +6,27 @@ from veracode_api_py import Analytics
 
 wait_seconds = 15
 
-print('Generating report...')
-theguid = Analytics().create_findings_report(start_date="2023-07-01 00:00:00")
+print('Generating audit report...')
+theguid = Analytics().create_report(report_type="audit", start_date='2025-05-01',end_date='2025-05-05')
 
 print('Checking status for report {}...'.format(theguid))
-thestatus,thefindings=Analytics().get(theguid)
+thestatus,theaudits=Analytics().get_audits(theguid)
 
 while thestatus != 'COMPLETED':
     print('Waiting {} seconds before we try again...'.format(wait_seconds))
     time.sleep(wait_seconds)
     print('Checking status for report {}...'.format(theguid))
-    thestatus,thefindings=Analytics().get(theguid)
+    thestatus,theaudits=Analytics().get_audits(theguid)
 
-recordcount = len(thefindings)
+recordcount = len(theaudits)
 
-print('Retrieved {} findings'.format(recordcount))
+print('Retrieved {} audit records'.format(recordcount))
 
 if recordcount > 0:
     now = datetime.datetime.now().astimezone()
     filename = 'report-{}'.format(now)
     with open('{}.json'.format(filename), 'w') as outfile:
-        json.dump(thefindings,outfile)
+        json.dump(theaudits,outfile)
         outfile.close()
 
-    print('Wrote {} findings to {}.json'.format(recordcount,filename))
+    print('Wrote {} audit records to {}.json'.format(recordcount,filename))

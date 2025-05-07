@@ -6,7 +6,7 @@ from uuid import UUID
 from .apihelper import APIHelper
 
 class Analytics():
-   report_types = [ "findings", "scans", "deletedscans" ]
+   report_types = [ "findings", "scans", "deletedscans", "audit" ]
 
    findings_scan_types = ["Static Analysis", "Dynamic Analysis", "Manual", "SCA", "Software Composition Analysis" ]
    scan_scan_types = ["Static Analysis", "Dynamic Analysis", "Manual" ]
@@ -17,30 +17,42 @@ class Analytics():
    def create_report(self,report_type,last_updated_start_date=None,last_updated_end_date=None,
                      scan_type:list = [], finding_status=None,passed_policy=None,
                      policy_sandbox=None,application_id=None,rawjson=False, deletion_start_date=None,
-                     deletion_end_date=None, sandbox_ids:list = []):
+                     deletion_end_date=None, sandbox_ids:list = [], start_date=None, end_date=None,
+                     audit_action:list = [], target_user_id:int = None, modifier_user_id:int = None):
 
       if report_type not in self.report_types:
          raise ValueError("{} is not in the list of valid report types ({})".format(report_type,self.report_types))
 
       report_def = { 'report_type': report_type }
 
-      if last_updated_start_date:
-         report_def['last_updated_start_date'] = last_updated_start_date
-      else:
-         if report_type in ['findings','scans']:
+      if report_type in ['audit']:
+         if start_date:
+            report_def['start_date'] = start_date
+         else:
+            raise ValueError("{} report type requires a start date.").format(report_type)
+         
+         if end_date:
+            report_def['end_date'] = end_date
+
+      if report_type in ['findings','scans']:
+         if last_updated_start_date:
+            report_def['last_updated_start_date'] = last_updated_start_date
+         else:
             raise ValueError("{} report type requires a last updated start date.").format(report_type)
 
-      if last_updated_end_date:
-         report_def['last_updated_end_date'] = last_updated_end_date
-         
-      if deletion_end_date:
-         report_def['deletion_end_date'] = deletion_end_date
+         if last_updated_end_date:
+            report_def['last_updated_end_date'] = last_updated_end_date
 
-      if deletion_start_date:
-         report_def['deletion_start_date'] = deletion_start_date
-      else:
-         if report_type == 'deletedscans':
-            raise ValueError("{} report type requires a deleteion start date.").format(report_type)
+      if report_type == 'deletedscans':   
+         if deletion_start_date:
+            report_def['deletion_start_date'] = deletion_start_date
+         else:
+            raise ValueError("{} report type requires a deletion start date.").format(report_type)
+
+         if deletion_end_date:
+            report_def['deletion_end_date'] = deletion_end_date
+
+#  clean this part up, make it object oriented, probably switch report creation by report type and create sub methods
 
       if len(scan_type) > 0:
          if report_type == 'findings':
@@ -65,6 +77,15 @@ class Analytics():
 
       if sandbox_ids:
          report_def['sandbox_ids'] = sandbox_ids
+
+      if len(audit_action) > 0:
+         report_def['audit_action'] = audit_action
+
+      if target_user_id:
+         report_def['target_user_id'] = target_user_id
+
+      if modifier_user_id:
+         report_def['modifier_user_id'] = modifier_user_id
       
       payload = json.dumps(report_def)
       response = APIHelper()._rest_request(url=self.base_url,method="POST",body=payload)
@@ -74,6 +95,31 @@ class Analytics():
       else:
          return response['_embedded']['id'] #we will usually just need the guid so we can come back and fetch the report
 
+   def create_findings_report(self, start_date, end_date=None,
+                     scan_type:list = [], finding_status=None, passed_policy=None,
+                     policy_sandbox=None, application_id=None,rawjson=False):
+      return self.create_report(report_type='findings', last_updated_start_date=start_date,
+                                last_updated_end_date=end_date,scan_type=scan_type,
+                                finding_status=finding_status, passed_policy=passed_policy,
+                                policy_sandbox=policy_sandbox, application_id=application_id,rawjson=rawjson) 
+
+   def create_scans_report(self, start_date, end_date=None, scan_type:list = [], 
+                           policy_sandbox=None, application_id=None, rawjson=False):
+      return self.create_report(report_type='scans', last_updated_start_date=start_date, 
+                                last_updated_end_date=end_date, scan_type=scan_type,
+                                policy_sandbox=policy_sandbox, application_id=application_id,rawjson=rawjson)
+
+   def create_deleted_scans_report(self, start_date, end_date=None, application_id=None,
+                                   rawjson=False):
+      return self.create_report(report_type='deleted_scans', deletion_start_date=start_date, 
+                                deletion_end_date=end_date, application_id=application_id,
+                                rawjson=rawjson)
+   
+   def create_audit_report(self, start_date, end_date=None, audit_action:list=[], target_user_id:int=None, 
+                           modifier_user_id:int=None):
+      return self.create_report(report_type='audit', start_date=start_date, end_date=end_date, audit_action=audit_action,
+                                target_user_id=target_user_id, modifier_user_id=modifier_user_id)
+      
    def get_findings(self, guid: UUID):
       thestatus, thefindings = self.get(guid=guid,report_type='findings')
       return thestatus, thefindings
@@ -84,7 +130,11 @@ class Analytics():
 
    def get_deleted_scans(self, guid: UUID):
       thestatus, thescans = self.get(guid=guid,report_type='deletedscans')
-      return thestatus, thescans   
+      return thestatus, thescans
+
+   def get_audits(self, guid: UUID):
+      thestatus, theaudits = self.get(guid=guid, report_type='audit_logs')  
+      return thestatus, theaudits 
    
    def get(self,guid: UUID,report_type='findings'):
       # handle multiple scan types

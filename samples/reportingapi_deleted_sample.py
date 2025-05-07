@@ -7,7 +7,7 @@ from veracode_api_py import Analytics
 wait_seconds = 15
 
 print('Generating deleted scans report...')
-theguid = Analytics().create_report(report_type="deletedscans",deletion_start_date='2024-07-01',deletion_end_date='2024-12-31')
+theguid = Analytics().create_deleted_scans_report(start_date='2024-07-01',end_date='2024-12-31')
 
 print('Checking status for report {}...'.format(theguid))
 thestatus,thescans=Analytics().get_deleted_scans(theguid)
@@ -20,7 +20,7 @@ while thestatus != 'COMPLETED':
 
 recordcount = len(thescans)
 
-print('Retrieved {} scans'.format(recordcount))
+print('Retrieved {} deleted scans'.format(recordcount))
 
 if recordcount > 0:
     now = datetime.datetime.now().astimezone()
@@ -29,4 +29,4 @@ if recordcount > 0:
         json.dump(thescans,outfile)
         outfile.close()
 
-    print('Wrote {} findings to {}.json'.format(recordcount,filename))
+    print('Wrote {} deleted scan records to {}.json'.format(recordcount,filename))
