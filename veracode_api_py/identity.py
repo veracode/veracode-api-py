@@ -151,8 +151,7 @@ class Users():
 class Teams():
    def get_by_name(self, team_name, all_for_org=False):
       #Gets a list of teams matching a team_name using the Veracode Identity API
-      request_params = {'page': 0}
-      request_params.update({'team_name': parse.quote(team_name)})
+      request_params = {'team_name': parse.quote(team_name), 'page': 0}
       if all_for_org:
          request_params.update({'all_for_org': True})
       return APIHelper()._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
