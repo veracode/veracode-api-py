@@ -149,6 +149,14 @@ class Users():
       return APIHelper()._rest_request(uri,"DELETE")
 
 class Teams():
+   def get_by_name(self, team_name, all_for_org=False):
+      #Gets a list of teams matching a team_name using the Veracode Identity API
+      request_params = {'team_name': parse.quote(team_name), 'page': 0}
+      if all_for_org:
+         request_params.update({'all_for_org': True})
+      return APIHelper()._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
+
+
    def get_all(self, all_for_org=False):
       #Gets a list of teams using the Veracode Identity API       
       if all_for_org:
@@ -207,6 +215,11 @@ class Teams():
 
 class BusinessUnits():
    base_uri = "api/authn/v2/business_units"
+
+   def get_by_name(self, bu_name):
+      #Gets a list of business units matching a bu_name using the Veracode Identity API
+      request_params = {'bu_name': parse.quote(bu_name), 'page': 0}
+      return APIHelper()._rest_paged_request(self.base_uri,"GET","business_units",request_params)
 
    def get_all(self):
       request_params = {'page': 0}
