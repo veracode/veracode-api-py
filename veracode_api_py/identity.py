@@ -156,7 +156,6 @@ class Teams():
          request_params.update({'all_for_org': True})
       return APIHelper()._rest_paged_request("api/authn/v2/teams","GET","teams",request_params)
 
-
    def get_all(self, all_for_org=False):
       #Gets a list of teams using the Veracode Identity API       
       if all_for_org:

@@ -1,4 +1,4 @@
-requests>=2.32.0
+requests==2.32.4
 veracode-api-signing>=24.11.0
 Pygments>= 2.9.0
 idna>=3.7
