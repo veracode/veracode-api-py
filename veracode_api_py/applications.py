@@ -1,6 +1,7 @@
 #applications.py - API class for Applications API calls
 
 import json
+from typing import Iterable
 from urllib import parse
 from uuid import UUID
 
@@ -10,7 +11,7 @@ from .models.applications_entity import ApplicationsEntity
 
 
 class Applications():    
-    def yield_all(self, policy_check_after=None):
+    def yield_all(self, policy_check_after=None) -> Iterable[ApplicationsEntity]:
         if policy_check_after == None:
             params={}
         else:

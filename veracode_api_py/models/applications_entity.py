@@ -1,41 +1,52 @@
+from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 
+
+@dataclass
 class Scan:
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
     scan_type: str
     status: str
     modified_date: datetime
     scan_url: str
     internal_status: str
 
+
+@dataclass
 class BusinessUnit:
     id: int
     name: str
     guid: str
 
+
+@dataclass
 class BusinessOwner:
     name: str
     email: str
 
+
+@dataclass
 class Policy:
     guid: str
     name: str
     is_default: bool
     policy_compliance_status: str
 
+
+@dataclass
 class Team:
     team_id: int
     team_name: str
     guid: str
 
+
+@dataclass
 class CustomField:
     name: str
     value: str
 
+
+@dataclass
 class Settings:
     nextday_consultation_allowed: bool
     static_scan_xpa_or_dpa: bool
@@ -43,11 +54,9 @@ class Settings:
     sca_enabled: bool
     static_scan_xpp_enabled: bool
 
-class Profile:
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
+@dataclass
+class Profile:
     name: str
     tags: str
     business_unit: BusinessUnit
@@ -63,8 +72,9 @@ class Profile:
     vendor_rescan: bool
     business_criticality: str
 
+
+@dataclass
 class ApplicationsEntity:
-    _element: str = 'applications'
     id: int
     oid: int
     last_completed_scan_date: datetime
@@ -78,11 +88,4 @@ class ApplicationsEntity:
     profile: Profile
     results_url: str
 
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            if key == 'profile':
-                self.profile = Profile(**value)
-            elif key == 'scans':
-                self.scans = [Scan(**s) for s in value]
-            else:
-                setattr(self, key, value)
+    _element: str = 'applications'
