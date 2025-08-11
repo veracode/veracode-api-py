@@ -6,8 +6,18 @@ from uuid import UUID
 
 from .apihelper import APIHelper
 from .constants import Constants
+from .models.applications_entity import ApplicationsEntity
+
 
 class Applications():    
+    def yield_all(self, policy_check_after=None):
+        if policy_check_after == None:
+            params={}
+        else:
+            params={"policy_compliance_checked_after": policy_check_after}
+
+        return APIHelper()._yield_paginated_request('appsec/v1/applications',"GET", ApplicationsEntity, params=params)
+
     def get_all(self,policy_check_after=None):
         if policy_check_after == None:
             params={}
