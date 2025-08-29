@@ -96,12 +96,12 @@ class Users():
          user_def.update({"pin_required":True})
 
       if ipRestricted & len(allowedIpAddresses)>0:
-         user_def.update({"ipRestricted":True})
-         user_def.update({"allowedIpAddresses": allowedIpAddresses})
+         user_def.update({"ip_restricted":True})
+         user_def.update({"allowed_ip_addresses": allowedIpAddresses})
 
       if samlUser & len(samlSubject)>0:
-         user_def.update({"samlUser":True})
-         user_def.update({"samlSubject": samlSubject})
+         user_def.update({"saml_user":True})
+         user_def.update({"saml_subject": samlSubject})
 
       payload = json.dumps(user_def)
       return APIHelper()._rest_request(self.USER_URI,'POST',body=payload)
