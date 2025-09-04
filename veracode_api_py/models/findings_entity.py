@@ -5,55 +5,55 @@ from typing import Optional
 
 @dataclass
 class CWE:
-    id: int
-    name: str
-    href: str
+    id: Optional[int]
+    name: Optional[str]
+    href: Optional[str]
 
 
 @dataclass
 class FindingCategory:
-    id: int
-    name: str
-    href: str
+    id: Optional[int]
+    name: Optional[str]
+    href: Optional[str]
 
 
 @dataclass
 class FindingDetails:
-    severity: int
-    cwe: CWE
-    file_path: str
-    file_name: str
-    module: str
-    relative_location: int
-    finding_category: FindingCategory
-    procedure: str
-    exploitability: int
-    attack_vector: str
-    file_line_number: int
+    severity: Optional[int]
+    cwe: Optional[CWE]
+    file_path: Optional[str]
+    file_name: Optional[str]
+    module: Optional[str]
+    relative_location: Optional[int]
+    finding_category: Optional[FindingCategory]
+    procedure: Optional[str]
+    exploitability: Optional[int]
+    attack_vector: Optional[str]
+    file_line_number: Optional[int]
 
 
 @dataclass
 class FindingStatus:
-    first_found_date: datetime
-    status: str
-    resolution: str
-    mitigation_review_status: str
-    new: bool
-    resolution_status: str
-    last_seen_date: datetime
+    first_found_date: Optional[datetime]
+    status: Optional[str]
+    resolution: Optional[str]
+    mitigation_review_status: Optional[str]
+    new: Optional[bool]
+    resolution_status: Optional[str]
+    last_seen_date: Optional[datetime]
 
 
 @dataclass
 class FindingsEntity:
-    issue_id: int
-    scan_type: str
-    description: str
-    count: int
-    context_type: str
-    context_guid: str
-    violates_policy: bool
-    finding_status: FindingStatus
-    finding_details: FindingDetails
-    build_id: int
+    issue_id: Optional[int]
+    scan_type: Optional[str]
+    description: Optional[str]
+    count: Optional[int]
+    context_type: Optional[str]
+    context_guid: Optional[str]
+    violates_policy: Optional[bool]
+    finding_status: Optional[FindingStatus]
+    finding_details: Optional[FindingDetails]
+    build_id: Optional[int]
 
     _element: str = 'findings'
