@@ -152,3 +152,11 @@ dmypy.json
 cython_debug/
 .DS_Store
 helpers/__pycache__/api.cpython-37.pyc
+
+# Python virtual environments
+pyvenv.cfg
+bin/
+lib/
+lib64/
+include/
+share/
