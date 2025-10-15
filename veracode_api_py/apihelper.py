@@ -109,7 +109,7 @@ class APIHelper():
             logger.debug("API call returned non-200 HTTP status code: {}".format(r.status_code))
 
         if not (r.ok):
-            conv_id = r.headers['x-conversation-id']
+            conv_id = r.headers.get('x-conversation-id',"Unknown")
             logger.debug("Error retrieving data. HTTP status code: {}, conversation id {}".format(r.status_code,conv_id))
             if r.status_code == 401:
                 logger.exception(
