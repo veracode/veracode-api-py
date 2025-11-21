@@ -111,7 +111,7 @@ class Analytics():
 
    def create_deleted_scans_report(self, start_date, end_date=None, application_id=None,
                                    rawjson=False):
-      return self.create_report(report_type='deleted_scans', deletion_start_date=start_date, 
+      return self.create_report(report_type='deletedscans', deletion_start_date=start_date, 
                                 deletion_end_date=end_date, application_id=application_id,
                                 rawjson=rawjson)
    
