@@ -95,11 +95,11 @@ class Users():
       if mfa:
          user_def.update({"pin_required":True})
 
-      if ipRestricted & len(allowedIpAddresses)>0:
+      if ipRestricted and len(allowedIpAddresses)>0:
          user_def.update({"ip_restricted":True})
          user_def.update({"allowed_ip_addresses": allowedIpAddresses})
 
-      if samlUser & len(samlSubject)>0:
+      if samlUser and len(samlSubject)>0:
          user_def.update({"saml_user":True})
          user_def.update({"saml_subject": samlSubject})
 
