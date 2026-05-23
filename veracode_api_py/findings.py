@@ -1,13 +1,39 @@
 #findings.py - API class for Findings API and related calls
 
 import json
+from typing import Iterable
 from uuid import UUID
+
+from veracode_api_py.models.findings_entity import FindingsEntity
 
 from .apihelper import APIHelper
 
 LINE_NUMBER_SLOP = 3 #adjust to allow for line number movement  
 
 class Findings():
+    
+    def yield_all(self, app: UUID, scantype='STATIC', annot='TRUE', request_params=None, sandbox: UUID = None) -> Iterable[FindingsEntity]:
+        if request_params == None:
+            request_params = {}
+
+        scantypes = ""
+        scantype = scantype.split(',')
+        for st in scantype:
+            if st in ['STATIC', 'DYNAMIC', 'MANUAL', 'SCA']:
+                if len(scantypes) > 0:
+                    scantypes += ","
+                scantypes += st
+        if len(scantypes) > 0:
+            request_params['scan_type'] = scantypes
+        # note that scantype='ALL' will result in no scan_type parameter as in API
+
+        request_params['include_annot'] = annot
+
+        if sandbox != None:
+            request_params['context'] = sandbox
+
+        uri = "appsec/v2/applications/{}/findings".format(app)
+        return APIHelper()._yield_paginated_request(uri, "GET", FindingsEntity, request_params)
     
     def get_findings(self,app: UUID,scantype='STATIC',annot='TRUE',request_params=None,sandbox: UUID=None):
         #Gets a list of  findings for app using the Veracode Findings API
