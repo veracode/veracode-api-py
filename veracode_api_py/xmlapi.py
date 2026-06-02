@@ -113,7 +113,11 @@ class XMLAPI():
     def get_detailed_report(self, build_id: int):
         """Returns a detailed report for a given build ID."""
         return APIHelper()._xml_request(self.baseurl + "/5.0/detailedreport.do", "GET", params={"build_id": build_id})
-
+        
+    def get_detailed_report_pdf(self, build_id: int):
+        """Returns a detailed PDF report for a given build ID."""
+        return APIHelper()._xml_request(self.baseurl + "/4.0/detailedreportpdf.do", "GET", params={"build_id": build_id})
+        
     def generate_archer(self, payload):
         return APIHelper()._xml_request(self.baseurl + "/3.0/generatearcherreport.do", "GET", params=payload)
 
