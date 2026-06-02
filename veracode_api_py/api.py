@@ -60,6 +60,9 @@ class VeracodeAPI:
     def get_detailed_report(self, build_id):
         return XMLAPI().get_detailed_report(build_id)
 
+    def get_detailed_report_pdf(self, build_id):
+        return XMLAPI().get_detailed_report_pdf(build_id)
+
     def set_mitigation_info(self, build_id, flaw_id_list, action, comment):
         return XMLAPI().set_mitigation_info(build_id, flaw_id_list, action, comment)
 

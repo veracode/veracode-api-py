@@ -27,3 +27,4 @@ Please follow the instructions below to make a contribution.
 - [Bnreplah](https://github.com/bnreplah)
 - [Ashton Syed](https://github.com/ashtonsyed)
 - [Jbrule](https://github.com/jbrule)
+- [Cadonuno](https://github.com/cadonuno)
