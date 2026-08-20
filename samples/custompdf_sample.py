@@ -5,10 +5,17 @@ from veracode_api_py import CustomPDF
 import requests
 
 wait_seconds = 5
-app = 967128
+app = 123456 # provide a valid app_id here
 
 print('Generating report...')
-theguid = CustomPDF().create_report(app_id=app)
+theguid = CustomPDF().create_report(app_id=app,scan_types=['Static'],executive_summary=False,policy_evaluation=False,
+                                    findings_impacting_policy=False,findings_severity_level="high",
+                                    findings_details=True,flaw_category_details=False,findings_summary=False,
+                                    changes_from_last_scan=False,sca_vulnerability_details=True,
+                                    static_scan_details=True,dynamic_scan_details=False,
+                                    penetration_test_summary=True,proposed_mitigated_findings=False,
+                                    approved_mitigated_findings=True,rejected_mitigated_findings=False,
+                                    sca_standalone=False)
 
 print('Checking status for report {}...'.format(theguid))
 thestatus,theUrl=CustomPDF().get(theguid)

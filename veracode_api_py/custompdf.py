@@ -20,7 +20,7 @@ class CustomPDF():
                      changes_from_last_scan=True, sca_vulnerability_details=True, static_scan_details=True, 
                      dynamic_scan_details=True, penetration_test_summary=True, 
                      proposed_mitigated_findings=True, approved_mitigated_findings=True, 
-                     rejected_mitigated_findings=True, sca_standalone=True, veracode_methodology=True,
+                     rejected_mitigated_findings=True, sca_standalone=False, veracode_methodology=True,
                      rawjson=False):
 
       valid_scan_types = self.scan_types
@@ -31,7 +31,7 @@ class CustomPDF():
 
       if len(scan_types) > 0: 
          for scan_type in scan_types:
-            if not(Utilities().case_insensitive_list_compare(scan_type,valid_scan_types)):
+            if not(Utilities().case_insensitive_list_compare([scan_type],valid_scan_types)):
                raise ValueError("{} is not in the list of valid scan types ({})".format(scan_type,valid_scan_types))
             
          report_def['scan_types'] = scan_types
