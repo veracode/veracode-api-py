@@ -4,6 +4,7 @@ import json
 from uuid import UUID
 
 from .apihelper import APIHelper
+from .utilities import Utilities
 
 class Analytics():
    report_types = [ "findings", "scans", "deletedscans", "audit" ]
@@ -59,7 +60,7 @@ class Analytics():
             valid_scan_types = self.findings_scan_types
          elif report_type in [ 'scans', 'deletedscans' ]:
             valid_scan_types = self.scan_scan_types
-         if not(self._case_insensitive_list_compare(scan_type,valid_scan_types)):
+         if not(Utilities().case_insensitive_list_compare(scan_type,valid_scan_types)):
             raise ValueError("{} is not in the list of valid scan types ({})".format(scan_type,valid_scan_types))
          report_def['scan_type'] = scan_type
 
@@ -143,12 +144,4 @@ class Analytics():
       thestatus = theresponse.get('_embedded',{}).get('status','')
       thebody = theresponse.get('_embedded',{}).get(report_type,{})
       return thestatus, thebody
-
-   #helper methods
-   def _case_insensitive_list_compare(self,input_list:list, target_list:list):
-      input_set = self._lowercase_set_from_list(input_list)
-      target_set = self._lowercase_set_from_list(target_list)
-      return target_set.issuperset(input_set)
-
-   def _lowercase_set_from_list(self,thelist:list):
-      return set([x.lower() for x in thelist])
+   

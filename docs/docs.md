@@ -11,10 +11,11 @@ See the topics below for more information on how to use this library.
 * [Applications and Sandboxes](applications.md) - create, update, access, and delete application profiles and sandboxes.
 * [Policy](policy.md) - create, update, access, and delete policy definitions.
 * [Findings, Annotations, Summary Reports, and CWE and Category Metadata](findings.md) - retrieve findings and propose, accept, and reject mitigations. Get summary reports for applications. Get CWE and category metadata.
+* [Custom PDF Reports](custompdf.md) - request and retrieve PDF reports for individual applications.
 * [Collections](collections.md) - (EARLY ACCESS) create, update, access, and delete collections.
 * [SCA Agent](sca.md) - access information about SCA workspaces, projects, issues, vulnerabilities, libraries, and licenses.
 * [Dynamic Analysis](dynamic.md) - configure, schedule and start dynamic analyses (use with the Veracode Dynamic Analysis product).
-* [DAST](dast.md) - configure, schedule, and run DAST Essentials scans (use with the Veracode DAST Essentials product).
+* [DAST](dast.md) - configure, schedule, and run DAST scans (use with the Veracode DAST product).
 * [Analytics](analytics.md) - request and retrieve reports across your Veracode organization.
 
 ## Administration

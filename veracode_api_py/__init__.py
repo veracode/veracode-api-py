@@ -13,3 +13,5 @@ from veracode_api_py.xmlapi import XMLAPI
 from veracode_api_py.analytics import Analytics
 from veracode_api_py.static import StaticCLI
 from veracode_api_py.dast import DASTTargets, DASTAnalysisProfiles, DASTAnalysisRuns
+from veracode_api_py.custompdf import CustomPDF
+from veracode_api_py.utilities import Utilities
