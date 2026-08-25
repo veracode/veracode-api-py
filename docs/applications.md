@@ -4,6 +4,7 @@ The following methods call Veracode REST APIs and return JSON.
 
 ## Applications
 
+- `Applications().yield_all(policy_check_after(opt))` : get a list of Veracode applications. If provided, returns only applications that have a policy check date on or after `policy_check_after` (format is `yyyy-mm-dd`).
 - `Applications().get_all(policy_check_after(opt))` : get a list of Veracode applications (JSON format). If provided, returns only applications that have a policy check date on or after `policy_check_after` (format is `yyyy-mm-dd`).
 - `Applications().get(guid(opt),legacy_id(opt))`: get information for a single Veracode application using either the `guid` or the `legacy_id` (integer).
 - `Applications().get_by_name(name)`: get list of applications whose names contain the search string `name`.

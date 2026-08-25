@@ -1,21 +1,21 @@
 # apihelper.py - API class for making network calls
+import logging
+import time
+from datetime import datetime
+from typing import Iterable, TypeVar, Type
 
 import requests
-import logging
-import json
-import time
+from dacite import from_dict, Config
 from requests.adapters import HTTPAdapter
-
-from veracode_api_signing.exceptions import VeracodeAPISigningException
-from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from veracode_api_signing.credentials import get_credentials
+from veracode_api_signing.plugin_requests import RequestsAuthPluginVeracodeHMAC
 from veracode_api_signing.regions import get_region_for_api_credential
 
-from .exceptions import VeracodeAPIError
-from .log import VeracodeLog as vlog
 from .constants import Constants
+from .exceptions import VeracodeAPIError
 
 logger = logging.getLogger(__name__)
+T = TypeVar('T')
 
 
 class APIHelper():
@@ -151,6 +151,41 @@ class APIHelper():
         else:
             return all_data
 
+    def _yield_paginated_request(self, uri, method, entity: Type[T], params=None) -> Iterable[T]:
+        """Paginates the request and yields the entities.
+
+        Args:
+            uri: The URI to request.
+            method: The HTTP method to use.
+            entity: The entity to yield.
+            params: The parameters to pass to the request.
+            fullresponse: Whether to return the full response.
+
+        Returns:
+            An iterable of the entities.
+        """
+
+        element = entity._element
+
+        page = 0
+        more_pages = True
+
+        while more_pages:
+            params['page'] = page
+            page_data = self._rest_request(uri, method, params)
+            total_pages = page_data.get('page', {}).get('total_pages', 0)
+            data_page = page_data.get('_embedded', {}).get(element, [])
+            for data in data_page:
+                config = Config(
+                    type_hooks={
+                        datetime: lambda x: datetime.fromisoformat(x.replace('Z', '+00:00')) if isinstance(x, str) else x
+                    }
+                )
+                yield from_dict(data_class=entity, data=data, config=config)
+
+            page += 1
+            more_pages = page < total_pages
+        
     def _xml_request(self, url, method, params=None, files=None):
         # base request method for XML APIs, handles what little error handling there is around these APIs
         if method not in ["GET", "POST"]:
@@ -160,14 +195,14 @@ class APIHelper():
             session = requests.Session()
             session.mount(self.baseurl, HTTPAdapter(max_retries=3))
             request = requests.Request(method, url, params=params, files=files,
-                                       auth=RequestsAuthPluginVeracodeHMAC(), headers=self._prepare_headers(method,'xml'))
+                                       auth=RequestsAuthPluginVeracodeHMAC(), headers=self._prepare_headers(method, 'xml'))
             prepared_request = request.prepare()
             r = session.send(prepared_request)
             if 200 <= r.status_code <= 299:
                 if r.status_code == 204:
                     # retry after wait
                     time.sleep(self.retry_seconds)
-                    return self._xml_request(url,method,params)
+                    return self._xml_request(url, method, params)
                 elif r.content is None:
                     logger.debug("HTTP response body empty:\r\n{}\r\n{}\r\n{}\r\n\r\n{}\r\n{}\r\n{}\r\n"
                                  .format(r.request.url, r.request.headers, r.request.body, r.status_code, r.headers,
